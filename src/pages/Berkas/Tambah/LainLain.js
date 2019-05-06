@@ -96,11 +96,7 @@ export default class LainLain extends Component {
 					gudang: ${formData.gudang}
 					kd_lokasi: "${formData.kd_lokasi}"
 					urutan: ${formData.urutan}
-<<<<<<< HEAD
 					${formData.ket_lain ? `ket_lain: "${formData.ket_lain}"` : ``}
-=======
-					${formData.kd_berkas ? `ket_lain: "${formData.kd_berkas}"` : ``}
->>>>>>> 3954fcb64fec08687b65730579804232158c7c22
 				}) {
 					ket_berkas {
 						nama_berkas
