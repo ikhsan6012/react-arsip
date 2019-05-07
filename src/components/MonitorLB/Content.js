@@ -144,6 +144,11 @@ export default class MonitorLBContent extends Component {
         className: 'text-center'
       },
       {
+        Header: "Nama WP",
+        accessor: "nama_wp",
+        width: 250,
+      },
+      {
         Header: "No. Tanda Terima",
         accessor: "no_tt",
         width: 350,
@@ -181,11 +186,13 @@ export default class MonitorLBContent extends Component {
         Header: "Tanggal Terima",
         accessor: "tgl_terima",
         className: 'text-center',
+        width: 125
       },
       {
         Header: "Tanggal Jatuh Tempo",
         accessor: "tgl_jt",
         className: 'text-center',
+        width: 165
       },
     ]
     return(
