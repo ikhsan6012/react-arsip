@@ -31,7 +31,7 @@ export default class HasilLokasi extends Component {
 				<td className="text-center">{ noBerkas++ }</td>
 				<td>{ b.ket_berkas.nama_berkas }</td>
 				<td>{ b.pemilik ? <React.Fragment>{b.pemilik.npwp} /<br/>{b.pemilik.nama_wp}</React.Fragment> : '' }</td>
-				<td className="text-center">{ b.masa_pajak ? `${b.masa_pajak}/${b.tahun_pajak}` : '' }</td>
+				<td className="text-center">{ b.tahun_pajak ? `${b.masa_pajak}/${b.tahun_pajak}` : '' }</td>
 				<td>{ b.penerima ? <React.Fragment>{b.penerima.nama_penerima}<br/>{b.penerima.tgl_terima}</React.Fragment> : '' }</td>
 				<td className="text-center">{ b.urutan }</td>
 				<td>{ b.ket_lain }</td>
