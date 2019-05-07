@@ -142,6 +142,7 @@ export default class IndukBerkas extends Component {
 						disableNamaWP: false
 					})
 					document.querySelector('[name=npwp]').focus()
+					document.getElementById('file').value = ''
 				})
 				.catch(err => {
 					const alert = document.querySelector('.alert')
@@ -242,6 +243,7 @@ export default class IndukBerkas extends Component {
 							<label>Lampiran <span className="text-warning" style={{ fontSize: '.75em' }}>pdf only!</span></label>
 							<div className="input-group">
 								<input 
+									id="file"
 									type="file" 
 									name="file"
 									accept="application/pdf"
