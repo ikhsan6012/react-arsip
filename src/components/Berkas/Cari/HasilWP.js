@@ -116,7 +116,7 @@ export default class HasilWP extends Component {
 			</tr>
 		)) : (
 			<tr>
-				<td colSpan="4">NPWP Tidak Ditemukan</td>
+				<td colSpan="4">Wajib Pajak Tidak Ditemukan</td>
 			</tr>
 		)
 

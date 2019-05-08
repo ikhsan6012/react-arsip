@@ -12,7 +12,8 @@ export default class LainLain extends Component {
 		errMsg: '',
 		formData: {
 			gudang: 1
-		}
+		},
+		required: false
 	}
 
 	errorHandler = msg => {
@@ -31,6 +32,7 @@ export default class LainLain extends Component {
 		const value = el.value.toUpperCase()
 		await this.setState({formData: { ...this.state.formData, [name]: value }})
 		if(name === 'npwp') return this.checkNPWP()
+		if(name === 'kd_berkas') return this.checkKdBerkas(value)
 	}
 
 	checkNPWP = () => {
@@ -59,6 +61,14 @@ export default class LainLain extends Component {
 					})
 				})
 				.catch(err => this.errorHandler(err.message))
+		}
+	}
+
+	checkKdBerkas = value => {
+		if(!value.match(/LAIN/)){
+			this.setState({ required: true })
+		} else {
+			this.setState({ required: false })
 		}
 	}
 
@@ -91,8 +101,8 @@ export default class LainLain extends Component {
 					npwp: "${formData.npwp}"
 					nama_wp: "${formData.nama_wp}"
 					${status ? `status: "${status}"` : ``}
-					masa_pajak: ${formData.masa_pajak}
-					tahun_pajak: ${formData.tahun_pajak}
+					${formData.masa_pajak ? `masa_pajak: ${formData.masa_pajak}` : ``}
+					${formData.tahun_pajak ? `tahun_pajak: ${formData.tahun_pajak}` : ``}
 					gudang: ${formData.gudang}
 					kd_lokasi: "${formData.kd_lokasi}"
 					urutan: ${formData.urutan}
@@ -115,7 +125,7 @@ export default class LainLain extends Component {
 					const alert = document.querySelector('.alert')
 					alert.classList.remove('alert-danger')
 					alert.classList.add('alert-success')
-					alert.innerHTML = `${data.berkas.ket_berkas.nama_berkas}<br/> Nama: ${data.berkas.pemilik.nama_wp}, NPWP: ${data.berkas.pemilik.npwp}<br/>Masa/Tahun: ${data.berkas.masa_pajak}/${data.berkas.tahun_pajak}`
+					alert.innerHTML = `${data.berkas.ket_berkas.nama_berkas}<br/> Nama: ${data.berkas.pemilik.nama_wp}, NPWP: ${data.berkas.pemilik.npwp}${data.berkas.tahun_pajak ? `<br/>Masa/Tahun: ${data.berkas.masa_pajak}/${data.berkas.tahun_pajak}` : ``}`
 					alert.hidden = false
 					this.setState({
 						formData: { ...this.state.formData, npwp: '', nama_wp: '' },
@@ -151,7 +161,7 @@ export default class LainLain extends Component {
 	}
 
 	render(){
-		const ket_berkas = this.state.ket_berkas.filter(data => !data.kd_berkas.match(/(induk|pindah|pkp|sertel)/i))
+		const ket_berkas = this.state.ket_berkas.filter(data => !data.kd_berkas.match(/(induk|pindah|pkp|sertel|pbk)/i))
 		const options = ket_berkas.map(opt => {
 			return <option value={ opt.kd_berkas } key={ opt._id }>{ opt.nama_berkas }</option>
 		})
@@ -242,14 +252,15 @@ export default class LainLain extends Component {
 						<label>Masa Pajak</label>
 						<div className="input-group">
 							<input 
-								type="number" 
-								name="masa_pajak" 
-								className="form-control" 
-								min="0" 
-								max="12" 
+								type="number"
+								name="masa_pajak"
+								className="form-control"
+								min="0"
+								max="12"
 								placeholder={ new Date().getMonth() }
 								defaultValue={ this.state.formData.masa_pajak }
 								onChange={ this.changeHandler }
+								required={ this.state.required }
 							/>
 						</div>
 					</div><div className="form-group col-md-5">
