@@ -136,108 +136,140 @@ export default class MonitorLBContent extends Component {
   }
 
   render(){
+    const formStyle = {
+      border: "1px solid rgba(0,0,0,0.1)",
+      background: "#fff",
+      padding: "5px 7px",
+      fonSize: "inherit",
+      borderRadius: "3px",
+      fontWeight: "normal",
+      outline: "none",
+      margin: "5px"
+    }
+    const tdStyle = {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
     const columns = [
       {
         Header: "NPWP",
         accessor: "npwp",
-        width: 175,
-        className: 'text-center'
+        minWidth: 125,
+        style: tdStyle
       },
       {
         Header: "Nama WP",
         accessor: "nama_wp",
-        width: 250,
+        minWidth: 200,
+        style: { ...tdStyle, justifyContent: 'flex-start' }
       },
       {
         Header: "No. Tanda Terima",
         accessor: "no_tt",
-        width: 350,
-        className: 'text-center'
+        minWidth: 250,
+        style: tdStyle
       },
       {
         Header: "Nilai",
         accessor: "nilai",
-        className: 'text-center',
-        minWidth: 100
+        minWidth: 150,
+        style: tdStyle
       },
       {
         Header: "Masa / Tahun",
         accessor: "masa_tahun",
-        className: 'text-center',
-        width: 120
+        minWidth: 100,
+        style: tdStyle
       },
       {
         Header: "Status",
         accessor: "res_kom",
-        className: 'text-center',
-        width: 215
+        minWidth: 150,
+        style: tdStyle
       },
       {
         Header: "Sumber",
         accessor: "sumber",
-        className: 'text-center',
+        minWidth: 75,
+        style: tdStyle
       },
       {
         Header: "Pembetulan",
         accessor: "pb",
-        className: 'text-center',
+        minWidth: 80,
+        style: tdStyle
       },
       {
         Header: "Tanggal Terima",
         accessor: "tgl_terima",
-        className: 'text-center',
-        width: 125
+        width: 100,
+        style: tdStyle
       },
       {
         Header: "Tanggal Jatuh Tempo",
         accessor: "tgl_jt",
-        className: 'text-center',
-        width: 165
+        width: 125,
+        style: tdStyle
       },
     ]
     return(
       <section className="content">
-        <ReactTable
-          columns={ localStorage.token 
-            ? [
-                ...columns, 
-                {
-                  Header: "No. ND",
-                  id: "no_nd",
-                  minWidth: 275,
-                  accessor: lb => lb.no_nd 
-                    ? <span>
-                        <i className="fa fa-times mr-2 text-danger" style={{ cursor: 'pointer' }} onClick={ () => this.deleteND(lb._id) }></i>
-                        { `ND-${lb.no_nd}/WPJ.05/KP.0203/${lb.tahun_nd}` }
-                      </span>
-                    : <span>
-                        <button name="btn_nd" id={ `btn_${lb._id}` } className="btn btn-primary" onClick={ () => this.showFormND(lb._id) }><strong>+</strong></button>
-                        <form name="form_nd" id={ `nd_${ lb._id }` } hidden={ true } onSubmit={ this.addND }>
-                          <div className="row">
-                            <div className="form-group col-md-5">
-                              <input required id={ `input_${ lb._id }` } className="form-control" type="text"/>
-                            </div>
-                            <div className="form-group col-md-7">
-                              <input required id={ `tahun_${ lb._id }` } className="form-control" type="number" placeholder="Tahun"/>
-                              <input type="submit" hidden={true}/>
-                            </div>
-                          </div>
-                        </form>
-                      </span>,
-                  className: 'text-center align-middle',
-                }
-              ]
-            : columns
-          }
-          manual
-          data={ this.state.data }
-          pages={ this.state.pages }
-          loading={ this.state.loading }
-          onFetchData={ this.fetchData }
-          filterable
-          defaultPageSize={10}
-          className="-striped -highlight"
-        />
+        <div className="container-fluid">
+        <div className="row">
+          <div className="col-md-12">
+            <ReactTable
+              columns={ localStorage.token
+                ? [
+                    ...columns, 
+                    {
+                      Header: "No. ND",
+                      id: "no_nd",
+                      minWidth: 175,
+                      resizable: false,
+                      accessor: lb => lb.no_nd 
+                        ? <span>
+                            <i className="fa fa-times mr-2 text-danger" style={{ cursor: 'pointer' }} onClick={ () => this.deleteND(lb._id) }></i>
+                            { `ND-${lb.no_nd}/WPJ.05/KP.0203/${lb.tahun_nd}` }
+                          </span>
+                        : <span>
+                            <i name="btn_nd" id={ `btn_${lb._id}` } className="fa fa-plus text-primary" style={{ cursor: 'pointer' }} onClick={ () => this.showFormND(lb._id)}></i>
+                            <form name="form_nd" id={ `nd_${ lb._id }` } hidden={ true } onSubmit={ this.addND }>
+                                  <input required id={ `input_${ lb._id }` } style={{ ...formStyle, width: '60px' }} type="text" placeholder="No."/>
+                                  <input required id={ `tahun_${ lb._id }` } style={{ ...formStyle, width: '85px' }} type="number" placeholder="Tahun"/>
+                                  <input type="submit" hidden={true}/>
+                            </form>
+                          </span>,
+                      className: 'text-center',
+                    }
+                  ]
+                : [ 
+                    ...columns,
+                    {
+                      Header: "No. ND",
+                      id: "no_nd",
+                      minWidth: 175,
+                      resizable: false,
+                      accessor: lb => lb.no_nd
+                        ? `ND-${lb.no_nd}/WPJ.05/KP.0203/${lb.tahun_nd}`
+                        : null,
+                      className: 'text-center'
+                    }
+                  ]
+              }
+              manual
+              data={ this.state.data }
+              pages={ this.state.pages }
+              loading={ this.state.loading }
+              onFetchData={ this.fetchData }
+              filterable
+              defaultPageSize={10}
+              className="-striped -highlight"
+              style={{ fontSize: '10px' }}
+            />
+          </div>
+        </div>
+        </div>
       </section>
     )
   }
