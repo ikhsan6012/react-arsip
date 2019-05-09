@@ -17,7 +17,7 @@ export default class MonitorLBContent extends Component {
     const value = document.getElementById(`input_${ id }`).value
     const tahun = document.getElementById(`tahun_${ id }`).value
     const body = {query: `mutation {
-      sptlb: addNDLB(id: "${id}", value: ${value}, tahun: ${tahun}){
+      sptlb: addNDLB(id: "${id}", value: "${value}", tahun: ${tahun}){
         _id
         no_nd
         tahun_nd
@@ -215,7 +215,7 @@ export default class MonitorLBContent extends Component {
                         <form name="form_nd" id={ `nd_${ lb._id }` } hidden={ true } onSubmit={ this.addND }>
                           <div className="row">
                             <div className="form-group col-md-5">
-                              <input required id={ `input_${ lb._id }` } className="form-control" type="number"/>
+                              <input required id={ `input_${ lb._id }` } className="form-control" type="text"/>
                             </div>
                             <div className="form-group col-md-7">
                               <input required id={ `tahun_${ lb._id }` } className="form-control" type="number" placeholder="Tahun"/>
