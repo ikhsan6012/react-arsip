@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import ReactTable from 'react-table'
+import swal from 'sweetalert'
 import 'react-table/react-table.css'
 
 import { fetchDataGQL } from '../../helpers'
@@ -135,6 +136,45 @@ export default class MonitorLBContent extends Component {
       .catch(err => console.error(err))
   }
 
+  fileHandler = e => {
+    const file = e.target.files[0]
+    if(!file) return false
+    const fileName = file.name
+    const label = document.getElementById('importLB-label')
+    label.innerText = fileName
+    document.getElementById('import').hidden = false
+  }
+
+  resetFile = () => {
+    document.getElementById('importLB').value = ''
+    document.getElementById('importLB-label').innerText = 'import .json'
+    document.getElementById('import').hidden = true
+  }
+
+  submitImport = () => {
+    const file = document.getElementById('importLB').files[0]
+    swal('Apakah Anda Yakin?', {
+      buttons: ['Tidak', 'Ya']
+    }).then(val => {
+      if(!val) {
+        Promise.resolve(false)
+      } else {
+        const formData = new FormData()
+        formData.append('file', file)
+        return fetch(`${process.env.REACT_APP_API_SERVER}/importlb`, {
+          method: 'post',
+          body: formData
+        })
+      }
+    }).then(res => res.json())
+      .then(async res => {
+        await swal('Berhasil Import SPT LB...', { icon: 'success' })
+        document.getElementById('importLB').value = ''
+        document.getElementById('importLB-label').innerText = 'import .json'
+        document.getElementById('import').hidden = true
+      })
+  }
+
   render(){
     const formStyle = {
       border: "1px solid rgba(0,0,0,0.1)",
@@ -217,6 +257,16 @@ export default class MonitorLBContent extends Component {
       <section className="content">
         <div className="container-fluid">
         <div className="row">
+          <div className="col-md-3 mb-3">
+            <div className="custom-file">
+              <input type="file" className="custom-file-input" id="importLB" accept="application/json" onChange={ this.fileHandler }/>
+              <label id="importLB-label" htmlFor="importLB" className="custom-file-label">import .json</label>
+            </div>
+          </div>
+          <div className="col-md-7" id="import" hidden={ true }>
+            <button className="btn btn-secondary mr-2" onClick={ this.resetFile }>Reset</button>
+            <button className="btn btn-primary" onClick={ this.submitImport }>Import</button>
+          </div>
           <div className="col-md-12">
             <ReactTable
               columns={ localStorage.token
