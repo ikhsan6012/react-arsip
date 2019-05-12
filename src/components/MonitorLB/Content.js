@@ -168,7 +168,11 @@ export default class MonitorLBContent extends Component {
       }
     }).then(res => res.json())
       .then(async res => {
-        await swal('Berhasil Import SPT LB...', { icon: 'success' })
+        if(!res.ok){
+          await swal(res.title, res.message, 'error')
+        } else {
+          await swal('Berhasil Import SPT LB!!!', `${res.upsertedCount} dari ${res.total} Data Ditambahkan...`, 'success')
+        }
         document.getElementById('importLB').value = ''
         document.getElementById('importLB-label').innerText = 'import .json'
         document.getElementById('import').hidden = true
