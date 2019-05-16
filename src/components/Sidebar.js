@@ -11,9 +11,17 @@ export default props => {
 
 	const notLogin = e => {
 		e.preventDefault()
-		if(e.target.id === 'tambah'){
-			swal('Anda Belum Login!', 'Silahkan Login Untuk Menambah Berkas', 'error')
-		}
+		const id = e.target.id || e.target.parentNode.id
+		let msg
+		if(id === 'tambah') msg = 'Menambah Berkas'
+		if(id === 'monitorlb') msg = 'Untuk Melanjutkan'
+		swal('Anda Belum Login!', `Silahkan Login Untuk ${msg}...`, 'error')
+			.then(() => {
+				const login = document.querySelector('#formLogin button[type=submit]')
+				const input = document.querySelector('#formLogin .form-control')
+				if(input.hidden) return login.click()
+				return input.focus()
+			})
 	}
 
 	return(
@@ -31,7 +39,7 @@ export default props => {
 								<p>Dashboard</p>
 							</NavLink>
 						</li>
-						<li className="nav-item has-treeview" onMouseEnter={ openMenu } onMouseLeave={ openMenu } data-toggle="collapse" data-target="#collapseBerkas" aria-expanded="true" aria-controls="collapseBerkas">
+						<li className="nav-item has-treeview" onMouseEnter={ openMenu } onMouseLeave={ openMenu }>
 							<NavLink to="/berkas" id="berkas" className="nav-link">
 								<i className="nav-icon fa fa-archive"></i>
 								<p>
@@ -61,10 +69,16 @@ export default props => {
 							</ul>
 						</li>
 						<li className="nav-item">
-							<NavLink exact to="/monitorlb" className="nav-link">
-								<i className="nav-icon fa fa-desktop"></i>
-								<p>Monitor SPT LB</p>
-							</NavLink>
+							{ localStorage.getItem('token')
+								? <NavLink exact to="/monitorlb" className="nav-link">
+										<i className="nav-icon fa fa-desktop"></i>
+										<p>Monitor SPT LB</p>
+									</NavLink>
+								: <a href="/" id="monitorlb" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin }>
+										<i className="nav-icon fa fa-circle-o"></i>
+										<p>Monitor SPT LB</p>
+									</a>
+							}
 						</li>
 					</ul>
 				</nav>

@@ -13,7 +13,7 @@ import './static/css/adminlte.min.css'
 import './static/font-awesome/css/font-awesome.min.css'
 import './static/css/style.css'
 
-import { fetchDataGQL } from './helpers'
+import { fetchDataGQL2 } from './helpers'
 
 class App extends Component {
   state = {
@@ -38,31 +38,37 @@ class App extends Component {
     const username = document.querySelectorAll('#formLogin .form-control')[0].value
     const password = document.querySelectorAll('#formLogin .form-control')[1].value
     const body = {query: `{
-      user: getUser(username: "${username}", password: "${password}"){
+      user(username: "${username}", password: "${password}"){
         _id
         username
         nama
         token
       }
     }`}
-    return fetchDataGQL(body)
+    return fetchDataGQL2(body)
       .then(res => res.json())
-      .then(({data}) => {
-        localStorage.setItem('token', data.user.token)
-        swal('Login Berhasil!', {
+      .then(({data, errors}) => {
+        if(errors){
+          return console.log(errors)
+        }
+        return swal('Login Berhasil!', {
           icon: 'success'
+        }).then(() => {
+          localStorage.setItem('token', data.user.token)
+          this.forceUpdate() 
         })
-        this.forceUpdate()
       })
       .catch(err => console.log(err))
   }
 
   logout = () => {
-    localStorage.removeItem('token')
     swal('Logout Berhasil!', {
       icon: 'success'
+    }).then(() => {
+      localStorage.removeItem('token')
+      document.querySelector('.brand-link').click()
+      this.forceUpdate()
     })
-    this.forceUpdate()
   }
 
   render() {

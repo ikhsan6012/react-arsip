@@ -26,7 +26,7 @@ export default class HasilLokasi extends Component {
 
 	render(){
 		let noBerkas = 1
-		const berkas = this.props.berkas.length ? this.props.berkas.map(b => (
+		const berkas = this.props.berkas.length ? this.props.berkas.sort((a, b) => a.urutan - b.urutan).map(b => (
 			<tr key={ b._id }>
 				<td className="text-center">{ noBerkas++ }</td>
 				<td>{ b.ket_berkas.nama_berkas }</td>
@@ -35,21 +35,27 @@ export default class HasilLokasi extends Component {
 				<td>{ b.penerima ? <React.Fragment>{b.penerima.nama_penerima}<br/>{b.penerima.tgl_terima}</React.Fragment> : '' }</td>
 				<td className="text-center">{ b.urutan }</td>
 				<td>{ b.ket_lain }</td>
-				{ localStorage.getItem('token')
-					? <td className="text-center">
-							{
-								b.ket_berkas.kd_berkas === 'INDUK' 
-									? b.file
-										? <i style={{cursor: 'pointer'}} onClick={ this.getDocument } value={ b.file } className="fa fa-download text-primary mr-2"></i>
-										: <i style={{cursor: 'not-allowed'}} className="fa fa-download text-secondary mr-2"></i>
-									: null
-							}
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.editBerkas } className="fa fa-pencil text-warning mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } className="fa fa-exchange text-info mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.props.deleteBerkas } className="fa fa-trash text-danger"></i>
-						</td>
-					: null
-				}
+				<td className="text-center">
+					{ localStorage.getItem('token')
+						? <React.Fragment>
+								{
+									b.ket_berkas.kd_berkas === 'INDUK' 
+										? b.file
+											? <i style={{cursor: 'pointer'}} onClick={ this.getDocument } value={ b.file } className="fa fa-download text-primary mr-2"></i>
+											: <i style={{cursor: 'not-allowed'}} className="fa fa-download text-secondary mr-2"></i>
+										: null
+								}
+								<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.editBerkas } className="fa fa-pencil text-warning mr-2"></i>
+								<i style={{cursor: 'pointer'}} value={ b._id } className="fa fa-exchange text-info mr-2"></i>
+								<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.props.deleteBerkas } className="fa fa-trash text-danger"></i>
+							</React.Fragment>
+						: b.ket_berkas.kd_berkas === 'INDUK' 
+								? b.file
+									? <i style={{cursor: 'pointer'}} onClick={ this.getDocument } value={ b.file } className="fa fa-download text-primary mr-2"></i>
+									: <i style={{cursor: 'not-allowed'}} className="fa fa-download text-secondary mr-2"></i>
+								: null
+					}
+				</td>
 			</tr>
 		)) : (
 			<tr>
@@ -70,10 +76,7 @@ export default class HasilLokasi extends Component {
 									<th className="text-center align-middle">Penerima / Tanggal</th>
 									<th className="text-center align-middle" width="77px">Urutan</th>
 									<th className="text-center align-middle">Keterangan</th>
-									{ localStorage.getItem('token')
-										? <th className="text-center align-middle" width="125px">Aksi</th>
-										: null
-									}
+									<th className="text-center align-middle" width="125px">Aksi</th>
 								</tr>
 							</thead>
 							<tbody>

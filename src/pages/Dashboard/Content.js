@@ -35,7 +35,7 @@ export default class Content extends Component {
 			if(data[0] !== 'lastUpdate'){
 				return(
 					<tr key={ data[0] }>
-						{ data[0] === 'total' ? null : <td className="text-center">{ i +1 }</td> }
+						{ data[0] === 'total' ? null : <td className="text-center">{ i + 1 }</td> }
 						{ data[0] === 'total' 
 							? <td colSpan='2'>{ data[0].toUpperCase() }</td> 
 							: <td style={{ textTransform: 'capitalize' }}>{ data[0].split('_').join(' ') }</td> }
