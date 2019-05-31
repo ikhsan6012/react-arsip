@@ -60,7 +60,6 @@ export default class Dashboard extends Component {
 			container.hidden = false
 			Object.assign(container.style, { flex: '0 0 100%', maxWidth: '100%', transition: 'all 1s' })
 			fetchDataGQL2(body)
-				.then(res => res.json())
 				.then(({data, extensions}) => {
 				if(extensions.token) localStorage.setItem('token', extensions.token)
 					this.setState({
@@ -116,7 +115,6 @@ export default class Dashboard extends Component {
 		} else {
 			if(!body) return
 			fetchDataGQL2(body)
-				.then(res => res.json())
 				.then(({data, errors, extensions}) => {
 					if(extensions.token) localStorage.setItem('token', extensions.token)
 					if(errors) {
@@ -153,7 +151,6 @@ export default class Dashboard extends Component {
 			}`
 		}
 		fetchDataGQL2(body)
-			.then(res => res.json())
 			.then(({data, errors, extensions}) => {
 				if(extensions.token) localStorage.setItem('token', extensions.token)
 				if(errors) return swal(errors.message, { icon: 'error' })

@@ -1,3 +1,5 @@
+const swal = require('sweetalert')
+
 module.exports = {
 	fetchDataGQL: body => {
 		const api = process.env.REACT_APP_API_SERVER || "http://localhost:3001"
@@ -21,6 +23,19 @@ module.exports = {
 			method: 'post',
 			headers,
 			body: JSON.stringify(body)
-		})
+		}).then(res => res.json())
+	},
+	handleErrors: errors => {
+		if(errors.name === 'SessionError') {
+			return swal(errors.message, { icon: 'error' })
+				.then(() => {
+					localStorage.removeItem('token')
+					window.location.href = process.env.REACT_APP_HOST
+				})
+		} else if(errors.length) {
+			return errors.forEach(err => {
+				console.error(err)
+			})
+		}
 	}
 }

@@ -46,7 +46,6 @@ class App extends Component {
       }
     }`}
     return fetchDataGQL2(body)
-      .then(res => res.json())
       .then(({data, errors}) => {
         if(errors){
           return console.log(errors)

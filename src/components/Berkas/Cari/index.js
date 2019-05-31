@@ -6,7 +6,7 @@ import HasilWP from './HasilWP'
 import HasilLokasi from './HasilLokasi'
 import HasilPenerima from './HasilPenerima'
 
-import { fetchDataGQL } from '../../../helpers'
+import { fetchDataGQL, fetchDataGQL2 } from '../../../helpers'
 
 export default class Cari extends Component {
 	state = {
@@ -45,14 +45,13 @@ export default class Cari extends Component {
 		switch(kriteria) {
 			case 'npwp':
 				body = {query: `{
-					wps: getWPsByNPWP(npwp: "${document.querySelector('.npwp').value}") {
+					wps(npwp: "${document.querySelector('.npwp').value}") {
 						_id
 						npwp
 						nama_wp
 					}
 				}`}
-				fetchDataGQL(body)
-					.then(res => res.json())
+				fetchDataGQL2(body)
 					.then(({data}) => {
 						this.Hasil = <HasilWP
 							wps={ data.wps } 
@@ -67,14 +66,13 @@ export default class Cari extends Component {
 				break
 			case 'nama_wp':
 				body = {query: `{
-					wps: getWPsByNamaWP(nama_wp: "${document.querySelector('.nama_wp').value}") {
+					wps(nama_wp: "${document.querySelector('.nama_wp').value}") {
 						_id
 						npwp
 						nama_wp
 					}
 				}`}
-				fetchDataGQL(body)
-					.then(res => res.json())
+				fetchDataGQL2(body)
 					.then(({data}) => {
 						this.Hasil = <HasilWP
 							wps={ data.wps } 
