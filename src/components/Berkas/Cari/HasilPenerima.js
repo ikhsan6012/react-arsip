@@ -3,7 +3,7 @@ import Pagination from 'react-js-pagination'
 
 import ModalEditPenerima from './ModalEditPenerima'
 
-import { fetchDataGQL } from '../../../helpers'
+import { fetchDataGQL2, handleErrors } from '../../../helpers'
 
 export default class HasilPenerima extends Component {
 	state = {
@@ -44,7 +44,7 @@ export default class HasilPenerima extends Component {
 	lihatBerkas = e => {
 		let id = e.target ? e.target.value : e
 		const body = {query: `{
-			berkas: getBerkasByPenerima(id: "${id}") {
+			berkas: berkases(by: penerima, id: "${id}") {
 				_id
 				ket_berkas{
 					kd_berkas
@@ -63,9 +63,9 @@ export default class HasilPenerima extends Component {
 				ket_lain
 			}
 		}`}
-		fetchDataGQL(body)
-			.then(res => res.json())
-			.then(({data}) => {
+		fetchDataGQL2(body)
+			.then(({data, errors}) => {
+				if(errors) return handleErrors(errors)
 				this.setState({
 					berkas: data.berkas,
 					penerima: this.state.penerima.filter(p => p._id === id),

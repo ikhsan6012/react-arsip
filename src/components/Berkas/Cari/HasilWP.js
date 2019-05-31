@@ -3,7 +3,7 @@ import Pagination from 'react-js-pagination'
 
 import ModalEditWP from './ModalEditWP'
 
-import { fetchDataGQL, fetchDataGQL2, handleErrors } from '../../../helpers'
+import { fetchDataGQL2, handleErrors } from '../../../helpers'
 
 export default class HasilWP extends Component {
 	state = {
@@ -49,11 +49,6 @@ export default class HasilWP extends Component {
 				ket_berkas {
 					kd_berkas
 					nama_berkas
-				}
-				pemilik {
-					_id
-					npwp
-					nama_wp
 				}
 				masa_pajak
 				tahun_pajak
