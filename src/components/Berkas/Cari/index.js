@@ -6,7 +6,7 @@ import HasilWP from './HasilWP'
 import HasilLokasi from './HasilLokasi'
 import HasilPenerima from './HasilPenerima'
 
-import { fetchDataGQL, fetchDataGQL2 } from '../../../helpers'
+import { fetchDataGQL2, handleErrors } from '../../../helpers'
 
 export default class Cari extends Component {
 	state = {
@@ -52,7 +52,8 @@ export default class Cari extends Component {
 					}
 				}`}
 				fetchDataGQL2(body)
-					.then(({data}) => {
+					.then(({data, errors}) => {
+						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilWP
 							wps={ data.wps } 
 							berkas={ this.state.berkas } 
@@ -73,7 +74,8 @@ export default class Cari extends Component {
 					}
 				}`}
 				fetchDataGQL2(body)
-					.then(({data}) => {
+					.then(({data, errors}) => {
+						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilWP
 							wps={ data.wps } 
 							berkas={ this.state.berkas } 
@@ -89,7 +91,7 @@ export default class Cari extends Component {
 				const gudang = document.getElementById('gudang').value
 				const kd_lokasi = document.getElementById('kd_lokasi').value
 				body = {query: `{
-					berkas: getBerkasByLokasi(gudang: ${gudang}, kd_lokasi: "${kd_lokasi}") {
+					berkas: berkases(by: lokasi, gudang: ${gudang}, kd_lokasi: "${kd_lokasi}") {
 						_id
 						ket_berkas {
 							kd_berkas
@@ -105,17 +107,13 @@ export default class Cari extends Component {
 						}
 						masa_pajak
 						tahun_pajak
-						lokasi {
-							gudang
-							kd_lokasi
-						}
 						urutan
 						ket_lain
 					}
 				}`}
-				fetchDataGQL(body)
-					.then(res => res.json())
-					.then(({data}) => {
+				fetchDataGQL2(body)
+					.then(({data, errors}) => {
+						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilLokasi
 							ket_berkas={ this.state.ket_berkas }
 							berkas={ data.berkas }
@@ -129,15 +127,15 @@ export default class Cari extends Component {
 				const nama_penerima = document.getElementById('nama_penerima').value
 				const tgl_terima = document.getElementById('tgl_terima').value
 				body = {query: `{
-					penerima: getPenerimas(${!tgl_terima ? `nama_penerima: "${nama_penerima}"` : !nama_penerima ? `tgl_terima: "${tgl_terima}"` : `tgl_terima: "${tgl_terima}", nama_penerima: "${nama_penerima}"`}){
+					penerima: penerimas(${!tgl_terima ? `nama_penerima: "${nama_penerima}"` : !nama_penerima ? `tgl_terima: "${tgl_terima}"` : `tgl_terima: "${tgl_terima}", nama_penerima: "${nama_penerima}"`}){
 						_id
 						nama_penerima
 						tgl_terima
 					}
 				}`}
-				fetchDataGQL(body)
-					.then(res => res.json())
-					.then(({data}) => {
+				fetchDataGQL2(body)
+					.then(({data, errors}) => {
+						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilPenerima
 							penerima={ data.penerima } 
 							ket_berkas={ this.state.ket_berkas }
@@ -166,20 +164,25 @@ export default class Cari extends Component {
 							pemilik {
 								_id
 							}
+							penerima {
+								_id
+							}
 						}
 					}
 				`}
 				const kriteria = document.querySelector('[name=kriteria]').value
-				fetchDataGQL(body)
-					.then(res => res.json())
-					.then(async ({data}) => {
-						console.log(kriteria)
-						swal('Berkas Berhasil Dihapus!', { icon: 'success' })
-						if(kriteria === 'npwp' || kriteria === 'nama_wp') {
-							const wp = await this.state.wps.find(wp => wp._id === data.berkas.pemilik._id)
-							return document.querySelector(`button[value="${wp._id}"]`).click()
-						}
-						return document.getElementById('cariBerkas').click()
+				fetchDataGQL2(body)
+					.then(({data}) => {
+						return swal('Berkas Berhasil Dihapus!', { icon: 'success' })
+							.then(() => {
+								if(kriteria === 'npwp' || kriteria === 'nama_wp') {
+									return document.querySelector(`button[value="${data.berkas.pemilik._id}"]`).click()
+								}
+								if(kriteria === 'penerima') {
+									return document.querySelector(`button[value="${data.berkas.penerima._id}"]`).click()
+								}
+								return document.getElementById('cariBerkas').click()
+							})
 					})
 					.catch(err => { throw err })
 			}
@@ -188,15 +191,17 @@ export default class Cari extends Component {
 
 	componentDidMount(){
 		const body = { query: `{
-			ket_berkas: getSemuaKetBerkas {
+			ket_berkas: ketBerkases(projection: "-berkas") {
 				_id
 				kd_berkas
 				nama_berkas
 			}
 		}`}
-		fetchDataGQL(body)
-			.then(res => res.json())
-			.then(({data}) => this.setState({ ket_berkas: data.ket_berkas }))
+		fetchDataGQL2(body)
+			.then(({data, errors}) => {
+				if(errors) return handleErrors(errors)
+				this.setState({ ket_berkas: data.ket_berkas })
+			})
 			.catch(err => this.setState({
 				isError: true,
 				errMsg: err
