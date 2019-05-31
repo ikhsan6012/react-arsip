@@ -172,7 +172,8 @@ export default class Cari extends Component {
 				`}
 				const kriteria = document.querySelector('[name=kriteria]').value
 				fetchDataGQL2(body)
-					.then(({data}) => {
+					.then(({data, errors}) => {
+						if(errors) return handleErrors(errors)
 						return swal('Berkas Berhasil Dihapus!', { icon: 'success' })
 							.then(() => {
 								if(kriteria === 'npwp' || kriteria === 'nama_wp') {

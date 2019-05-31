@@ -3,7 +3,7 @@ import Pagination from 'react-js-pagination'
 
 import ModalEditWP from './ModalEditWP'
 
-import { fetchDataGQL } from '../../../helpers'
+import { fetchDataGQL, fetchDataGQL2, handleErrors } from '../../../helpers'
 
 export default class HasilWP extends Component {
 	state = {
@@ -44,7 +44,7 @@ export default class HasilWP extends Component {
 	lihatBerkas = e => {
 		let id = e.target ? e.target.value : e
 		const body = {query: `{
-			berkas: getBerkasByWP(id: "${id}"){
+			berkas: berkases(by: pemilik, id: "${id}"){
 				_id
 				ket_berkas {
 					kd_berkas
@@ -70,9 +70,9 @@ export default class HasilWP extends Component {
 				ket_lain
 			}
 		}`}
-		return fetchDataGQL(body)
-			.then(res => res.json())
-			.then(({data}) => {
+		return fetchDataGQL2(body)
+			.then(({data, errors}) => {
+				if(errors) return handleErrors(errors)
 				this.setState({ 
 					berkas: data.berkas,
 					wps: this.state.wps.filter(wp => wp._id === id),
