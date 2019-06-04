@@ -75,7 +75,7 @@ export default props => {
 										<p>Monitor SPT LB</p>
 									</NavLink>
 								: <a href="/" id="monitorlb" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin }>
-										<i className="nav-icon fa fa-circle-o"></i>
+										<i className="nav-icon fa fa-desktop"></i>
 										<p>Monitor SPT LB</p>
 									</a>
 							}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import ModalEditLokasi from './ModalEditLokasi'
+import ModalEdit from './ModalEdit'
 
 export default class HasilLokasi extends Component {
 	state = {
@@ -9,7 +9,7 @@ export default class HasilLokasi extends Component {
 
 	editBerkas = e => {
 		const id = e.target.getAttribute('value')
-		const modalEdit = document.getElementById('modalEditLokasi')
+		const modalEdit = document.getElementById('modalEdit')
 		modalEdit.style.display = 'block'
 		if(modalEdit.style.display === 'block'){
 			document.addEventListener('keyup', e => {
@@ -85,7 +85,7 @@ export default class HasilLokasi extends Component {
 						</table>
 					</div>
 				</div>
-				<ModalEditLokasi
+				<ModalEdit
 					ket_berkas={ this.props.ket_berkas }
 					berkas={ this.state.berkasModal }
 				/>

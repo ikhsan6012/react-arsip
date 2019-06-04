@@ -105,6 +105,10 @@ export default class Cari extends Component {
 							nama_penerima
 							tgl_terima
 						}
+						lokasi {
+							gudang
+							kd_lokasi
+						}
 						masa_pajak
 						tahun_pajak
 						urutan

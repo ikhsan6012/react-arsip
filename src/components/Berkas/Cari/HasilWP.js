@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Pagination from 'react-js-pagination'
 
-import ModalEditWP from './ModalEditWP'
+import ModalEdit from './ModalEdit'
 
 import { fetchDataGQL2, handleErrors } from '../../../helpers'
 
@@ -26,7 +26,7 @@ export default class HasilWP extends Component {
 
 	editBerkas = e => {
 		const id = e.target.getAttribute('value')
-		const modalEdit = document.getElementById('modalEditWP')
+		const modalEdit = document.getElementById('modalEdit')
 		modalEdit.style.display = 'block'
 		if(modalEdit.style.display === 'block'){
 			document.addEventListener('keyup', e => {
@@ -50,12 +50,21 @@ export default class HasilWP extends Component {
 					kd_berkas
 					nama_berkas
 				}
+				pemilik {
+					_id
+					npwp
+					nama_wp
+				}
+				penerima {
+					_id
+					nama_penerima
+					tgl_terima
+				}
 				masa_pajak
 				tahun_pajak
 				status_pbk
 				nomor_pbk
 				tahun_pbk
-				created_at
 				lokasi {
 					gudang
 					kd_lokasi
@@ -202,7 +211,7 @@ export default class HasilWP extends Component {
 						</table>
 					</div>
 				</div>
-				<ModalEditWP
+				<ModalEdit
 					ket_berkas={ this.props.ket_berkas }
 					berkas={ this.state.berkasModal }
 					lihatBerkas={ this.lihatBerkas }
