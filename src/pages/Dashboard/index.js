@@ -3,7 +3,7 @@ import ContentHeader from '../../components/ContentHeader'
 import Content from './Content'
 import swal from 'sweetalert'
 
-import { fetchDataGQL2 } from '../../helpers'
+import { fetchDataGQL2, handleErrors } from '../../helpers'
 
 export default class Dashboard extends Component {
 	state = {
@@ -60,8 +60,9 @@ export default class Dashboard extends Component {
 			container.hidden = false
 			Object.assign(container.style, { flex: '0 0 100%', maxWidth: '100%', transition: 'all 1s' })
 			fetchDataGQL2(body)
-				.then(({data, extensions}) => {
-				if(extensions.token) localStorage.setItem('token', extensions.token)
+				.then(({data, extensions, errors}) => {
+					if(extensions.token) localStorage.setItem('token', extensions.token)
+					if(errors) return handleErrors(errors)
 					this.setState({
 						dataDetailWP: { isHidden: false, data, data2: data }
 					})
@@ -117,15 +118,7 @@ export default class Dashboard extends Component {
 			fetchDataGQL2(body)
 				.then(({data, errors, extensions}) => {
 					if(extensions.token) localStorage.setItem('token', extensions.token)
-					if(errors) {
-						errors.forEach(err => {
-							console.error(err.message)
-						})
-						return swal('Terjadi Masalah Pada Server...', { icon: 'error' })
-							.then(() => {
-								e.target.click()
-							})
-					}
+					if(errors) return handleErrors(errors)
 					this.setState({ dataDetail: { isHidden: false, data: data.data } })
 				})
 				.catch(err => { throw err })

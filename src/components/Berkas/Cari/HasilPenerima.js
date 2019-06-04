@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Pagination from 'react-js-pagination'
 
-import ModalEditPenerima from './ModalEditPenerima'
+import ModalEdit from './ModalEdit'
 
 import { fetchDataGQL2, handleErrors } from '../../../helpers'
 
@@ -26,7 +26,7 @@ export default class HasilPenerima extends Component {
 
 	editBerkas = e => {
 		const id = e.target.getAttribute('value')
-		const modalEdit = document.getElementById('modalEditPenerima')
+		const modalEdit = document.getElementById('modalEdit')
 		modalEdit.style.display = 'block'
 		if(modalEdit.style.display === 'block'){
 			document.addEventListener('keyup', e => {
@@ -184,7 +184,7 @@ export default class HasilPenerima extends Component {
 						</table>
 					</div>
 				</div>
-				<ModalEditPenerima
+				<ModalEdit
 					ket_berkas={ this.props.ket_berkas }
 					berkas={ this.state.berkasModal }
 					lihatBerkas={ this.lihatBerkas }
