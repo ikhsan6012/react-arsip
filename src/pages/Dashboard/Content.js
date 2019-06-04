@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Pagination from 'react-js-pagination'
-import { fetchDataGQL, fetchDataGQL2, handleErrors } from '../../helpers'
+import { fetchDataGQL2, handleErrors } from '../../helpers'
 
 export default class Content extends Component {
 	state = {
@@ -16,16 +16,16 @@ export default class Content extends Component {
 		const begin = this.state.begin * page 
 		const end = this.state.end * page
 		const body = {query: `{
-			wps: getWPsByStatus(status: "${status}", begin: ${begin}, end: ${end}){
+			wps(by: status, search: { status: "" }, begin: ${begin}, end: ${end}){
 				_id
 				npwp
 				nama_wp
 				status
 			}
 		}`}
-		fetchDataGQL(body)
-			.then(res => res.json())
-			.then(({data}) => {
+		fetchDataGQL2(body)
+			.then(({data, errors}) => {
+				if(errors) return handleErrors(errors)
 				this.setState({ wps: data.wps, totalItemsCount: this.props.dataDetailWP.data[status] })
 			})
 	}

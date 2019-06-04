@@ -45,7 +45,7 @@ export default class Cari extends Component {
 		switch(kriteria) {
 			case 'npwp':
 				body = {query: `{
-					wps(npwp: "${document.querySelector('.npwp').value}") {
+					wps(by: npwp, search: { npwp: "${document.querySelector('.npwp').value}" }) {
 						_id
 						npwp
 						nama_wp
@@ -67,7 +67,7 @@ export default class Cari extends Component {
 				break
 			case 'nama_wp':
 				body = {query: `{
-					wps(nama_wp: "${document.querySelector('.nama_wp').value}") {
+					wps(by: nama_wp, search: { nama_wp: "${document.querySelector('.nama_wp').value}" }) {
 						_id
 						npwp
 						nama_wp
