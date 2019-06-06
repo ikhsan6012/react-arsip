@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 
 import swal from 'sweetalert'
-import { fetchDataGQL } from '../../../helpers'
+import { fetchDataGQL, fetchDataGQL2, handleErrors } from '../../../helpers'
 
 export default class IndukBerkas extends Component {
 	state = {
@@ -41,15 +41,14 @@ export default class IndukBerkas extends Component {
 			// Get Nama WP
 			const body = {
 				query: `{
-					wp: getWPByNPWP(npwp: "${npwp}") {
+					wp(npwp: "${npwp}") {
 						nama_wp
 					}
 				}`
 			}
-			fetchDataGQL(body)
-				.then(res => res.json())
-				.then(({data}) => {
-					if(!data) return this.errorHandler('NPWP Tidak Ditemukan')
+			fetchDataGQL2(body)
+				.then(({data, errors}) => {
+					if(!data.wp) return this.errorHandler('NPWP Tidak Ditemukan')
 					this.setState({
 						formData: { ...this.state.formData, nama_wp: data.wp.nama_wp },
 						isError: false,
@@ -107,13 +106,17 @@ export default class IndukBerkas extends Component {
 		if(isSend) {
 			const body = {
 				query: `mutation {
-					berkas: addBerkasInduk(input: {
+					berkas: addBerkas(input: {
 						kd_berkas: "${this.props.kd_berkas}"
-						npwp: "${formData.npwp}"
-						${ status ? `status: "${status}"` : ``}
-						nama_wp: "${formData.nama_wp}"
-						gudang: ${formData.gudang}
-						kd_lokasi: "${formData.kd_lokasi}"
+						lokasi: {
+							gudang: ${formData.gudang}
+							kd_lokasi: "${formData.kd_lokasi}"
+						}
+						pemilik: {
+							npwp: "${formData.npwp}"
+							nama_wp: "${formData.nama_wp}"
+							${ status ? `status: "${status}"` : `` }
+						}
 						urutan: ${formData.urutan}
 						${ file ? `file: "${file}"` : `` }
 						${ formData.ket_lain ? `ket_lain: "${ formData.ket_lain }"` : `` }
@@ -129,9 +132,9 @@ export default class IndukBerkas extends Component {
 					}
 				}`
 			}
-			return fetchDataGQL(body)
-				.then(res => res.json())
-				.then(({data}) => {
+			return fetchDataGQL2(body)
+				.then(({data, errors}) => {
+					if(errors) return handleErrors(errors)
 					const alert = document.querySelector('.alert')
 					alert.classList.remove('alert-danger')
 					alert.classList.add('alert-success')

@@ -11,7 +11,7 @@ export default class ModalEdit extends Component {
 		disablePemilik: true,
 		disablePenerima: true,
 		errWPMsg: null,
-		kriteria: null
+		kriteria: null,
 	}
 
 	closeModal = e => {
@@ -114,24 +114,21 @@ export default class ModalEdit extends Component {
 						urutan: ${ formData.urutan }
 						${ formData.ket_lain ? `ket_lain: "${ formData.ket_lain }"` : `` }
 					}) {
-						pemilik {
-							_id
-						}
-						penerima {
-							_id
-						}
+						_id
 					}
 				}
 			`}
 			return fetchDataGQL2(body)
-				.then(({data, errors}) => {
+				.then(async ({data, errors}) => {
 					if(errors) return handleErrors(errors)
+					await swal('Berhasil Menyimpan Data...', { icon: 'success' })
 					this.closeModal()
 					const kriteria = this.state.kriteria
+					const formData = JSON.parse(localStorage.getItem('formData'))
 					if(kriteria.match(/npwp|nama_wp/i)){
-						return this.props.lihatBerkas(data.berkas.pemilik._id)
+ 						return this.props.lihatBerkas(formData.pemilik._id)
 					} else if(kriteria.match(/penerima/i)){
-						return this.props.lihatBerkas(data.berkas.penerima._id)
+						return this.props.lihatBerkas(formData.penerima._id)
 					} else {
 						return document.querySelector('#cariBerkas').click()
 					}
@@ -174,7 +171,7 @@ export default class ModalEdit extends Component {
 						<form onSubmit={ this.editSubmit }>
 							<div className="modal-body">
 								<div className="row">
-									<div className="form-group col-md-7">
+									<div className="form-group col-md-6">
 										<label>Gudang</label>
 										<div className="input-group">
 											<select
@@ -189,7 +186,7 @@ export default class ModalEdit extends Component {
 											</select>
 										</div>
 									</div>
-									<div className="form-group col-md-5">
+									<div className="form-group col-md-4">
 										<label>Lokasi</label>
 										<div className="input-group">
 											<input 
@@ -200,6 +197,22 @@ export default class ModalEdit extends Component {
 												onChange={ this.changeHandler }
 												pattern="\w{1,2}\d{4}"
 												value={ this.state.formData.lokasi ? this.state.formData.lokasi.kd_lokasi : '' }
+												required
+											/>
+										</div>
+									</div>
+									<div className="form-group col-md-2">
+										<label>Urutan</label>
+										<div className="input-group">
+											<input 
+												type="number"
+												name="urutan"
+												className="form-control"
+												placeholder="1"
+												min="1"
+												step="any"
+												value={ this.state.formData.urutan ? this.state.formData.urutan : '' }
+												onChange={ this.changeHandler }
 												required
 											/>
 										</div>
@@ -266,7 +279,7 @@ export default class ModalEdit extends Component {
 											/>
 										</div>
 									</div>
-									<div className="form-group col-md-4">
+									<div className="form-group col-md-6">
 										<label>Jenis Berkas</label>
 										<div className="input-group">
 											<select
@@ -305,22 +318,6 @@ export default class ModalEdit extends Component {
 												max={ new Date().getFullYear() }
 												value={ this.state.formData.tahun_pajak ? this.state.formData.tahun_pajak : '' }
 												onChange={ this.changeHandler }
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-2">
-										<label>Urutan</label>
-										<div className="input-group">
-											<input 
-												type="number"
-												name="urutan"
-												className="form-control"
-												placeholder="1"
-												min="1"
-												step="any"
-												value={ this.state.formData.urutan ? this.state.formData.urutan : '' }
-												onChange={ this.changeHandler }
-												required
 											/>
 										</div>
 									</div>

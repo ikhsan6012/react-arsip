@@ -155,6 +155,7 @@ export default class Cari extends Component {
 	}
 
 	deleteBerkas = e => {
+		console.log(e.target)
 		const id = e.target.getAttribute('value')
 		swal('Apakah Anda yakin akan menghapus berkas?', {
 			icon: 'warning',
