@@ -64,6 +64,8 @@ export default class Cari extends Component {
 							deleteBerkas={ this.deleteBerkas }
 							addDocument={ this.addDocument }
 							getDocument={ this.getDocument }
+							editDocument={ this.editDocument }
+							deleteDocument={ this.deleteDocument }
 						/>
 						this.setState({ wps: data.wps })
 					})
@@ -89,6 +91,8 @@ export default class Cari extends Component {
 							deleteBerkas={ this.deleteBerkas }
 							addDocument={ this.addDocument }
 							getDocument={ this.getDocument }
+							editDocument={ this.editDocument }
+							deleteDocument={ this.deleteDocument }
 						/>
 						this.setState({ wps: data.wps })
 					})
@@ -132,6 +136,8 @@ export default class Cari extends Component {
 							deleteBerkas={ this.deleteBerkas }
 							addDocument={ this.addDocument }
 							getDocument={ this.getDocument }
+							editDocument={ this.editDocument }
+							deleteDocument={ this.deleteDocument }
 						/>
 						this.forceUpdate()
 					})
@@ -157,6 +163,8 @@ export default class Cari extends Component {
 							deleteBerkas={ this.deleteBerkas }
 							addDocument={ this.addDocument }
 							getDocument={ this.getDocument }
+							editDocument={ this.editDocument }
+							deleteDocument={ this.deleteDocument }
 						/>
 						this.forceUpdate()
 					})
@@ -215,6 +223,10 @@ export default class Cari extends Component {
 		}
 		const btnLihatBerkas = document.querySelector(`button[value="${this.state.id}"]`)
 		const wp = this.state.wps.find(wp => wp._id === this.state.id)
+		const ok = await swal('Anda Yakin Akan Mengunggah Dokumen?', {
+			buttons: ['Batal', 'Ya']
+		})
+		if(!ok) return e.target.value = ''
 		try {
 			const data = new FormData()
 			data.append('file', file)
@@ -237,22 +249,102 @@ export default class Cari extends Component {
 				.then(({errors, extensions}) => {
 					setToken(extensions)
 					if(errors) return handleErrors(errors)
-					if(kriteria.match(/npwp|nama_wp|penerima/i)){
-						return btnLihatBerkas.click()
-					} else {
-						console.log('test')
-						return document.querySelector('#cariBerkas').click()
-					}
+					return swal('Berhasil Mengunggah Dokumen...', { icon: 'success' })
+						.then(() => {
+							if(kriteria.match(/npwp|nama_wp|penerima/i)){
+								return btnLihatBerkas.click()
+							} else {
+								return document.querySelector('#cariBerkas').click()
+							}
+						})
 				})
 		} catch (err) {
 			console.error(err)
-			swal('Gagal Mengunggah File!')
+			swal('Gagal Mengunggah Dokumen!')
 		}
 	}
 
 	getDocument = e => {
 		const file = e.target.getAttribute('value')
 		window.open(`${process.env.REACT_APP_API_SERVER}/lampiran/${file}`)
+	}
+
+	editDocument = async e => {
+		e.persist()
+		const target = e.target
+		let file = target.files[0]
+		if(file.type !== 'application/pdf'){
+			return swal('File Yang Diunggah Harus Dalam Format .pdf!', { icon: 'error' })
+		}
+		const ok = await swal('Anda Yakin Akan Mengganti Dokumen?', {
+			buttons: ['Batal', 'Ya']
+		})
+		if(!ok) return false
+		const btnLihatBerkas = document.querySelector(`button[value="${this.state.id}"]`)
+		const kriteria = document.querySelector('[name=kriteria]').value
+		try {
+			const kd_berkas = target.getAttribute('kd_berkas')
+			const npwp = target.getAttribute('npwp')
+			const data = new FormData()
+			data.append('file', file)
+			data.append('kd_berkas', kd_berkas)
+			if(npwp) data.append('npwp', npwp) 
+			const generate = await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
+				method: 'post',
+				body: data
+			})
+			const res = await generate.json()
+			file = res.file
+			const body = {query: `mutation{
+				berkas: editBerkasDocument(id: "${ target.getAttribute('_id') }", file: "${ file }"){
+					_id
+				}
+			}`}
+			return fetchDataGQL2(body)
+				.then(({errors, extensions}) => {
+					setToken(extensions)
+					if(errors) return handleErrors(errors)
+					return swal('Berhasil Memperbarui Dokumen...', { icon: 'success' })
+						.then(() => {
+							if(kriteria.match(/npwp|nama_wp|penerima/i)){
+								return btnLihatBerkas.click()
+							} else {
+								return document.querySelector('#cariBerkas').click()
+							}
+						})
+				})
+		} catch (err) {
+			console.log(err)
+			swal('Gagal Memperbarui Dokumen!')
+		}
+	}
+
+	deleteDocument = async e => {
+		const file = e.target.getAttribute('value')
+		const ok = await swal('Anda Yakin Akan Menghapus Dokumen?', {
+			buttons: ['Batal', 'Ya']
+		})
+		if(!ok) return false
+		const body = {query: `mutation{
+			berkas: deleteBerkasDocument(file: "${ file }"){
+				_id
+			}
+		}`}
+		return fetchDataGQL2(body)
+			.then(({errors, extensions}) => {
+				setToken(extensions)
+				if(errors) return handleErrors(errors)
+				const btnLihatBerkas = document.querySelector(`button[value="${this.state.id}"]`)
+				const kriteria = document.querySelector('[name=kriteria]').value
+				return swal('Berhasil Menghapus Dokumen...', { icon: 'success' })
+					.then(() => {
+						if(kriteria.match(/npwp|nama_wp|penerima/i)){
+							return btnLihatBerkas.click()
+						} else {
+							return document.querySelector('#cariBerkas').click()
+						}
+					})
+			})
 	}
 
 	componentDidMount(){

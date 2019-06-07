@@ -42,6 +42,8 @@ export default class HasilLokasi extends Component {
 					addDocument={ this.props.addDocument }
 					editBerkas={ this.editBerkas }
 					deleteBerkas={ this.props.deleteBerkas }
+					editDocument={ this.props.editDocument }
+					deleteDocument={ this.props.deleteDocument }
 				/>
 			</tr>
 		)) : (
@@ -63,7 +65,7 @@ export default class HasilLokasi extends Component {
 									<th className="text-center align-middle">Penerima / Tanggal</th>
 									<th className="text-center align-middle" width="77px">Urutan</th>
 									<th className="text-center align-middle">Keterangan</th>
-									<th className="text-center align-middle" width="125px">Aksi</th>
+									<th className="text-center align-middle" width="150px">Aksi</th>
 								</tr>
 							</thead>
 							<tbody>

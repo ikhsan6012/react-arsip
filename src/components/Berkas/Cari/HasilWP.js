@@ -138,6 +138,8 @@ export default class HasilWP extends Component {
 					addDocument={ this.props.addDocument }
 					editBerkas={ this.editBerkas }
 					deleteBerkas={ this.props.deleteBerkas }
+					editDocument={ this.props.editDocument }
+					deleteDocument={ this.props.deleteDocument }
 				/>
 			</tr>
 		)) : (
@@ -190,7 +192,7 @@ export default class HasilWP extends Component {
 									<th className="align-middle text-center" width="200px" style={{ cursor: 'pointer' }}>Lokasi</th>
 									<th className="align-middle text-center" style={{ cursor: 'pointer' }}>Keterangan</th>
 									{ localStorage.getItem('token')
-										? <th className="align-middle text-center" width="125px">Aksi</th>
+										? <th className="align-middle text-center" width="150px">Aksi</th>
 										: null
 									}
 								</tr>

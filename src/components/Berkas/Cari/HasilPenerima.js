@@ -127,6 +127,8 @@ export default class HasilPenerima extends Component {
 					addDocument={ this.props.addDocument }
 					editBerkas={ this.editBerkas }
 					deleteBerkas={ this.props.deleteBerkas }
+					editDocument={ this.props.editDocument }
+					deleteDocument={ this.props.deleteDocument }
 				/>
 			</tr>
 		)) : (
@@ -176,7 +178,7 @@ export default class HasilPenerima extends Component {
 									<th className="text-center align-middle" width="200px">Lokasi</th>
 									<th className="text-center align-middle">Keterangan</th>
 									{ localStorage.getItem('token')
-										? <th className="text-center align-middle" width="125px">Aksi</th>
+										? <th className="text-center align-middle" width="150px">Aksi</th>
 										: null
 									}
 								</tr>
