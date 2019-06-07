@@ -63,6 +63,7 @@ export default class Cari extends Component {
 							ket_berkas={ this.state.ket_berkas }
 							deleteBerkas={ this.deleteBerkas }
 							addDocument={ this.addDocument }
+							getDocument={ this.getDocument }
 						/>
 						this.setState({ wps: data.wps })
 					})
@@ -87,6 +88,7 @@ export default class Cari extends Component {
 							ket_berkas={ this.state.ket_berkas }
 							deleteBerkas={ this.deleteBerkas }
 							addDocument={ this.addDocument }
+							getDocument={ this.getDocument }
 						/>
 						this.setState({ wps: data.wps })
 					})
@@ -129,6 +131,7 @@ export default class Cari extends Component {
 							berkas={ data.berkas }
 							deleteBerkas={ this.deleteBerkas }
 							addDocument={ this.addDocument }
+							getDocument={ this.getDocument }
 						/>
 						this.forceUpdate()
 					})
@@ -148,10 +151,12 @@ export default class Cari extends Component {
 					.then(({data, errors}) => {
 						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilPenerima
+							setId={ this.setId }
 							penerima={ data.penerima } 
 							ket_berkas={ this.state.ket_berkas }
 							deleteBerkas={ this.deleteBerkas }
 							addDocument={ this.addDocument }
+							getDocument={ this.getDocument }
 						/>
 						this.forceUpdate()
 					})
@@ -242,6 +247,11 @@ export default class Cari extends Component {
 			console.error(err)
 			swal('Gagal Mengunggah File!')
 		}
+	}
+
+	getDocument = e => {
+		const file = e.target.getAttribute('value')
+		window.open(`${process.env.REACT_APP_API_SERVER}/lampiran/${file}`)
 	}
 
 	componentDidMount(){

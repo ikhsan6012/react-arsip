@@ -242,21 +242,19 @@ export default class IndukBerkas extends Component {
 							/>
 						</div>
 					</div>
-					{ this.props.kd_berkas === "INDUK" ? (
-						<div className="form-group col-md-12">
-							<label>Lampiran <span className="text-warning" style={{ fontSize: '.75em' }}>pdf only!</span></label>
-							<div className="input-group">
-								<input 
-									id="file"
-									type="file" 
-									name="file"
-									accept="application/pdf"
-									className="form-control-file"
-									onChange={ this.fileHandler }
-								/>
-							</div>
+					<div className="form-group col-md-12">
+						<label>Lampiran <span className="text-warning" style={{ fontSize: '.75em' }}>pdf only!</span></label>
+						<div className="input-group">
+							<input 
+								id="file"
+								type="file" 
+								name="file"
+								accept="application/pdf"
+								className="form-control-file"
+								onChange={ this.fileHandler }
+							/>
 						</div>
-					) : null }
+					</div>
 					<div className="form-group col-md-12">
 						<label>Keterangan</label>
 						<div className="input-group">

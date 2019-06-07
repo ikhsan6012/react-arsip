@@ -89,11 +89,6 @@ export default class HasilWP extends Component {
 			.catch(err => { throw err })
 	}
 
-	getDocument = e => {
-		const file = e.target.getAttribute('value')
-		window.open(`${process.env.REACT_APP_API_SERVER}/lampiran/${file}`)
-	}
-
 	componentDidMount(){
 		this.setState({
 			wps: this.props.wps,
@@ -138,7 +133,7 @@ export default class HasilWP extends Component {
 				<td>{ b.ket_lain }</td>
 				<Aksi
 					berkas={ b }
-					getDocument={ this.getDocument }
+					getDocument={ this.props.getDocument }
 					addDocument={ this.props.addDocument }
 					editBerkas={ this.editBerkas }
 					deleteBerkas={ this.props.deleteBerkas }
