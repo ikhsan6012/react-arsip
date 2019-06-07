@@ -21,6 +21,7 @@ export default class ModalEdit extends Component {
 			modalEdit.style.display = 'none'
 		}, 150);
 		this.setState({ formData: JSON.parse(localStorage.getItem('formData')) })
+		localStorage.removeItem('formData')
 	}
 
 	changeHandler = async e => {

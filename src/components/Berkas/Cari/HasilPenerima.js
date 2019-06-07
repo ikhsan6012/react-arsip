@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Pagination from 'react-js-pagination'
 
+import Aksi from './Aksi'
 import ModalEdit from './ModalEdit'
 
 import { fetchDataGQL2, handleErrors } from '../../../helpers'
@@ -60,6 +61,7 @@ export default class HasilPenerima extends Component {
 					kd_lokasi
 				}
 				urutan
+				file
 				ket_lain
 			}
 		}`}
@@ -117,14 +119,13 @@ export default class HasilPenerima extends Component {
 				<td>{ b.ket_berkas.nama_berkas }</td>
 				<td className="text-center">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
 				<td>{ b.ket_lain }</td>
-				{ localStorage.getItem('token')
-					? <td className="text-center">
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.editBerkas } className="fa fa-pencil text-warning mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } className="fa fa-exchange text-info mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.props.deleteBerkas } className="fa fa-trash text-danger"></i>
-						</td>
-					: null
-				}
+				<Aksi
+					berkas={ b }
+					getDocument={ this.getDocument }
+					addDocument={ this.addDocument }
+					editBerkas={ this.editBerkas }
+					deleteBerkas={ this.props.deleteBerkas }
+				/>
 			</tr>
 		)) : (
 			<tr>

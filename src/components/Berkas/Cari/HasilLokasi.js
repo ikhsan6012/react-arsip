@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 
+import Aksi from './Aksi'
 import ModalEdit from './ModalEdit'
 
 export default class HasilLokasi extends Component {
@@ -35,27 +36,13 @@ export default class HasilLokasi extends Component {
 				<td>{ b.penerima ? <React.Fragment>{b.penerima.nama_penerima}<br/>{b.penerima.tgl_terima}</React.Fragment> : '' }</td>
 				<td className="text-center">{ b.urutan }</td>
 				<td>{ b.ket_lain }</td>
-				<td className="text-center">
-					{ localStorage.getItem('token')
-						? <React.Fragment>
-								{
-									b.ket_berkas.kd_berkas === 'INDUK' 
-										? b.file
-											? <i style={{cursor: 'pointer'}} onClick={ this.getDocument } value={ b.file } className="fa fa-download text-primary mr-2"></i>
-											: <i style={{cursor: 'not-allowed'}} className="fa fa-download text-secondary mr-2"></i>
-										: null
-								}
-								<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.editBerkas } className="fa fa-pencil text-warning mr-2"></i>
-								<i style={{cursor: 'pointer'}} value={ b._id } className="fa fa-exchange text-info mr-2"></i>
-								<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.props.deleteBerkas } className="fa fa-trash text-danger"></i>
-							</React.Fragment>
-						: b.ket_berkas.kd_berkas === 'INDUK' 
-								? b.file
-									? <i style={{cursor: 'pointer'}} onClick={ this.getDocument } value={ b.file } className="fa fa-download text-primary mr-2"></i>
-									: <i style={{cursor: 'not-allowed'}} className="fa fa-download text-secondary mr-2"></i>
-								: null
-					}
-				</td>
+				<Aksi
+					berkas={ b }
+					getDocument={ this.getDocument }
+					addDocument={ this.addDocument }
+					editBerkas={ this.editBerkas }
+					deleteBerkas={ this.props.deleteBerkas }
+				/>
 			</tr>
 		)) : (
 			<tr>

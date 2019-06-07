@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 
 import swal from 'sweetalert'
-import { fetchDataGQL, fetchDataGQL2, handleErrors } from '../../../helpers'
+import { fetchDataGQL2, handleErrors } from '../../../helpers'
 
 export default class IndukBerkas extends Component {
 	state = {
@@ -78,6 +78,7 @@ export default class IndukBerkas extends Component {
 			let data = new FormData()
 			data.append('file', formData.file)
 			data.append('npwp', formData.npwp)
+			data.append('kd_berkas', this.props.kd_berkas)
 			await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
 				method: 'post',
 				body: data

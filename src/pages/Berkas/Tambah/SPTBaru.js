@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 
-import { fetchDataGQL } from '../../../helpers'
+import { fetchDataGQL, fetchDataGQL2, handleErrors } from '../../../helpers'
 
 export default class SPTBaru extends Component {
 	state = {

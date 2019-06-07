@@ -11,10 +11,11 @@ import { fetchDataGQL2, handleErrors } from '../../../helpers'
 export default class Cari extends Component {
 	state = {
 		wps: [],
-		berkas: [],
+		id: null
 	}
 
 	Hasil = ''
+	setId = id => this.setState({ id })
 
 	kriteriaHandler = e => {
 		const input_kriteria = document.getElementsByName('input_kriteria')
@@ -55,11 +56,13 @@ export default class Cari extends Component {
 					.then(({data, errors}) => {
 						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilWP
+							setId={ this.setId }
 							wps={ data.wps } 
 							berkas={ this.state.berkas } 
 							lihatBerkas={ this.lihatBerkas } 
 							ket_berkas={ this.state.ket_berkas }
 							deleteBerkas={ this.deleteBerkas }
+							addDocument={ this.addDocument }
 						/>
 						this.setState({ wps: data.wps })
 					})
@@ -77,11 +80,13 @@ export default class Cari extends Component {
 					.then(({data, errors}) => {
 						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilWP
+							setId={ this.setId }
 							wps={ data.wps } 
 							berkas={ this.state.berkas } 
 							lihatBerkas={ this.lihatBerkas } 
 							ket_berkas={ this.state.ket_berkas }
 							deleteBerkas={ this.deleteBerkas }
+							addDocument={ this.addDocument }
 						/>
 						this.setState({ wps: data.wps })
 					})
@@ -112,6 +117,7 @@ export default class Cari extends Component {
 						masa_pajak
 						tahun_pajak
 						urutan
+						file
 						ket_lain
 					}
 				}`}
@@ -122,6 +128,7 @@ export default class Cari extends Component {
 							ket_berkas={ this.state.ket_berkas }
 							berkas={ data.berkas }
 							deleteBerkas={ this.deleteBerkas }
+							addDocument={ this.addDocument }
 						/>
 						this.forceUpdate()
 					})
@@ -144,6 +151,7 @@ export default class Cari extends Component {
 							penerima={ data.penerima } 
 							ket_berkas={ this.state.ket_berkas }
 							deleteBerkas={ this.deleteBerkas }
+							addDocument={ this.addDocument }
 						/>
 						this.forceUpdate()
 					})
@@ -155,7 +163,6 @@ export default class Cari extends Component {
 	}
 
 	deleteBerkas = e => {
-		console.log(e.target)
 		const id = e.target.getAttribute('value')
 		swal('Apakah Anda yakin akan menghapus berkas?', {
 			icon: 'warning',
@@ -193,6 +200,48 @@ export default class Cari extends Component {
 					.catch(err => { throw err })
 			}
 		})
+	}
+
+	addDocument = async e => {
+		e.persist()
+		let file = e.target.files[0]
+		if(file.type !== 'application/pdf'){
+			return swal('File Yang Diunggah Harus Dalam Format .pdf!', { icon: 'error' })
+		}
+		const btnLihatBerkas = document.querySelector(`button[value="${this.state.id}"]`)
+		try {
+			const data = new FormData()
+			data.append('file', file)
+			data.append('kd_berkas', e.target.getAttribute('kd_berkas'))
+			data.append('npwp', this.state.wps.find(wp => wp._id === this.state.id).npwp)
+			const generate = await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
+				method: 'post',
+				body: data
+			})
+			const res = await generate.json()
+			file = res.file
+			const kriteria = document.querySelector('[name=kriteria]').value
+			const body = { query: `mutation 
+			{
+				berkas: addBerkasDocument(id: "${ e.target.getAttribute('_id') }", file: "${ file }") {
+					_id
+				}
+			}`}
+			return fetchDataGQL2(body)
+				.then(({errors}) => {
+					if(errors) return handleErrors(errors)
+					if(kriteria.match(/npwp|nama_wp|penerima/i)){
+						return btnLihatBerkas.click()
+				//  } else if(kriteria.match(/penerima/i)){
+				// 	 return this.props.lihatBerkas(formData.penerima._id)
+					} else {
+						return document.querySelector('#cariBerkas').click()
+					}
+				})
+		} catch (err) {
+			console.error(err)
+			swal('Gagal Mengunggah File!')
+		}
 	}
 
 	componentDidMount(){

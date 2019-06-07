@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Pagination from 'react-js-pagination'
 
+import Aksi from './Aksi'
 import ModalEdit from './ModalEdit'
 
 import { fetchDataGQL2, handleErrors } from '../../../helpers'
@@ -77,6 +78,7 @@ export default class HasilWP extends Component {
 		return fetchDataGQL2(body)
 			.then(({data, errors}) => {
 				if(errors) return handleErrors(errors)
+				this.props.setId(id)
 				this.setState({ 
 					berkas: data.berkas,
 					wps: this.state.wps.filter(wp => wp._id === id),
@@ -134,21 +136,13 @@ export default class HasilWP extends Component {
 				<td className="text-center">{ b.status_pbk ? `${ b.status_pbk } | No. ${ b.nomor_pbk } | ${ b.tahun_pbk }` : '' }</td>
 				<td className="text-center">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
 				<td>{ b.ket_lain }</td>
-				{ localStorage.getItem('token')
-					? <td className="text-center">
-							{
-								b.ket_berkas.kd_berkas === 'INDUK' 
-									? b.file
-										? <i style={{cursor: 'pointer'}} onClick={ this.getDocument } value={ b.file } className="fa fa-download text-primary mr-2"></i>
-										: <i style={{cursor: 'not-allowed'}} className="fa fa-download text-secondary mr-2"></i>
-									: null
-							}
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.editBerkas } className="fa fa-pencil text-warning mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } className="fa fa-exchange text-info mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.props.deleteBerkas } className="fa fa-trash text-danger"></i>
-						</td>
-					: null
-				}
+				<Aksi
+					berkas={ b }
+					getDocument={ this.getDocument }
+					addDocument={ this.props.addDocument }
+					editBerkas={ this.editBerkas }
+					deleteBerkas={ this.props.deleteBerkas }
+				/>
 			</tr>
 		)) : (
 			<tr>
