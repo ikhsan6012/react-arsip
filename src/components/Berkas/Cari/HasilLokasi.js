@@ -29,17 +29,17 @@ export default class HasilLokasi extends Component {
 		let noBerkas = 1
 		const berkas = this.props.berkas.length ? this.props.berkas.sort((a, b) => a.urutan - b.urutan).map(b => (
 			<tr key={ b._id }>
-				<td className="text-center">{ noBerkas++ }</td>
-				<td>{ b.ket_berkas.nama_berkas }</td>
-				<td>{ b.pemilik ? <React.Fragment>{b.pemilik.npwp} /<br/>{b.pemilik.nama_wp}</React.Fragment> : '' }</td>
-				<td className="text-center">{ b.tahun_pajak ? `${b.masa_pajak}/${b.tahun_pajak}` : '' }</td>
-				<td>{ b.penerima ? <React.Fragment>{b.penerima.nama_penerima}<br/>{b.penerima.tgl_terima}</React.Fragment> : '' }</td>
-				<td className="text-center">{ b.urutan }</td>
-				<td>{ b.ket_lain }</td>
+				<td className="text-center align-middle">{ noBerkas++ }</td>
+				<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
+				<td className="align-middle">{ b.pemilik ? <React.Fragment>{b.pemilik.npwp} /<br/>{b.pemilik.nama_wp}</React.Fragment> : '' }</td>
+				<td className="text-center align-middle">{ b.tahun_pajak ? `${b.masa_pajak}/${b.tahun_pajak}` : '' }</td>
+				<td className="align-middle">{ b.penerima ? <React.Fragment>{b.penerima.nama_penerima}<br/>{b.penerima.tgl_terima}</React.Fragment> : '' }</td>
+				<td className="text-center align-middle">{ b.urutan }</td>
+				<td className="align-middle">{ b.ket_lain }</td>
 				<Aksi
 					berkas={ b }
-					getDocument={ this.getDocument }
-					addDocument={ this.addDocument }
+					getDocument={ this.props.getDocument }
+					addDocument={ this.props.addDocument }
 					editBerkas={ this.editBerkas }
 					deleteBerkas={ this.props.deleteBerkas }
 				/>

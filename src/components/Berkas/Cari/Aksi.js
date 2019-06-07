@@ -4,7 +4,7 @@ export default props => {
 	return(
 		<Fragment>
 			{ localStorage.getItem('token')
-				? <td className="text-center">
+				? <td className="text-center align-middle">
 						{ props.berkas.file
 							? <i style={{cursor: 'pointer'}} onClick={ props.getDocument } value={ props.berkas.file } className="fa fa-download text-primary mr-2"></i>
 							: <React.Fragment>

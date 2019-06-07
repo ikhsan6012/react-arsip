@@ -68,6 +68,7 @@ export default class HasilPenerima extends Component {
 		fetchDataGQL2(body)
 			.then(({data, errors}) => {
 				if(errors) return handleErrors(errors)
+				this.props.setId(id)
 				this.setState({
 					berkas: data.berkas,
 					penerima: this.state.penerima.filter(p => p._id === id),
@@ -115,14 +116,14 @@ export default class HasilPenerima extends Component {
 		let noBerkas = 1
 		const berkas = this.state.berkas.length ? this.state.berkas.map(b => (
 			<tr key={ b._id }>
-				<td className="text-center">{ noBerkas++ }</td>
-				<td>{ b.ket_berkas.nama_berkas }</td>
-				<td className="text-center">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
-				<td>{ b.ket_lain }</td>
+				<td className="text-center align-middle">{ noBerkas++ }</td>
+				<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
+				<td className="text-center align-middle">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
+				<td className="align-middle">{ b.ket_lain }</td>
 				<Aksi
 					berkas={ b }
 					getDocument={ this.props.getDocument }
-					addDocument={ this.addDocument }
+					addDocument={ this.props.addDocument }
 					editBerkas={ this.editBerkas }
 					deleteBerkas={ this.props.deleteBerkas }
 				/>

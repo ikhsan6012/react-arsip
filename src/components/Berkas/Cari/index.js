@@ -214,11 +214,12 @@ export default class Cari extends Component {
 			return swal('File Yang Diunggah Harus Dalam Format .pdf!', { icon: 'error' })
 		}
 		const btnLihatBerkas = document.querySelector(`button[value="${this.state.id}"]`)
+		const wp = this.state.wps.find(wp => wp._id === this.state.id)
 		try {
 			const data = new FormData()
 			data.append('file', file)
 			data.append('kd_berkas', e.target.getAttribute('kd_berkas'))
-			data.append('npwp', this.state.wps.find(wp => wp._id === this.state.id).npwp)
+			if(wp) data.append('npwp', wp.npwp)
 			const generate = await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
 				method: 'post',
 				body: data
@@ -237,9 +238,8 @@ export default class Cari extends Component {
 					if(errors) return handleErrors(errors)
 					if(kriteria.match(/npwp|nama_wp|penerima/i)){
 						return btnLihatBerkas.click()
-				//  } else if(kriteria.match(/penerima/i)){
-				// 	 return this.props.lihatBerkas(formData.penerima._id)
 					} else {
+						console.log('test')
 						return document.querySelector('#cariBerkas').click()
 					}
 				})

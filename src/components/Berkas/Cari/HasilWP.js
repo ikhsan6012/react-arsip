@@ -124,13 +124,13 @@ export default class HasilWP extends Component {
 		let noBerkas = 1
 		const berkas = this.state.berkas.length ? this.state.berkas.map(b => (
 			<tr key={ b._id }>
-				<td className="text-center">{ noBerkas++ }</td>
-				<td>{ b.ket_berkas.nama_berkas }</td>
-				<td className="text-center">{ b.masa_pajak }</td>
-				<td className="text-center">{ b.tahun_pajak }</td>
-				<td className="text-center">{ b.status_pbk ? `${ b.status_pbk } | No. ${ b.nomor_pbk } | ${ b.tahun_pbk }` : '' }</td>
-				<td className="text-center">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
-				<td>{ b.ket_lain }</td>
+				<td className="text-center align-middle">{ noBerkas++ }</td>
+				<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
+				<td className="text-center align-middle">{ b.masa_pajak }</td>
+				<td className="text-center align-middle">{ b.tahun_pajak }</td>
+				<td className="text-center align-middle">{ b.status_pbk ? `${ b.status_pbk } | No. ${ b.nomor_pbk } | ${ b.tahun_pbk }` : '' }</td>
+				<td className="text-center align-middle">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
+				<td className="align-middle">{ b.ket_lain }</td>
 				<Aksi
 					berkas={ b }
 					getDocument={ this.props.getDocument }
