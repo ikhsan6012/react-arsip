@@ -47,8 +47,13 @@ class App extends Component {
     }`}
     return fetchDataGQL2(body)
       .then(({data, errors}) => {
-        if(errors){
-          return console.log(errors)
+        if(!data.user) {
+          return swal('Username atau Password Salah...', { icon: 'error' })
+            .then(() => {
+              const inputDOM = document.querySelectorAll('#formLogin input')
+              inputDOM.forEach(input => input.value = '')
+              inputDOM[0].focus()
+            })
         }
         return swal('Login Berhasil!', {
           icon: 'success'

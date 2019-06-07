@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 
-import { fetchDataGQL, fetchDataGQL2, handleErrors } from '../../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
 import swal from 'sweetalert'
 
 export default class LainLain extends Component {
@@ -146,7 +146,8 @@ export default class LainLain extends Component {
 				}
 			}`}
 			return fetchDataGQL2(body)
-				.then(({data, errors}) => {
+				.then(({data, errors, extensions}) => {
+					setToken(extensions)
 					if(errors) return handleErrors(errors)
 					const alert = document.querySelector('.alert')
 					alert.classList.remove('alert-danger')
@@ -171,15 +172,18 @@ export default class LainLain extends Component {
 
 	componentDidMount(){
 		const body = { query: `{
-			ket_berkas: getSemuaKetBerkas {
+			ket_berkas: ketBerkases {
 				_id
 				kd_berkas
 				nama_berkas
 			}
 		}`}
-		fetchDataGQL(body)
-			.then(res => res.json())
-			.then(({data}) => this.setState({ ket_berkas: data.ket_berkas }))
+		fetchDataGQL2(body)
+			.then(({data, errors, extensions}) => {
+				setToken(extensions)
+				if(errors) return handleErrors(errors)
+				this.setState({ ket_berkas: data.ket_berkas })
+			})
 			.catch(err => this.setState({
 				isError: true,
 				errMsg: err

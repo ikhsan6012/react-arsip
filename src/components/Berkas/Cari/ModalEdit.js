@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 import swal from 'sweetalert'
 
-import { fetchDataGQL2, handleErrors } from '../../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
 
 export default class ModalEdit extends Component {
 	state = {
@@ -56,7 +56,8 @@ export default class ModalEdit extends Component {
 				}`
 			}
 			fetchDataGQL2(body)
-				.then(({data, errors}) => {
+				.then(({data, errors, extensions}) => {
+					setToken(extensions)
 					if(errors) return handleErrors(errors)
 					if(!data.wp){
 						return this.setState({ errWPMsg: 'NPWP Tidak Ditemukan' })
@@ -120,7 +121,8 @@ export default class ModalEdit extends Component {
 				}
 			`}
 			return fetchDataGQL2(body)
-				.then(async ({data, errors}) => {
+				.then(async ({data, errors, extensions}) => {
+					setToken(extensions)
 					if(errors) return handleErrors(errors)
 					await swal('Berhasil Menyimpan Data...', { icon: 'success' })
 					this.closeModal()

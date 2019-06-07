@@ -25,7 +25,7 @@ module.exports = {
 			body: JSON.stringify(body)
 		}).then(res => res.json())
 	},
-	handleErrors: errors => {
+	handleErrors: (errors) => {
 		if(errors.name === 'SessionError') {
 			return swal(errors.message, { icon: 'error' })
 				.then(() => {
@@ -38,4 +38,9 @@ module.exports = {
 			})
 		}
 	},
+	setToken: extentions => {
+		if(extentions ? extentions.token : false){
+			localStorage.setItem('token', extentions.token)
+		}
+	}
 }

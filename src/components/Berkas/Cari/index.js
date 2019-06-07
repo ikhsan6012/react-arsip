@@ -6,7 +6,7 @@ import HasilWP from './HasilWP'
 import HasilLokasi from './HasilLokasi'
 import HasilPenerima from './HasilPenerima'
 
-import { fetchDataGQL2, handleErrors } from '../../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
 
 export default class Cari extends Component {
 	state = {
@@ -234,7 +234,8 @@ export default class Cari extends Component {
 				}
 			}`}
 			return fetchDataGQL2(body)
-				.then(({errors}) => {
+				.then(({errors, extensions}) => {
+					setToken(extensions)
 					if(errors) return handleErrors(errors)
 					if(kriteria.match(/npwp|nama_wp|penerima/i)){
 						return btnLihatBerkas.click()
@@ -263,7 +264,8 @@ export default class Cari extends Component {
 			}
 		}`}
 		fetchDataGQL2(body)
-			.then(({data, errors}) => {
+			.then(({data, errors, extensions}) => {
+				setToken(extensions)
 				if(errors) return handleErrors(errors)
 				this.setState({ ket_berkas: data.ket_berkas })
 			})

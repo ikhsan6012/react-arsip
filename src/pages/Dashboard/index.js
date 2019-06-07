@@ -3,7 +3,7 @@ import ContentHeader from '../../components/ContentHeader'
 import Content from './Content'
 import swal from 'sweetalert'
 
-import { fetchDataGQL2, handleErrors } from '../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../helpers'
 
 export default class Dashboard extends Component {
 	state = {
@@ -61,7 +61,7 @@ export default class Dashboard extends Component {
 			Object.assign(container.style, { flex: '0 0 100%', maxWidth: '100%', transition: 'all 1s' })
 			fetchDataGQL2(body)
 				.then(({data, extensions, errors}) => {
-					if(extensions.token) localStorage.setItem('token', extensions.token)
+					setToken(extensions)
 					if(errors) return handleErrors(errors)
 					this.setState({
 						dataDetailWP: { isHidden: false, data, data2: data }
@@ -117,7 +117,7 @@ export default class Dashboard extends Component {
 			if(!body) return
 			fetchDataGQL2(body)
 				.then(({data, errors, extensions}) => {
-					if(extensions.token) localStorage.setItem('token', extensions.token)
+					setToken(extensions)
 					if(errors) return handleErrors(errors)
 					this.setState({ dataDetail: { isHidden: false, data: data.data } })
 				})
@@ -145,7 +145,7 @@ export default class Dashboard extends Component {
 		}
 		fetchDataGQL2(body)
 			.then(({data, errors, extensions}) => {
-				if(extensions.token) localStorage.setItem('token', extensions.token)
+				setToken(extensions)
 				if(errors) return swal(errors.message, { icon: 'error' })
 					.then(() => {
 						document.querySelector('nav .btn-danger').click()
@@ -155,7 +155,8 @@ export default class Dashboard extends Component {
 					wp: { isError: false, jumlah: data.jumlahWP}
 				})
 			})
-			.catch(() => {
+			.catch(err => {
+				console.log(err)
 				this.setState({
 					ket_berkas: { isError: true, data: [] },
 					wp: { isError: true, jumlah: 0 }

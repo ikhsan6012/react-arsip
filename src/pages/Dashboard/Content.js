@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Pagination from 'react-js-pagination'
-import { fetchDataGQL2, handleErrors } from '../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../helpers'
 
 export default class Content extends Component {
 	state = {
@@ -24,7 +24,8 @@ export default class Content extends Component {
 			}
 		}`}
 		fetchDataGQL2(body)
-			.then(({data, errors}) => {
+			.then(({data, errors, extensions}) => {
+				setToken(extensions)
 				if(errors) return handleErrors(errors)
 				this.setState({ wps: data.wps, totalItemsCount: this.props.dataDetailWP.data[status] })
 			})
