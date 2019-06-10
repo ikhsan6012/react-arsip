@@ -71,7 +71,7 @@ class App extends Component {
     }).then(() => {
       localStorage.removeItem('token')
       document.querySelector('.brand-link').click()
-      this.forceUpdate()
+      window.location.href = process.env.REACT_APP_HOST
     })
   }
 

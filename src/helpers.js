@@ -29,8 +29,7 @@ module.exports = {
 		if(errors.name === 'SessionError') {
 			return swal(errors.message, { icon: 'error' })
 				.then(() => {
-					localStorage.removeItem('token')
-					window.location.href = process.env.REACT_APP_HOST
+					document.querySelector('nav .btn-danger').click()
 				})
 		} else if(errors.length) {
 			return errors.forEach(err => {
@@ -38,9 +37,9 @@ module.exports = {
 			})
 		}
 	},
-	setToken: extentions => {
-		if(extentions ? extentions.token : false){
-			localStorage.setItem('token', extentions.token)
+	setToken: extensions => {
+		if(extensions ? extensions.token : false){
+			localStorage.setItem('token', extensions.token)
 		}
 	}
 }
