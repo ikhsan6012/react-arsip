@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import ContentHeader from '../../components/ContentHeader'
 import Content from './Content'
+import swal from 'sweetalert'
 
-import { fetchDataGQL } from '../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../helpers'
 
 export default class Dashboard extends Component {
 	state = {
@@ -34,14 +35,12 @@ export default class Dashboard extends Component {
 
 	getDetailWP = e => {
 		const body = {query: `{
-			data: getDetailWP{
-				aktif
-				de
-				ne
-				pindah
-				total
-				lastUpdate
-			}
+			aktif: totalWPs(status: "aktif")
+			de: totalWPs(status: "de")
+			ne: totalWPs(status: "ne")
+			pindah: totalWPs(status: "pindah")
+			total: totalWPs
+			lastUpdate: lastUpdateWPs
 		}`}
 
 		const container = e.target.parentNode.parentNode.parentNode
@@ -60,24 +59,26 @@ export default class Dashboard extends Component {
 			})
 			container.hidden = false
 			Object.assign(container.style, { flex: '0 0 100%', maxWidth: '100%', transition: 'all 1s' })
-			fetchDataGQL(body)
-			.then(res => res.json())
-			.then(({data}) => {
+			fetchDataGQL2(body)
+				.then(({data, extensions, errors}) => {
+					setToken(extensions)
+					if(errors) return handleErrors(errors)
 					this.setState({
-						dataDetailWP: { isHidden: false, data: data.data, data2: data.data }
+						dataDetailWP: { isHidden: false, data, data2: data }
 					})
 				})
 		}
 	}
 
 	getDetail = e => {
+		e.persist()
 		const container = e.target.parentNode.parentNode.parentNode
 		const initStyle = { flex: '0 0 33.333333%', maxWidth: '33.333333%'}
 		const kd_berkas = container.getAttribute('value')
 		let body
 		if(kd_berkas === 'INDUK'){
 			body = {query: `{
-				data: getDetailInduk(kd_berkas: "${kd_berkas}") {
+				data: ketBerkas(kd_berkas: "${kd_berkas}") {
 					berkas_baru
 					berkas_lama
 					total
@@ -86,9 +87,9 @@ export default class Dashboard extends Component {
 			}`}
 		}else if(kd_berkas === 'PINDAH'){
 			body = {query: `{
-				data: getDetailPindah(kd_berkas: "${kd_berkas}") {
-					jumlah_wajib_pajak
-					total
+				data: ketBerkas(kd_berkas: "${kd_berkas}") {
+					wajib_pajak_pindah
+					berkas_wajib_pajak_pindah
 					lastUpdate
 				}
 			}`}
@@ -96,7 +97,7 @@ export default class Dashboard extends Component {
 			return false
 		}else{
 			body = {query: `{
-				data: getDetailSPT(kd_berkas: "${kd_berkas}"){
+				data: ketBerkas(kd_berkas: "${kd_berkas}"){
 					berdasarkan_tanggal_terima
 					tidak_berdasarkan_tanggal_terima
 					total
@@ -114,9 +115,10 @@ export default class Dashboard extends Component {
 			})
 		} else {
 			if(!body) return
-			fetchDataGQL(body)
-				.then(res => res.json())
-				.then(({data}) => {
+			fetchDataGQL2(body)
+				.then(({data, errors, extensions}) => {
+					setToken(extensions)
+					if(errors) return handleErrors(errors)
 					this.setState({ dataDetail: { isHidden: false, data: data.data } })
 				})
 				.catch(err => { throw err })
@@ -133,23 +135,28 @@ export default class Dashboard extends Component {
 		// GET DATA BERKAS
 		const body = {
 			query: `{
-				ket_berkas: getSemuaKetBerkas {
+				ket_berkas: ketBerkases {
 					kd_berkas
 					nama_berkas
 					jumlah
 				}
-				jumlahWP: getJumlahWP
+				jumlahWP: totalWPs
 			}`
 		}
-		fetchDataGQL(body)
-			.then(res => res.json())
-			.then(({data}) => {
+		fetchDataGQL2(body)
+			.then(({data, errors, extensions}) => {
+				setToken(extensions)
+				if(errors) return swal(errors.message, { icon: 'error' })
+					.then(() => {
+						document.querySelector('nav .btn-danger').click()
+					})
 				this.setState({
 					ket_berkas: { isError: false, data: data.ket_berkas },
 					wp: { isError: false, jumlah: data.jumlahWP}
 				})
 			})
-			.catch(() => {
+			.catch(err => {
+				console.log(err)
 				this.setState({
 					ket_berkas: { isError: true, data: [] },
 					wp: { isError: true, jumlah: 0 }

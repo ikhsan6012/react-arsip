@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 
 import swal from 'sweetalert'
-import { fetchDataGQL } from '../../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
 
 export default class PBK extends Component {
 	state = {
@@ -42,15 +42,15 @@ export default class PBK extends Component {
 			// Get Nama WP
 			const body = {
 				query: `{
-					wp: getWPByNPWP(npwp: "${npwp}") {
+					wp(npwp: "${npwp}") {
 						nama_wp
 					}
 				}`
 			}
-			fetchDataGQL(body)
-				.then(res => res.json())
-				.then(({data}) => {
-					if(!data) return this.errorHandler('NPWP Tidak Ditemukan')
+			fetchDataGQL2(body)
+				.then(({data, errors, extensions}) => {
+					setToken(extensions)
+					if(!data.wp) return this.errorHandler('NPWP Tidak Ditemukan')
 					this.setState({
 						formData: { ...this.state.formData, nama_wp: data.wp.nama_wp },
 						isError: false,
@@ -62,11 +62,20 @@ export default class PBK extends Component {
 		}
 	}
 
+	fileHandler = e => {
+		let file = e.target.files[0]
+		if(file.type !== 'application/pdf'){
+			return e.target.classList.add('invalid')
+		}
+		e.target.classList.remove('invalid')
+		this.setState({ formData: { ...this.state.formData, file } })
+	}
+
 	addBerkas = async e => {
 		e.preventDefault()
 		const formData = this.state.formData
 		let isSend = true
-		let status
+		let status, file
 		if(this.state.isError) {
 			await swal(`${this.state.errMsg}. Pilih Status WP untuk menyimpan!`, {
 				buttons: {
@@ -84,36 +93,54 @@ export default class PBK extends Component {
 					}
 				})
 		}
+		if(formData.file){
+			try {
+				const data = new FormData()
+				data.append('file', formData.file)
+				data.append('kd_berkas', this.props.kd_berkas)
+				const generate = await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
+					method: 'post',
+					body: data
+				})
+				const res = await generate.json()
+				file = res.file
+			} catch (error) {
+				return swal('Gagal Mengunggah Dokumen...', { icon: 'error' })
+			}
+		}
 		if(isSend) {
-			const body = {
-				query: `mutation {
-					berkas: addBerkasPBK(input: {
-						kd_berkas: "${this.props.kd_berkas}"
+			const body = {query: `mutation{
+				berkas: addBerkas(input: {
+					kd_berkas: "${this.props.kd_berkas}"
+					pemilik: {
 						npwp: "${formData.npwp}"
-						${ status ? `status: "${status}"` : ``}
 						nama_wp: "${formData.nama_wp}"
-						status_pbk: "${formData.status_pbk}"
-						nomor_pbk: "${formData.nomor_pbk}"
-						tahun_pbk: "${formData.tahun_pbk}"
+						${ status ? `status: "${status}"` : ``}
+					}
+					status_pbk: "${formData.status_pbk}"
+					nomor_pbk: ${formData.nomor_pbk}
+					tahun_pbk: ${formData.tahun_pbk}
+					lokasi: {
 						gudang: ${formData.gudang}
 						kd_lokasi: "${formData.kd_lokasi}"
-						urutan: ${formData.urutan}
-						${ formData.ket_lain ? `ket_lain: "${ formData.ket_lain }"` : `` }
-					}) {
-						ket_berkas {
-							nama_berkas
-						}
-						pemilik {
-							npwp
-							nama_wp
-						}
-						urutan
 					}
-				}`
-			}
-			return fetchDataGQL(body)
-				.then(res => res.json())
-				.then(({data}) => {
+					urutan: ${formData.urutan}
+					${ file ? `file: "${ file }"` : `` }
+					${ formData.ket_lain ? `ket_lain: "${ formData.ket_lain }"` : `` }
+				}){
+					ket_berkas {
+						nama_berkas
+					}
+					pemilik {
+						npwp
+						nama_wp
+					}
+				}
+			}`}
+			return fetchDataGQL2(body)
+				.then(({data, errors, extensions}) => {
+					setToken(extensions)
+					if(errors) return handleErrors(errors)
 					const alert = document.querySelector('.alert')
 					alert.classList.remove('alert-danger')
 					alert.classList.add('alert-success')
@@ -263,6 +290,19 @@ export default class PBK extends Component {
 								defaultValue={ this.state.formData.urutan }
 								onChange={ this.changeHandler }
 								required
+							/>
+						</div>
+					</div>
+					<div className="form-group col-md-12">
+						<label>Lampiran <span className="text-warning" style={{ fontSize: '.75em' }}>pdf only!</span></label>
+						<div className="input-group">
+							<input 
+								id="file"
+								type="file" 
+								name="file"
+								accept="application/pdf"
+								className="form-control-file"
+								onChange={ this.fileHandler }
 							/>
 						</div>
 					</div>

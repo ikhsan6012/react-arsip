@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Pagination from 'react-js-pagination'
-import { fetchDataGQL } from '../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../helpers'
 
 export default class Content extends Component {
 	state = {
@@ -16,16 +16,17 @@ export default class Content extends Component {
 		const begin = this.state.begin * page 
 		const end = this.state.end * page
 		const body = {query: `{
-			wps: getWPsByStatus(status: "${status}", begin: ${begin}, end: ${end}){
+			wps(by: status, search: { status: "" }, begin: ${begin}, end: ${end}){
 				_id
 				npwp
 				nama_wp
 				status
 			}
 		}`}
-		fetchDataGQL(body)
-			.then(res => res.json())
-			.then(({data}) => {
+		fetchDataGQL2(body)
+			.then(({data, errors, extensions}) => {
+				setToken(extensions)
+				if(errors) return handleErrors(errors)
 				this.setState({ wps: data.wps, totalItemsCount: this.props.dataDetailWP.data[status] })
 			})
 	}
@@ -35,7 +36,7 @@ export default class Content extends Component {
 			if(data[0] !== 'lastUpdate'){
 				return(
 					<tr key={ data[0] }>
-						{ data[0] === 'total' ? null : <td className="text-center">{ i +1 }</td> }
+						{ data[0] === 'total' ? null : <td className="text-center">{ i + 1 }</td> }
 						{ data[0] === 'total' 
 							? <td colSpan='2'>{ data[0].toUpperCase() }</td> 
 							: <td style={{ textTransform: 'capitalize' }}>{ data[0].split('_').join(' ') }</td> }

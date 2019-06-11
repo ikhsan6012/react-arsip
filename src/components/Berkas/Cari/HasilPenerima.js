@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import Pagination from 'react-js-pagination'
 
-import ModalEditPenerima from './ModalEditPenerima'
+import Aksi from './Aksi'
+import ModalEdit from './ModalEdit'
 
-import { fetchDataGQL } from '../../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
 
 export default class HasilPenerima extends Component {
 	state = {
@@ -26,7 +27,7 @@ export default class HasilPenerima extends Component {
 
 	editBerkas = e => {
 		const id = e.target.getAttribute('value')
-		const modalEdit = document.getElementById('modalEditPenerima')
+		const modalEdit = document.getElementById('modalEdit')
 		modalEdit.style.display = 'block'
 		if(modalEdit.style.display === 'block'){
 			document.addEventListener('keyup', e => {
@@ -44,7 +45,7 @@ export default class HasilPenerima extends Component {
 	lihatBerkas = e => {
 		let id = e.target ? e.target.value : e
 		const body = {query: `{
-			berkas: getBerkasByPenerima(id: "${id}") {
+			berkas: berkases(by: penerima, id: "${id}") {
 				_id
 				ket_berkas{
 					kd_berkas
@@ -60,12 +61,15 @@ export default class HasilPenerima extends Component {
 					kd_lokasi
 				}
 				urutan
+				file
 				ket_lain
 			}
 		}`}
-		fetchDataGQL(body)
-			.then(res => res.json())
-			.then(({data}) => {
+		fetchDataGQL2(body)
+			.then(({data, errors, extensions}) => {
+				setToken(extensions)
+				if(errors) return handleErrors(errors)
+				this.props.setId(id)
 				this.setState({
 					berkas: data.berkas,
 					penerima: this.state.penerima.filter(p => p._id === id),
@@ -113,18 +117,19 @@ export default class HasilPenerima extends Component {
 		let noBerkas = 1
 		const berkas = this.state.berkas.length ? this.state.berkas.map(b => (
 			<tr key={ b._id }>
-				<td className="text-center">{ noBerkas++ }</td>
-				<td>{ b.ket_berkas.nama_berkas }</td>
-				<td className="text-center">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
-				<td>{ b.ket_lain }</td>
-				{ localStorage.getItem('token')
-					? <td className="text-center">
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.editBerkas } className="fa fa-pencil text-warning mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } className="fa fa-exchange text-info mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.props.deleteBerkas } className="fa fa-trash text-danger"></i>
-						</td>
-					: null
-				}
+				<td className="text-center align-middle">{ noBerkas++ }</td>
+				<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
+				<td className="text-center align-middle">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
+				<td className="align-middle">{ b.ket_lain }</td>
+				<Aksi
+					berkas={ b }
+					getDocument={ this.props.getDocument }
+					addDocument={ this.props.addDocument }
+					editBerkas={ this.editBerkas }
+					deleteBerkas={ this.props.deleteBerkas }
+					editDocument={ this.props.editDocument }
+					deleteDocument={ this.props.deleteDocument }
+				/>
 			</tr>
 		)) : (
 			<tr>
@@ -170,10 +175,10 @@ export default class HasilPenerima extends Component {
 								<tr>
 									<th className="text-center align-middle" width="50px">No</th>
 									<th className="text-center align-middle">Jenis Berkas</th>
-									<th className="text-center align-middle">Lokasi</th>
+									<th className="text-center align-middle" width="200px">Lokasi</th>
 									<th className="text-center align-middle">Keterangan</th>
 									{ localStorage.getItem('token')
-										? <th className="text-center align-middle" width="100px">Aksi</th>
+										? <th className="text-center align-middle" width="150px">Aksi</th>
 										: null
 									}
 								</tr>
@@ -184,7 +189,7 @@ export default class HasilPenerima extends Component {
 						</table>
 					</div>
 				</div>
-				<ModalEditPenerima
+				<ModalEdit
 					ket_berkas={ this.props.ket_berkas }
 					berkas={ this.state.berkasModal }
 					lihatBerkas={ this.lihatBerkas }

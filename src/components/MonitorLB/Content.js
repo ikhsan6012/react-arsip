@@ -2,242 +2,347 @@ import React, { Component } from 'react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 
-import { fetchDataGQL } from '../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../helpers'
 
-export default class MonitorLBContent extends Component {
+export default class MonitorSPTLB extends Component {
   state = {
+    get: `
+      _id
+      npwp
+      nama_wp
+      no_tt
+      tgl_spt
+      nilai
+      masa_tahun
+      res_kom
+      sumber
+      pb
+      tgl_terima
+      tgl_jt
+      no_nd
+      tahun_nd
+      tujuan_nd
+    `,
+    limit: 10,
     data: [],
-    pages: null,
-    loading: true,
+    filterStyle: {
+      border: "1px solid rgba(0,0,0,0.1)",
+      background: "#fff",
+      padding: "5px 7px",
+      fontSize: "inherit",
+      borderRadius: "3px",
+      fontWeight: "normal",
+      outline: "none"
+    },
+    filterQuery: null,
+    sortQuery: null,
+    columns: [
+      {
+        Header: 'NPWP',
+        accessor: 'npwp',
+        className: 'text-center',
+        minWidth: 120,
+        resizable: false
+      },
+      {
+        Header: 'Nama WP',
+        accessor: 'nama_wp',
+        className: 'text-center',
+        minWidth: 200,
+      },
+      {
+        Header: 'No Tanda Terima',
+        accessor: 'no_tt',
+        className: 'text-center',
+        minWidth: 225,
+        resizable: false
+      },
+            
+      {
+        Header: 'Tgl SPT',
+        accessor: 'tgl_spt',
+        className: 'text-center',
+        minWidth: 70,
+        resizable: false
+      },
+      {
+        Header: 'Nilai',
+        accessor: 'nilai',
+        className: 'text-center',
+      },
+      {
+        Header: 'Masa/Tahun',
+        accessor: 'masa_tahun',
+        className: 'text-center',
+        minWidth: 75,
+      },
+      {
+        Header: 'Status',
+        accessor: 'res_kom',
+        className: 'text-center',
+        minWidth: 150,
+      },
+      {
+        Header: 'Sumber',
+        accessor: 'sumber',
+        className: 'text-center',
+        minWidth: 75,
+        resizable: false
+      },
+      {
+        Header: 'Pembetulan',
+        accessor: 'pb',
+        className: 'text-center',
+        minWidth: 75,
+        resizable: false
+      },
+      {
+        Header: 'Tgl Terima',
+        accessor: 'tgl_terima',
+        className: 'text-center',
+        minWidth: 75,
+        resizable: false
+      },
+      {
+        Header: 'Tgl Jatuh Tempo',
+        accessor: 'tgl_jt',
+        className: 'text-center',
+        minWidth: 90,
+        resizable: false
+      },
+      {
+        Header: 'Nota Dinas',
+        id: 'nd',
+        minWidth: 175,
+        accessor: lb => lb.no_nd
+          ? <React.Fragment>
+              <i id={ lb._id } className="fa fa-times text-danger mr-2" style={{ cursor: 'pointer' }} onClick={ this.deleteND }></i>
+              { `ND-${lb.no_nd}/WPJ.05/KP.0203/${lb.tahun_nd}` }
+            </React.Fragment>
+          : <form id={ lb._id } onSubmit={ this.addND }>
+              <input type="text" style={{ ...this.state.filterStyle, width: '40%' }} placeholder="No" required/>
+              <input type="text" style={{ ...this.state.filterStyle, width: '60%' }} placeholder="Tahun" required pattern="20[0-2]\d"/>
+              <button type="submit" hidden>Simpan</button>
+            </form>
+      },
+      {
+        Header: 'Seksi Tujuan',
+        id: 'tujuan_nd',
+        minWidth: 150,
+        accessor: lb => {
+          let tujuan = lb.tujuan_nd.length 
+            ? lb.tujuan_nd.map((tujuan, i) => 
+              <div key={ lb.no_tt } className="ml-1 mb-2">
+                <i id={ `${lb._id}_${tujuan}` } className="fa fa-times text-danger mr-2" onClick={ this.deleteTujuan } style={{ cursor: 'pointer' }}></i>
+                { tujuan }
+              </div>)
+            : ''
+          return(
+            <React.Fragment>
+              { tujuan }
+              <form id={ lb._id } onSubmit={ this.addTujuan }>
+                <input type="text" style={{ ...this.state.filterStyle, width: '100%' }} placeholder="Tambah Seksi Tujuan" required/>
+              </form>
+            </React.Fragment>
+          )
+        }
+      },
+    ]
   }
 
   addND = e => {
     e.preventDefault()
-    const id = e.target.id.split('_')[1]
-    const value = document.getElementById(`input_${ id }`).value
-    const tahun = document.getElementById(`tahun_${ id }`).value
-    const body = {query: `mutation {
-      sptlb: addNDLB(id: "${id}", value: "${value}", tahun: ${tahun}){
-        _id
+    const id = e.target.id
+    const input = e.target.childNodes
+    const no_nd = input[0].value
+    const tahun_nd = input[1].value
+    const body = {query: `mutation{
+      lb: addNDLB(id: "${id}", no_nd: "${no_nd}", tahun_nd: ${tahun_nd}){
         no_nd
         tahun_nd
       }
     }`}
-    fetchDataGQL(body)
-      .then(res => res.json())
-      .then(({data}) => {
-        document.getElementById(`input_${ id }`).value = ""
-        document.getElementById(`tahun_${ id }`).value = ""
-        data = this.state.data.map(d => {
-          if(d._id === data.sptlb._id){
-            return { ...d, no_nd: data.sptlb.no_nd, tahun_nd: data.sptlb.tahun_nd }
-          }else{
-            return d
-          } 
+    return fetchDataGQL2(body)
+      .then(({data, extensions, errors}) => {
+        setToken(extensions)
+        if(errors) return handleErrors(errors)
+        let dataState = this.state.data
+        dataState = dataState.map(d => {
+          if(d._id === id){
+            d.no_nd = data.lb.no_nd
+            d.tahun_nd = data.lb.tahun_nd
+          }
+          return d
         })
-        this.setState({ data })
+        this.setState({ data: dataState })
       })
-      .catch(err => {
-        console.error(err)
-      })
+      .catch(err => console.log(err))
   }
 
-  deleteND = id => {
-    const body = {query: `mutation {
-      sptlb: deleteNDLB(id: "${id}"){
+  deleteND = e => {
+    e.preventDefault()
+    const id = e.target.id
+    const body = {query: `mutation{
+      lb: deleteNDLB(id: "${id}"){
         _id
-        no_nd
-        tahun_nd
       }
     }`}
-    fetchDataGQL(body)
-      .then(res => res.json())
-      .then(({data}) => {
-        data = this.state.data.map(d => {
-          if(d._id === data.sptlb._id){
-            return { ...d, no_nd: data.sptlb.no_nd, tahun: data.sptlb.tahun_nd }
-          }else{
-            return d
-          } 
+    return fetchDataGQL2(body)
+      .then(({extensions, errors}) => {
+        setToken(extensions)
+        if(errors) return handleErrors(errors)
+        let dataState = this.state.data
+        dataState = dataState.map(d => {
+          if(d._id === id){
+            d.no_nd = ''
+            d.tahun_nd = ''
+          }
+          return d
         })
-        this.setState({ data })
+        this.setState({ data: dataState })
+      })
+      .catch(err => console.log(err))
+  }
+
+  addTujuan = e => {
+    e.preventDefault()
+    const id = e.target.id
+    const tujuan = e.target.firstChild
+    const body = {query: `mutation{
+      lb: addTujuanLB(id: "${id}", tujuan_nd: "${tujuan.value}"){
+        tujuan_nd
+      }
+    }`}
+    return fetchDataGQL2(body)
+      .then(({data, errors, extensions}) => {
+        setToken(extensions)
+        if(errors) return handleErrors(errors)
+        let dataState = this.state.data
+        dataState = dataState.map(d => {
+          if(d._id === id) d.tujuan_nd = data.lb.tujuan_nd
+          return d
+        })
+        tujuan.value = ''
+        this.setState({ data: dataState })
       })
       .catch(err => {
-        console.error(err)
+        console.log(err)
       })
   }
 
-  showFormND = id => {
-    const btns = document.getElementsByName('btn_nd')
-    const forms = document.getElementsByName('form_nd')
-    const reset = () => {
-      btns.forEach(btn => btn.hidden = false)
-      forms.forEach(form => form.hidden = true)
-    }
-    reset()
-    const btnND = document.getElementById(`btn_${ id }`)
-    const formND = document.getElementById(`nd_${ id }`)
-    const inputND = document.getElementById(`input_${ id }`)
-    btnND.hidden = true
-    formND.hidden = false
-    inputND.focus()
+  deleteTujuan = e => {
+    let elId = e.target.id.split('_')
+    const id = elId[0]
+    const tujuan = elId[1]
+    const body = {query: `mutation{
+      lb: deleteTujuanLB(id: "${id}", tujuan_nd: "${tujuan}"){
+        tujuan_nd
+      }
+    }`}
+    return fetchDataGQL2(body)
+      .then(({data, errors, extensions}) => {
+        setToken(extensions)
+        if(errors) return handleErrors
+        let dataState = this.state.data
+        dataState = dataState.map(d => {
+          if(d._id === id) d.tujuan_nd = data.lb.tujuan_nd
+          return d
+        })
+        this.setState({ data: dataState })
+      })
+      .catch(err => console.log(err))
   }
 
-  fetchData = (state, instance) => {
-    const sorted = state.sorted
-    const filtered = state.filtered
-    const sort = sorted.length > 0 ? `sorted: [
-      ${ sorted.map(s => `{
-        sortBy: "${ s.id }"
-        order: ${ s.desc ? -1 : 1 }
-      }`) }
-    ]` : ``
-    const filter = filtered.length > 0 ? `filtered: [
-      ${ filtered.map(f => `{
+  filterHandler = filter => {
+    const filterQuery = filter.map(f => {
+      return `{
         filterBy: "${ f.id }"
         value: "${ f.value }"
-      }`) }
-    ]` : ``
+      }`
+    })
+    const query = this.state.sortQuery ? `filter: [${ filterQuery.join('\n') }], sort: [${ this.state.sortQuery }]` : `filter: [${ filterQuery.join('\n') }]`
     const body = {query: `{
-      sptlb: getSPTLB(
-        pageSize: ${state.pageSize}
-        page: ${state.page}
-        ${ sort }
-        ${ filter }
-      ) {
-        _id
-        npwp
-        nama_wp
-        no_tt
-        tgl_spt
-        nilai
-        masa_tahun
-        res_kom
-        sumber
-        pb
-        tgl_terima
-        tgl_jt
-        no_nd
-        tahun_nd
+      lbs(${ query }){
+        ${ this.state.get }
       }
-      total: getTotalSPTLB
     }`}
-    fetchDataGQL(body)
-      .then(res => res.json())
-      .then(({data}) => {
-        const pages = data.total / state.pageSize
-        this.setState({ 
-          data: data.sptlb,
-          loading: false,
-          pages: pages - Math.floor(pages) > 0 ? Math.floor(pages) + 1 : Math.floor(pages)
-        })
+    return fetchDataGQL2(body)
+      .then(({data, errors, extensions}) => {
+        setToken(extensions)
+        if(errors) return handleErrors
+        this.setState({ data: data.lbs, filterQuery })
       })
-      .catch(err => console.error(err))
+      .catch(err => console.log(err))
   }
 
-  render(){
-    const columns = [
-      {
-        Header: "NPWP",
-        accessor: "npwp",
-        width: 175,
-        className: 'text-center'
-      },
-      {
-        Header: "Nama WP",
-        accessor: "nama_wp",
-        width: 250,
-      },
-      {
-        Header: "No. Tanda Terima",
-        accessor: "no_tt",
-        width: 350,
-        className: 'text-center'
-      },
-      {
-        Header: "Nilai",
-        accessor: "nilai",
-        className: 'text-center',
-        minWidth: 100
-      },
-      {
-        Header: "Masa / Tahun",
-        accessor: "masa_tahun",
-        className: 'text-center',
-        width: 120
-      },
-      {
-        Header: "Status",
-        accessor: "res_kom",
-        className: 'text-center',
-        width: 215
-      },
-      {
-        Header: "Sumber",
-        accessor: "sumber",
-        className: 'text-center',
-      },
-      {
-        Header: "Pembetulan",
-        accessor: "pb",
-        className: 'text-center',
-      },
-      {
-        Header: "Tanggal Terima",
-        accessor: "tgl_terima",
-        className: 'text-center',
-        width: 125
-      },
-      {
-        Header: "Tanggal Jatuh Tempo",
-        accessor: "tgl_jt",
-        className: 'text-center',
-        width: 165
-      },
-    ]
+  sortHandler = sort => {
+    console.log(sort)
+    const sortQuery = sort.map(s => {
+      return `{
+        sortBy: "${ s.id }"
+        desc: ${ s.desc }
+      }`
+    })
+    const query = this.state.filterQuery ? `sort: [${ sortQuery.join('\n') }], filter: [${ this.state.filterQuery }]` : `sort: [${ sortQuery.join('\n') }]`
+    console.log(query)
+    const body = {query: `{
+      lbs(${ query }){
+        ${ this.state.get }
+      }
+    }`}
+    return fetchDataGQL2(body)
+      .then(({data, errors, extensions}) => {
+        setToken(extensions)
+        if(errors) return handleErrors
+        this.setState({ data: data.lbs, sortQuery })
+      })
+      .catch(err => console.log(err))
+  }
+
+  componentDidMount(){
+    const body = {query: `{
+      lbs{
+        ${ this.state.get }
+      }
+    }`}
+    fetchDataGQL2(body)
+      .then(({data, errors, extensions}) => {
+        setToken(extensions)
+        if(errors) return handleErrors(errors)
+        this.setState({ data: [...data.lbs] })
+      })
+  }
+
+  render() {
     return(
       <section className="content">
-        <ReactTable
-          columns={ localStorage.token 
-            ? [
-                ...columns, 
-                {
-                  Header: "No. ND",
-                  id: "no_nd",
-                  minWidth: 275,
-                  accessor: lb => lb.no_nd 
-                    ? <span>
-                        <i className="fa fa-times mr-2 text-danger" style={{ cursor: 'pointer' }} onClick={ () => this.deleteND(lb._id) }></i>
-                        { `ND-${lb.no_nd}/WPJ.05/KP.0203/${lb.tahun_nd}` }
-                      </span>
-                    : <span>
-                        <button name="btn_nd" id={ `btn_${lb._id}` } className="btn btn-primary" onClick={ () => this.showFormND(lb._id) }><strong>+</strong></button>
-                        <form name="form_nd" id={ `nd_${ lb._id }` } hidden={ true } onSubmit={ this.addND }>
-                          <div className="row">
-                            <div className="form-group col-md-5">
-                              <input required id={ `input_${ lb._id }` } className="form-control" type="text"/>
-                            </div>
-                            <div className="form-group col-md-7">
-                              <input required id={ `tahun_${ lb._id }` } className="form-control" type="number" placeholder="Tahun"/>
-                              <input type="submit" hidden={true}/>
-                            </div>
-                          </div>
-                        </form>
-                      </span>,
-                  className: 'text-center align-middle',
-                }
-              ]
-            : columns
-          }
-          manual
-          data={ this.state.data }
-          pages={ this.state.pages }
-          loading={ this.state.loading }
-          onFetchData={ this.fetchData }
-          filterable
-          defaultPageSize={10}
-          className="-striped -highlight"
-        />
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-md-3 mb-3">
+              <div className="custom-file">
+                <input type="file" className="custom-file-input" id="importLB" accept="application/json" onChange={ this.fileHandler }/>
+                <label id="importLB-label" htmlFor="importLB" className="custom-file-label">import .json</label>
+              </div>
+            </div>
+            <div className="col-md-7" id="import" hidden={ true }>
+              <button className="btn btn-secondary mr-2" onClick={ this.resetFile }>Reset</button>
+              <button className="btn btn-primary" onClick={ this.submitImport }>Import</button>
+            </div>
+            <div className="col-md-12">
+              <ReactTable
+                data={ this.state.data }
+                columns={ this.state.columns }
+                className="-striped -highlight"
+                style={{ fontSize: '10px' }}
+                pageSize={ this.state.limit }
+                filterable
+                manual
+                onFilteredChange={ this.filterHandler }
+                onSortedChange={ this.sortHandler }
+              />
+            </div>
+          </div>
+        </div>
       </section>
     )
   }

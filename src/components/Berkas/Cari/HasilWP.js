@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import Pagination from 'react-js-pagination'
 
-import ModalEditWP from './ModalEditWP'
+import Aksi from './Aksi'
+import ModalEdit from './ModalEdit'
 
-import { fetchDataGQL } from '../../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
 
 export default class HasilWP extends Component {
 	state = {
@@ -26,7 +27,7 @@ export default class HasilWP extends Component {
 
 	editBerkas = e => {
 		const id = e.target.getAttribute('value')
-		const modalEdit = document.getElementById('modalEditWP')
+		const modalEdit = document.getElementById('modalEdit')
 		modalEdit.style.display = 'block'
 		if(modalEdit.style.display === 'block'){
 			document.addEventListener('keyup', e => {
@@ -44,7 +45,7 @@ export default class HasilWP extends Component {
 	lihatBerkas = e => {
 		let id = e.target ? e.target.value : e
 		const body = {query: `{
-			berkas: getBerkasByWP(id: "${id}"){
+			berkas: berkases(by: pemilik, id: "${id}"){
 				_id
 				ket_berkas {
 					kd_berkas
@@ -55,12 +56,16 @@ export default class HasilWP extends Component {
 					npwp
 					nama_wp
 				}
+				penerima {
+					_id
+					nama_penerima
+					tgl_terima
+				}
 				masa_pajak
 				tahun_pajak
 				status_pbk
 				nomor_pbk
 				tahun_pbk
-				created_at
 				lokasi {
 					gudang
 					kd_lokasi
@@ -70,9 +75,11 @@ export default class HasilWP extends Component {
 				ket_lain
 			}
 		}`}
-		return fetchDataGQL(body)
-			.then(res => res.json())
-			.then(({data}) => {
+		return fetchDataGQL2(body)
+			.then(({data, errors, extensions}) => {
+				setToken(extensions)
+				if(errors) return handleErrors(errors)
+				this.props.setId(id)
 				this.setState({ 
 					berkas: data.berkas,
 					wps: this.state.wps.filter(wp => wp._id === id),
@@ -81,11 +88,6 @@ export default class HasilWP extends Component {
 				})
 			})
 			.catch(err => { throw err })
-	}
-
-	getDocument = e => {
-		const file = e.target.getAttribute('value')
-		window.open(`${process.env.REACT_APP_API_SERVER}/lampiran/${file}`)
 	}
 
 	componentDidMount(){
@@ -123,28 +125,22 @@ export default class HasilWP extends Component {
 		let noBerkas = 1
 		const berkas = this.state.berkas.length ? this.state.berkas.map(b => (
 			<tr key={ b._id }>
-				<td className="text-center">{ noBerkas++ }</td>
-				<td>{ b.ket_berkas.nama_berkas }</td>
-				<td className="text-center">{ b.masa_pajak }</td>
-				<td className="text-center">{ b.tahun_pajak }</td>
-				<td className="text-center">{ b.status_pbk ? `${ b.status_pbk } | No. ${ b.nomor_pbk } | ${ b.tahun_pbk }` : '' }</td>
-				<td className="text-center">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
-				<td>{ b.ket_lain }</td>
-				{ localStorage.getItem('token')
-					? <td className="text-center">
-							{
-								b.ket_berkas.kd_berkas === 'INDUK' 
-									? b.file
-										? <i style={{cursor: 'pointer'}} onClick={ this.getDocument } value={ b.file } className="fa fa-download text-primary mr-2"></i>
-										: <i style={{cursor: 'not-allowed'}} className="fa fa-download text-secondary mr-2"></i>
-									: null
-							}
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.editBerkas } className="fa fa-pencil text-warning mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } className="fa fa-exchange text-info mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.props.deleteBerkas } className="fa fa-trash text-danger"></i>
-						</td>
-					: null
-				}
+				<td className="text-center align-middle">{ noBerkas++ }</td>
+				<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
+				<td className="text-center align-middle">{ b.masa_pajak }</td>
+				<td className="text-center align-middle">{ b.tahun_pajak }</td>
+				<td className="text-center align-middle">{ b.status_pbk ? `${ b.status_pbk } | No. ${ b.nomor_pbk } | ${ b.tahun_pbk }` : '' }</td>
+				<td className="text-center align-middle">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
+				<td className="align-middle">{ b.ket_lain }</td>
+				<Aksi
+					berkas={ b }
+					getDocument={ this.props.getDocument }
+					addDocument={ this.props.addDocument }
+					editBerkas={ this.editBerkas }
+					deleteBerkas={ this.props.deleteBerkas }
+					editDocument={ this.props.editDocument }
+					deleteDocument={ this.props.deleteDocument }
+				/>
 			</tr>
 		)) : (
 			<tr>
@@ -196,7 +192,7 @@ export default class HasilWP extends Component {
 									<th className="align-middle text-center" width="200px" style={{ cursor: 'pointer' }}>Lokasi</th>
 									<th className="align-middle text-center" style={{ cursor: 'pointer' }}>Keterangan</th>
 									{ localStorage.getItem('token')
-										? <th className="align-middle text-center" width="125px">Aksi</th>
+										? <th className="align-middle text-center" width="150px">Aksi</th>
 										: null
 									}
 								</tr>
@@ -207,7 +203,7 @@ export default class HasilWP extends Component {
 						</table>
 					</div>
 				</div>
-				<ModalEditWP
+				<ModalEdit
 					ket_berkas={ this.props.ket_berkas }
 					berkas={ this.state.berkasModal }
 					lihatBerkas={ this.lihatBerkas }

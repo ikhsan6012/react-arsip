@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
-import ModalEditLokasi from './ModalEditLokasi'
+import Aksi from './Aksi'
+import ModalEdit from './ModalEdit'
 
 export default class HasilLokasi extends Component {
 	state = {
@@ -9,7 +10,7 @@ export default class HasilLokasi extends Component {
 
 	editBerkas = e => {
 		const id = e.target.getAttribute('value')
-		const modalEdit = document.getElementById('modalEditLokasi')
+		const modalEdit = document.getElementById('modalEdit')
 		modalEdit.style.display = 'block'
 		if(modalEdit.style.display === 'block'){
 			document.addEventListener('keyup', e => {
@@ -26,30 +27,24 @@ export default class HasilLokasi extends Component {
 
 	render(){
 		let noBerkas = 1
-		const berkas = this.props.berkas.length ? this.props.berkas.map(b => (
+		const berkas = this.props.berkas.length ? this.props.berkas.sort((a, b) => a.urutan - b.urutan).map(b => (
 			<tr key={ b._id }>
-				<td className="text-center">{ noBerkas++ }</td>
-				<td>{ b.ket_berkas.nama_berkas }</td>
-				<td>{ b.pemilik ? <React.Fragment>{b.pemilik.npwp} /<br/>{b.pemilik.nama_wp}</React.Fragment> : '' }</td>
-				<td className="text-center">{ b.tahun_pajak ? `${b.masa_pajak}/${b.tahun_pajak}` : '' }</td>
-				<td>{ b.penerima ? <React.Fragment>{b.penerima.nama_penerima}<br/>{b.penerima.tgl_terima}</React.Fragment> : '' }</td>
-				<td className="text-center">{ b.urutan }</td>
-				<td>{ b.ket_lain }</td>
-				{ localStorage.getItem('token')
-					? <td className="text-center">
-							{
-								b.ket_berkas.kd_berkas === 'INDUK' 
-									? b.file
-										? <i style={{cursor: 'pointer'}} onClick={ this.getDocument } value={ b.file } className="fa fa-download text-primary mr-2"></i>
-										: <i style={{cursor: 'not-allowed'}} className="fa fa-download text-secondary mr-2"></i>
-									: null
-							}
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.editBerkas } className="fa fa-pencil text-warning mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } className="fa fa-exchange text-info mr-2"></i>
-							<i style={{cursor: 'pointer'}} value={ b._id } onClick={ this.props.deleteBerkas } className="fa fa-trash text-danger"></i>
-						</td>
-					: null
-				}
+				<td className="text-center align-middle">{ noBerkas++ }</td>
+				<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
+				<td className="align-middle">{ b.pemilik ? <React.Fragment>{b.pemilik.npwp} /<br/>{b.pemilik.nama_wp}</React.Fragment> : '' }</td>
+				<td className="text-center align-middle">{ b.tahun_pajak ? `${b.masa_pajak}/${b.tahun_pajak}` : '' }</td>
+				<td className="align-middle">{ b.penerima ? <React.Fragment>{b.penerima.nama_penerima}<br/>{b.penerima.tgl_terima}</React.Fragment> : '' }</td>
+				<td className="text-center align-middle">{ b.urutan }</td>
+				<td className="align-middle">{ b.ket_lain }</td>
+				<Aksi
+					berkas={ b }
+					getDocument={ this.props.getDocument }
+					addDocument={ this.props.addDocument }
+					editBerkas={ this.editBerkas }
+					deleteBerkas={ this.props.deleteBerkas }
+					editDocument={ this.props.editDocument }
+					deleteDocument={ this.props.deleteDocument }
+				/>
 			</tr>
 		)) : (
 			<tr>
@@ -70,10 +65,7 @@ export default class HasilLokasi extends Component {
 									<th className="text-center align-middle">Penerima / Tanggal</th>
 									<th className="text-center align-middle" width="77px">Urutan</th>
 									<th className="text-center align-middle">Keterangan</th>
-									{ localStorage.getItem('token')
-										? <th className="text-center align-middle" width="125px">Aksi</th>
-										: null
-									}
+									<th className="text-center align-middle" width="150px">Aksi</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -82,7 +74,7 @@ export default class HasilLokasi extends Component {
 						</table>
 					</div>
 				</div>
-				<ModalEditLokasi
+				<ModalEdit
 					ket_berkas={ this.props.ket_berkas }
 					berkas={ this.state.berkasModal }
 				/>

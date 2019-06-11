@@ -6,15 +6,16 @@ import HasilWP from './HasilWP'
 import HasilLokasi from './HasilLokasi'
 import HasilPenerima from './HasilPenerima'
 
-import { fetchDataGQL } from '../../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
 
 export default class Cari extends Component {
 	state = {
 		wps: [],
-		berkas: [],
+		id: null
 	}
 
 	Hasil = ''
+	setId = id => this.setState({ id })
 
 	kriteriaHandler = e => {
 		const input_kriteria = document.getElementsByName('input_kriteria')
@@ -45,21 +46,26 @@ export default class Cari extends Component {
 		switch(kriteria) {
 			case 'npwp':
 				body = {query: `{
-					wps: getWPsByNPWP(npwp: "${document.querySelector('.npwp').value}") {
+					wps(by: npwp, search: { npwp: "${document.querySelector('.npwp').value}" }) {
 						_id
 						npwp
 						nama_wp
 					}
 				}`}
-				fetchDataGQL(body)
-					.then(res => res.json())
-					.then(({data}) => {
+				fetchDataGQL2(body)
+					.then(({data, errors}) => {
+						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilWP
+							setId={ this.setId }
 							wps={ data.wps } 
 							berkas={ this.state.berkas } 
 							lihatBerkas={ this.lihatBerkas } 
 							ket_berkas={ this.state.ket_berkas }
 							deleteBerkas={ this.deleteBerkas }
+							addDocument={ this.addDocument }
+							getDocument={ this.getDocument }
+							editDocument={ this.editDocument }
+							deleteDocument={ this.deleteDocument }
 						/>
 						this.setState({ wps: data.wps })
 					})
@@ -67,21 +73,26 @@ export default class Cari extends Component {
 				break
 			case 'nama_wp':
 				body = {query: `{
-					wps: getWPsByNamaWP(nama_wp: "${document.querySelector('.nama_wp').value}") {
+					wps(by: nama_wp, search: { nama_wp: "${document.querySelector('.nama_wp').value}" }) {
 						_id
 						npwp
 						nama_wp
 					}
 				}`}
-				fetchDataGQL(body)
-					.then(res => res.json())
-					.then(({data}) => {
+				fetchDataGQL2(body)
+					.then(({data, errors}) => {
+						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilWP
+							setId={ this.setId }
 							wps={ data.wps } 
 							berkas={ this.state.berkas } 
 							lihatBerkas={ this.lihatBerkas } 
 							ket_berkas={ this.state.ket_berkas }
 							deleteBerkas={ this.deleteBerkas }
+							addDocument={ this.addDocument }
+							getDocument={ this.getDocument }
+							editDocument={ this.editDocument }
+							deleteDocument={ this.deleteDocument }
 						/>
 						this.setState({ wps: data.wps })
 					})
@@ -91,7 +102,7 @@ export default class Cari extends Component {
 				const gudang = document.getElementById('gudang').value
 				const kd_lokasi = document.getElementById('kd_lokasi').value
 				body = {query: `{
-					berkas: getBerkasByLokasi(gudang: ${gudang}, kd_lokasi: "${kd_lokasi}") {
+					berkas: berkases(by: lokasi, gudang: ${gudang}, kd_lokasi: "${kd_lokasi}") {
 						_id
 						ket_berkas {
 							kd_berkas
@@ -105,23 +116,28 @@ export default class Cari extends Component {
 							nama_penerima
 							tgl_terima
 						}
-						masa_pajak
-						tahun_pajak
 						lokasi {
 							gudang
 							kd_lokasi
 						}
+						masa_pajak
+						tahun_pajak
 						urutan
+						file
 						ket_lain
 					}
 				}`}
-				fetchDataGQL(body)
-					.then(res => res.json())
-					.then(({data}) => {
+				fetchDataGQL2(body)
+					.then(({data, errors}) => {
+						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilLokasi
 							ket_berkas={ this.state.ket_berkas }
 							berkas={ data.berkas }
 							deleteBerkas={ this.deleteBerkas }
+							addDocument={ this.addDocument }
+							getDocument={ this.getDocument }
+							editDocument={ this.editDocument }
+							deleteDocument={ this.deleteDocument }
 						/>
 						this.forceUpdate()
 					})
@@ -131,19 +147,24 @@ export default class Cari extends Component {
 				const nama_penerima = document.getElementById('nama_penerima').value
 				const tgl_terima = document.getElementById('tgl_terima').value
 				body = {query: `{
-					penerima: getPenerimas(${!tgl_terima ? `nama_penerima: "${nama_penerima}"` : !nama_penerima ? `tgl_terima: "${tgl_terima}"` : `tgl_terima: "${tgl_terima}", nama_penerima: "${nama_penerima}"`}){
+					penerima: penerimas(${!tgl_terima ? `nama_penerima: "${nama_penerima}"` : !nama_penerima ? `tgl_terima: "${tgl_terima}"` : `tgl_terima: "${tgl_terima}", nama_penerima: "${nama_penerima}"`}){
 						_id
 						nama_penerima
 						tgl_terima
 					}
 				}`}
-				fetchDataGQL(body)
-					.then(res => res.json())
-					.then(({data}) => {
+				fetchDataGQL2(body)
+					.then(({data, errors}) => {
+						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilPenerima
+							setId={ this.setId }
 							penerima={ data.penerima } 
 							ket_berkas={ this.state.ket_berkas }
 							deleteBerkas={ this.deleteBerkas }
+							addDocument={ this.addDocument }
+							getDocument={ this.getDocument }
+							editDocument={ this.editDocument }
+							deleteDocument={ this.deleteDocument }
 						/>
 						this.forceUpdate()
 					})
@@ -168,37 +189,178 @@ export default class Cari extends Component {
 							pemilik {
 								_id
 							}
+							penerima {
+								_id
+							}
 						}
 					}
 				`}
 				const kriteria = document.querySelector('[name=kriteria]').value
-				fetchDataGQL(body)
-					.then(res => res.json())
-					.then(async ({data}) => {
-						console.log(kriteria)
-						swal('Berkas Berhasil Dihapus!', { icon: 'success' })
-						if(kriteria === 'npwp' || kriteria === 'nama_wp') {
-							const wp = await this.state.wps.find(wp => wp._id === data.berkas.pemilik._id)
-							return document.querySelector(`button[value="${wp._id}"]`).click()
-						}
-						return document.getElementById('cariBerkas').click()
+				fetchDataGQL2(body)
+					.then(({data, errors}) => {
+						if(errors) return handleErrors(errors)
+						return swal('Berkas Berhasil Dihapus!', { icon: 'success' })
+							.then(() => {
+								if(kriteria === 'npwp' || kriteria === 'nama_wp') {
+									return document.querySelector(`button[value="${data.berkas.pemilik._id}"]`).click()
+								}
+								if(kriteria === 'penerima') {
+									return document.querySelector(`button[value="${data.berkas.penerima._id}"]`).click()
+								}
+								return document.getElementById('cariBerkas').click()
+							})
 					})
 					.catch(err => { throw err })
 			}
 		})
 	}
 
+	addDocument = async e => {
+		e.persist()
+		let file = e.target.files[0]
+		if(file.type !== 'application/pdf'){
+			return swal('File Yang Diunggah Harus Dalam Format .pdf!', { icon: 'error' })
+		}
+		const btnLihatBerkas = document.querySelector(`button[value="${this.state.id}"]`)
+		const wp = this.state.wps.find(wp => wp._id === this.state.id)
+		const ok = await swal('Anda Yakin Akan Mengunggah Dokumen?', {
+			buttons: ['Batal', 'Ya']
+		})
+		if(!ok) return e.target.value = ''
+		try {
+			const data = new FormData()
+			data.append('file', file)
+			data.append('kd_berkas', e.target.getAttribute('kd_berkas'))
+			if(wp) data.append('npwp', wp.npwp)
+			const generate = await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
+				method: 'post',
+				body: data
+			})
+			const res = await generate.json()
+			file = res.file
+			const kriteria = document.querySelector('[name=kriteria]').value
+			const body = { query: `mutation 
+			{
+				berkas: addBerkasDocument(id: "${ e.target.getAttribute('_id') }", file: "${ file }") {
+					_id
+				}
+			}`}
+			return fetchDataGQL2(body)
+				.then(({errors, extensions}) => {
+					setToken(extensions)
+					if(errors) return handleErrors(errors)
+					return swal('Berhasil Mengunggah Dokumen...', { icon: 'success' })
+						.then(() => {
+							if(kriteria.match(/npwp|nama_wp|penerima/i)){
+								return btnLihatBerkas.click()
+							} else {
+								return document.querySelector('#cariBerkas').click()
+							}
+						})
+				})
+		} catch (err) {
+			console.error(err)
+			swal('Gagal Mengunggah Dokumen!')
+		}
+	}
+
+	getDocument = e => {
+		const file = e.target.getAttribute('value')
+		window.open(`${process.env.REACT_APP_API_SERVER}/lampiran/${file}`)
+	}
+
+	editDocument = async e => {
+		e.persist()
+		const target = e.target
+		let file = target.files[0]
+		if(file.type !== 'application/pdf'){
+			return swal('File Yang Diunggah Harus Dalam Format .pdf!', { icon: 'error' })
+		}
+		const ok = await swal('Anda Yakin Akan Mengganti Dokumen?', {
+			buttons: ['Batal', 'Ya']
+		})
+		if(!ok) return false
+		const btnLihatBerkas = document.querySelector(`button[value="${this.state.id}"]`)
+		const kriteria = document.querySelector('[name=kriteria]').value
+		try {
+			const kd_berkas = target.getAttribute('kd_berkas')
+			const npwp = target.getAttribute('npwp')
+			const data = new FormData()
+			data.append('file', file)
+			data.append('kd_berkas', kd_berkas)
+			if(npwp) data.append('npwp', npwp) 
+			const generate = await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
+				method: 'post',
+				body: data
+			})
+			const res = await generate.json()
+			file = res.file
+			const body = {query: `mutation{
+				berkas: editBerkasDocument(id: "${ target.getAttribute('_id') }", file: "${ file }"){
+					_id
+				}
+			}`}
+			return fetchDataGQL2(body)
+				.then(({errors, extensions}) => {
+					setToken(extensions)
+					if(errors) return handleErrors(errors)
+					return swal('Berhasil Memperbarui Dokumen...', { icon: 'success' })
+						.then(() => {
+							if(kriteria.match(/npwp|nama_wp|penerima/i)){
+								return btnLihatBerkas.click()
+							} else {
+								return document.querySelector('#cariBerkas').click()
+							}
+						})
+				})
+		} catch (err) {
+			console.log(err)
+			swal('Gagal Memperbarui Dokumen!')
+		}
+	}
+
+	deleteDocument = async e => {
+		const file = e.target.getAttribute('value')
+		const ok = await swal('Anda Yakin Akan Menghapus Dokumen?', {
+			buttons: ['Batal', 'Ya']
+		})
+		if(!ok) return false
+		const body = {query: `mutation{
+			berkas: deleteBerkasDocument(file: "${ file }"){
+				_id
+			}
+		}`}
+		return fetchDataGQL2(body)
+			.then(({errors, extensions}) => {
+				setToken(extensions)
+				if(errors) return handleErrors(errors)
+				const btnLihatBerkas = document.querySelector(`button[value="${this.state.id}"]`)
+				const kriteria = document.querySelector('[name=kriteria]').value
+				return swal('Berhasil Menghapus Dokumen...', { icon: 'success' })
+					.then(() => {
+						if(kriteria.match(/npwp|nama_wp|penerima/i)){
+							return btnLihatBerkas.click()
+						} else {
+							return document.querySelector('#cariBerkas').click()
+						}
+					})
+			})
+	}
+
 	componentDidMount(){
 		const body = { query: `{
-			ket_berkas: getSemuaKetBerkas {
+			ket_berkas: ketBerkases(projection: "-berkas") {
 				_id
 				kd_berkas
 				nama_berkas
 			}
 		}`}
-		fetchDataGQL(body)
-			.then(res => res.json())
-			.then(({data}) => this.setState({ ket_berkas: data.ket_berkas }))
+		fetchDataGQL2(body)
+			.then(({data, errors, extensions}) => {
+				setToken(extensions)
+				if(errors) return handleErrors(errors)
+				this.setState({ ket_berkas: data.ket_berkas })
+			})
 			.catch(err => this.setState({
 				isError: true,
 				errMsg: err

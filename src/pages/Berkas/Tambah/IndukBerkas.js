@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 
 import swal from 'sweetalert'
-import { fetchDataGQL } from '../../../helpers'
+import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
 
 export default class IndukBerkas extends Component {
 	state = {
@@ -41,15 +41,15 @@ export default class IndukBerkas extends Component {
 			// Get Nama WP
 			const body = {
 				query: `{
-					wp: getWPByNPWP(npwp: "${npwp}") {
+					wp(npwp: "${npwp}") {
 						nama_wp
 					}
 				}`
 			}
-			fetchDataGQL(body)
-				.then(res => res.json())
-				.then(({data}) => {
-					if(!data) return this.errorHandler('NPWP Tidak Ditemukan')
+			fetchDataGQL2(body)
+				.then(({data, errors, extensions}) => {
+					setToken(extensions)
+					if(!data.wp) return this.errorHandler('NPWP Tidak Ditemukan')
 					this.setState({
 						formData: { ...this.state.formData, nama_wp: data.wp.nama_wp },
 						isError: false,
@@ -79,6 +79,7 @@ export default class IndukBerkas extends Component {
 			let data = new FormData()
 			data.append('file', formData.file)
 			data.append('npwp', formData.npwp)
+			data.append('kd_berkas', this.props.kd_berkas)
 			await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
 				method: 'post',
 				body: data
@@ -107,13 +108,17 @@ export default class IndukBerkas extends Component {
 		if(isSend) {
 			const body = {
 				query: `mutation {
-					berkas: addBerkasInduk(input: {
+					berkas: addBerkas(input: {
 						kd_berkas: "${this.props.kd_berkas}"
-						npwp: "${formData.npwp}"
-						${ status ? `status: "${status}"` : ``}
-						nama_wp: "${formData.nama_wp}"
-						gudang: ${formData.gudang}
-						kd_lokasi: "${formData.kd_lokasi}"
+						lokasi: {
+							gudang: ${formData.gudang}
+							kd_lokasi: "${formData.kd_lokasi}"
+						}
+						pemilik: {
+							npwp: "${formData.npwp}"
+							nama_wp: "${formData.nama_wp}"
+							${ status ? `status: "${status}"` : `` }
+						}
 						urutan: ${formData.urutan}
 						${ file ? `file: "${file}"` : `` }
 						${ formData.ket_lain ? `ket_lain: "${ formData.ket_lain }"` : `` }
@@ -129,9 +134,10 @@ export default class IndukBerkas extends Component {
 					}
 				}`
 			}
-			return fetchDataGQL(body)
-				.then(res => res.json())
-				.then(({data}) => {
+			return fetchDataGQL2(body)
+				.then(({data, errors, extensions}) => {
+					setToken(extensions)
+					if(errors) return handleErrors(errors)
 					const alert = document.querySelector('.alert')
 					alert.classList.remove('alert-danger')
 					alert.classList.add('alert-success')
@@ -238,21 +244,19 @@ export default class IndukBerkas extends Component {
 							/>
 						</div>
 					</div>
-					{ this.props.kd_berkas === "INDUK" ? (
-						<div className="form-group col-md-12">
-							<label>Lampiran <span className="text-warning" style={{ fontSize: '.75em' }}>pdf only!</span></label>
-							<div className="input-group">
-								<input 
-									id="file"
-									type="file" 
-									name="file"
-									accept="application/pdf"
-									className="form-control-file"
-									onChange={ this.fileHandler }
-								/>
-							</div>
+					<div className="form-group col-md-12">
+						<label>Lampiran <span className="text-warning" style={{ fontSize: '.75em' }}>pdf only!</span></label>
+						<div className="input-group">
+							<input 
+								id="file"
+								type="file" 
+								name="file"
+								accept="application/pdf"
+								className="form-control-file"
+								onChange={ this.fileHandler }
+							/>
 						</div>
-					) : null }
+					</div>
 					<div className="form-group col-md-12">
 						<label>Keterangan</label>
 						<div className="input-group">
