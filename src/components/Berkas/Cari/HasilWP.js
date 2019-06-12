@@ -191,9 +191,8 @@ export default class HasilWP extends Component {
 									<th className="align-middle text-center" width="200px">Pemindahbukuan</th>
 									<th className="align-middle text-center" width="200px" style={{ cursor: 'pointer' }}>Lokasi</th>
 									<th className="align-middle text-center" style={{ cursor: 'pointer' }}>Keterangan</th>
-									{ localStorage.getItem('token')
-										? <th className="align-middle text-center" width="150px">Aksi</th>
-										: null
+									{ localStorage.getItem('token') &&
+										<th className="align-middle text-center" width="150px">Aksi</th>
 									}
 								</tr>
 							</thead>

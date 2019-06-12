@@ -177,9 +177,8 @@ export default class HasilPenerima extends Component {
 									<th className="text-center align-middle">Jenis Berkas</th>
 									<th className="text-center align-middle" width="200px">Lokasi</th>
 									<th className="text-center align-middle">Keterangan</th>
-									{ localStorage.getItem('token')
-										? <th className="text-center align-middle" width="150px">Aksi</th>
-										: null
+									{ localStorage.getItem('token') &&
+										<th className="text-center align-middle" width="150px">Aksi</th>
 									}
 								</tr>
 							</thead>

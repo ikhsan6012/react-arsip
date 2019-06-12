@@ -65,7 +65,9 @@ export default class HasilLokasi extends Component {
 									<th className="text-center align-middle">Penerima / Tanggal</th>
 									<th className="text-center align-middle" width="77px">Urutan</th>
 									<th className="text-center align-middle">Keterangan</th>
-									<th className="text-center align-middle" width="150px">Aksi</th>
+									{ localStorage.getItem('token') && 
+										<th className="text-center align-middle" width="150px">Aksi</th>
+									}
 								</tr>
 							</thead>
 							<tbody>
