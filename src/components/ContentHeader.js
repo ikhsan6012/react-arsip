@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-export default props => {
+export default function ContentHeader(props){
 	const contentTitle = props.contentHeader.slice(-1)[0].name
 	
 	const items = props.contentHeader.map(item => {

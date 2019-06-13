@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default  props => {
+export default function Content(props){
 	const detail = Object.entries(props.dataDetail.data).map((data, i) => {
 		if(data[0] !== 'lastUpdate'){
 			return(

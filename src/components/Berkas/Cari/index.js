@@ -6,7 +6,7 @@ import HasilWP from './HasilWP'
 import HasilLokasi from './HasilLokasi'
 import HasilPenerima from './HasilPenerima'
 
-import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../../helpers'
 
 export default class Cari extends Component {
 	state = {
@@ -52,7 +52,7 @@ export default class Cari extends Component {
 						nama_wp
 					}
 				}`}
-				fetchDataGQL2(body)
+				fetchDataGQL(body)
 					.then(({data, errors}) => {
 						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilWP
@@ -79,7 +79,7 @@ export default class Cari extends Component {
 						nama_wp
 					}
 				}`}
-				fetchDataGQL2(body)
+				fetchDataGQL(body)
 					.then(({data, errors}) => {
 						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilWP
@@ -127,7 +127,7 @@ export default class Cari extends Component {
 						ket_lain
 					}
 				}`}
-				fetchDataGQL2(body)
+				fetchDataGQL(body)
 					.then(({data, errors}) => {
 						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilLokasi
@@ -153,7 +153,7 @@ export default class Cari extends Component {
 						tgl_terima
 					}
 				}`}
-				fetchDataGQL2(body)
+				fetchDataGQL(body)
 					.then(({data, errors}) => {
 						if(errors) return handleErrors(errors)
 						this.Hasil = <HasilPenerima
@@ -196,7 +196,7 @@ export default class Cari extends Component {
 					}
 				`}
 				const kriteria = document.querySelector('[name=kriteria]').value
-				fetchDataGQL2(body)
+				fetchDataGQL(body)
 					.then(({data, errors}) => {
 						if(errors) return handleErrors(errors)
 						return swal('Berkas Berhasil Dihapus!', { icon: 'success' })
@@ -245,7 +245,7 @@ export default class Cari extends Component {
 					_id
 				}
 			}`}
-			return fetchDataGQL2(body)
+			return fetchDataGQL(body)
 				.then(({errors, extensions}) => {
 					setToken(extensions)
 					if(errors) return handleErrors(errors)
@@ -300,7 +300,7 @@ export default class Cari extends Component {
 					_id
 				}
 			}`}
-			return fetchDataGQL2(body)
+			return fetchDataGQL(body)
 				.then(({errors, extensions}) => {
 					setToken(extensions)
 					if(errors) return handleErrors(errors)
@@ -330,7 +330,7 @@ export default class Cari extends Component {
 				_id
 			}
 		}`}
-		return fetchDataGQL2(body)
+		return fetchDataGQL(body)
 			.then(({errors, extensions}) => {
 				setToken(extensions)
 				if(errors) return handleErrors(errors)
@@ -355,7 +355,7 @@ export default class Cari extends Component {
 				nama_berkas
 			}
 		}`}
-		fetchDataGQL2(body)
+		fetchDataGQL(body)
 			.then(({data, errors, extensions}) => {
 				setToken(extensions)
 				if(errors) return handleErrors(errors)

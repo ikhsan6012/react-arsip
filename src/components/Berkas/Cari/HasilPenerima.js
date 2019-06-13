@@ -4,7 +4,7 @@ import Pagination from 'react-js-pagination'
 import Aksi from './Aksi'
 import ModalEdit from './ModalEdit'
 
-import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../../helpers'
 
 export default class HasilPenerima extends Component {
 	state = {
@@ -65,7 +65,7 @@ export default class HasilPenerima extends Component {
 				ket_lain
 			}
 		}`}
-		fetchDataGQL2(body)
+		fetchDataGQL(body)
 			.then(({data, errors, extensions}) => {
 				setToken(extensions)
 				if(errors) return handleErrors(errors)

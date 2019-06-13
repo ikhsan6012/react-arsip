@@ -4,17 +4,14 @@ import swal from 'sweetalert'
 
 import logo from '../static/img/logo.png'
 
-export default props => {
+export default function Sidebar(props) {
 	const openMenu = e => {
 		e.currentTarget.classList.toggle('menu-open')
 	}
 
 	const notLogin = e => {
 		e.preventDefault()
-		const id = e.target.id || e.target.parentNode.id
-		let msg
-		if(id === 'tambah') msg = 'Menambah Berkas'
-		if(id === 'monitorlb') msg = 'Untuk Melanjutkan'
+		const msg = e.target.getAttribute('msg') || e.target.parentNode.getAttribute('msg')
 		swal('Anda Belum Login!', `Silahkan Login Untuk ${msg}...`, 'error')
 			.then(() => {
 				const login = document.querySelector('#formLogin button[type=submit]')
@@ -54,7 +51,7 @@ export default props => {
 												<i className="nav-icon fa fa-circle-o"></i>
 												<p>Tambah</p>
 											</NavLink>
-										: <a href="/" id="tambah" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin }>
+										: <a href="/" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin } msg="Menambah Berkas">
 												<i className="nav-icon fa fa-circle-o"></i>
 												<p>Tambah</p>
 											</a>
@@ -66,6 +63,18 @@ export default props => {
 										<p>Cari</p>
 									</NavLink>
 								</li>
+								<li className="nav-item">
+									{ localStorage.getItem('token')
+										? <NavLink exact to="/berkas/register" className="nav-link">
+												<i className="nav-icon fa fa-circle-o"></i>
+												<p>Register</p>
+											</NavLink>
+										: <a href="/" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin } msg="Melakukan Register">
+												<i className="nav-icon fa fa-circle-o"></i>
+												<p>Register</p>
+											</a>
+									}
+								</li>
 							</ul>
 						</li>
 						<li className="nav-item">
@@ -74,7 +83,7 @@ export default props => {
 										<i className="nav-icon fa fa-desktop"></i>
 										<p>Monitor SPT LB</p>
 									</NavLink>
-								: <a href="/" id="monitorlb" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin }>
+								: <a href="/" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin } msg="Melanjutkan">
 										<i className="nav-icon fa fa-desktop"></i>
 										<p>Monitor SPT LB</p>
 									</a>

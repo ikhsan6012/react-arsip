@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default props => {
+export default function Nav(props) {
 	return(
 		<nav className="main-header navbar navbar-expand bg-white navbar-light border-bottom">
 			<ul className="navbar-nav ml-auto">

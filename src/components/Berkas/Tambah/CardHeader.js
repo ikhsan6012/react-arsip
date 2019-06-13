@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-export default props => {
+export default function CardHeader(props){
 	const list = props.list.map(li => {
 		const link = `/berkas/tambah${ li.url }`
 		

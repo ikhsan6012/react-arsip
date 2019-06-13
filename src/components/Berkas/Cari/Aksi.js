@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 
-export default props => {
+export default function Aksi(props){
 	return(
 		<Fragment>
 			{ localStorage.getItem('token')
