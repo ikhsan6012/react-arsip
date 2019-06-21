@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 
-import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../../helpers'
 import swal from 'sweetalert';
 
 export default class SPTBaru extends Component {
@@ -73,7 +73,7 @@ export default class SPTBaru extends Component {
 				}
 			}
 		}`}
-		return fetchDataGQL2(body)
+		return fetchDataGQL(body)
 			.then(({data, errors, extensions}) => {
 				setToken(extensions)
 				if(errors) return handleErrors(errors)
@@ -104,7 +104,7 @@ export default class SPTBaru extends Component {
 				nama_berkas
 			}
 		}`}
-		fetchDataGQL2(body)
+		fetchDataGQL(body)
 			.then(({data, errors, extensions}) => {
 				setToken(extensions)
 				if(errors) return handleErrors(errors)

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Pagination from 'react-js-pagination'
-import { fetchDataGQL2, handleErrors, setToken } from '../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../helpers'
 
 export default class Content extends Component {
 	state = {
@@ -23,7 +23,7 @@ export default class Content extends Component {
 				status
 			}
 		}`}
-		fetchDataGQL2(body)
+		fetchDataGQL(body)
 			.then(({data, errors, extensions}) => {
 				setToken(extensions)
 				if(errors) return handleErrors(errors)

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 import swal from 'sweetalert'
 
-import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../../helpers'
 
 export default class ModalEdit extends Component {
 	state = {
@@ -55,7 +55,7 @@ export default class ModalEdit extends Component {
 					}
 				}`
 			}
-			fetchDataGQL2(body)
+			fetchDataGQL(body)
 				.then(({data, errors, extensions}) => {
 					setToken(extensions)
 					if(errors) return handleErrors(errors)
@@ -120,7 +120,7 @@ export default class ModalEdit extends Component {
 					}
 				}
 			`}
-			return fetchDataGQL2(body)
+			return fetchDataGQL(body)
 				.then(async ({data, errors, extensions}) => {
 					setToken(extensions)
 					if(errors) return handleErrors(errors)

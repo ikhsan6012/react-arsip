@@ -3,7 +3,7 @@ import ContentHeader from '../../components/ContentHeader'
 import Content from './Content'
 import swal from 'sweetalert'
 
-import { fetchDataGQL2, handleErrors, setToken } from '../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../helpers'
 
 export default class Dashboard extends Component {
 	state = {
@@ -59,7 +59,7 @@ export default class Dashboard extends Component {
 			})
 			container.hidden = false
 			Object.assign(container.style, { flex: '0 0 100%', maxWidth: '100%', transition: 'all 1s' })
-			fetchDataGQL2(body)
+			fetchDataGQL(body)
 				.then(({data, extensions, errors}) => {
 					setToken(extensions)
 					if(errors) return handleErrors(errors)
@@ -115,7 +115,7 @@ export default class Dashboard extends Component {
 			})
 		} else {
 			if(!body) return
-			fetchDataGQL2(body)
+			fetchDataGQL(body)
 				.then(({data, errors, extensions}) => {
 					setToken(extensions)
 					if(errors) return handleErrors(errors)
@@ -143,7 +143,7 @@ export default class Dashboard extends Component {
 				jumlahWP: totalWPs
 			}`
 		}
-		fetchDataGQL2(body)
+		fetchDataGQL(body)
 			.then(({data, errors, extensions}) => {
 				setToken(extensions)
 				if(errors) return swal(errors.message, { icon: 'error' })

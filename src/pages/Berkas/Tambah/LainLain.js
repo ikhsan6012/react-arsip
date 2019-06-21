@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 
-import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../../helpers'
 import swal from 'sweetalert'
 
 export default class LainLain extends Component {
@@ -49,7 +49,7 @@ export default class LainLain extends Component {
 					}
 				}`
 			}
-			fetchDataGQL2(body)
+			fetchDataGQL(body)
 				.then(({data}) => {
 					if(!data.wp) return this.errorHandler('NPWP Tidak Ditemukan')
 					this.setState({
@@ -145,7 +145,7 @@ export default class LainLain extends Component {
 					tahun_pajak
 				}
 			}`}
-			return fetchDataGQL2(body)
+			return fetchDataGQL(body)
 				.then(({data, errors, extensions}) => {
 					setToken(extensions)
 					if(errors) return handleErrors(errors)
@@ -178,7 +178,7 @@ export default class LainLain extends Component {
 				nama_berkas
 			}
 		}`}
-		fetchDataGQL2(body)
+		fetchDataGQL(body)
 			.then(({data, errors, extensions}) => {
 				setToken(extensions)
 				if(errors) return handleErrors(errors)

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 
 import swal from 'sweetalert'
-import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../../helpers'
 
 export default class PBK extends Component {
 	state = {
@@ -47,7 +47,7 @@ export default class PBK extends Component {
 					}
 				}`
 			}
-			fetchDataGQL2(body)
+			fetchDataGQL(body)
 				.then(({data, errors, extensions}) => {
 					setToken(extensions)
 					if(!data.wp) return this.errorHandler('NPWP Tidak Ditemukan')
@@ -137,7 +137,7 @@ export default class PBK extends Component {
 					}
 				}
 			}`}
-			return fetchDataGQL2(body)
+			return fetchDataGQL(body)
 				.then(({data, errors, extensions}) => {
 					setToken(extensions)
 					if(errors) return handleErrors(errors)

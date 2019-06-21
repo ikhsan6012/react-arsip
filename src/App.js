@@ -13,7 +13,7 @@ import './static/css/adminlte.min.css'
 import './static/font-awesome/css/font-awesome.min.css'
 import './static/css/style.css'
 
-import { fetchDataGQL2 } from './helpers'
+import { fetchDataGQL } from './helpers'
 
 class App extends Component {
   state = {
@@ -45,7 +45,7 @@ class App extends Component {
         token
       }
     }`}
-    return fetchDataGQL2(body)
+    return fetchDataGQL(body)
       .then(({data, errors}) => {
         if(!data.user) {
           return swal('Username atau Password Salah...', { icon: 'error' })
