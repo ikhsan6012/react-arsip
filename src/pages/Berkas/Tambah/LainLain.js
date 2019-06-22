@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import InputMask from 'react-input-mask'
+import swal from 'sweetalert'
 
 import { fetchDataGQL, handleErrors, setToken } from '../../../functions/helpers'
-import swal from 'sweetalert'
+import { NPWPInput, NamaWPInput, GudangInput, KdLokasiInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit, KdBerkasInput, MasaPajakInput, TahunPajakInput } from '../../../components/Forms'
 
 export default class LainLain extends Component {
 	state = {
@@ -199,160 +199,62 @@ export default class LainLain extends Component {
 		return(
 			<form id="form-lain-lain" onSubmit={ this.addBerkas }>
 				<div className="row">
-					<div className="form-group col-md-7">
-						<label>Gudang <span className="text-danger">*</span></label>
-						<div className="input-group">
-							<select
-								name="gudang" 
-								className="form-control"
-								defaultValue={ this.state.formData.gudang }
-								onChange={ this.changeHandler }
-								required
-							>
-								<option value="1">Gudang 1</option>
-								<option value="2">Gudang 2</option>
-							</select>
-						</div>
-					</div>
-					<div className="form-group col-md-5">
-						<label>Lokasi <span className="text-danger">*</span></label>
-						<div className="input-group">
-							<input 
-								type="text" 
-								name="kd_lokasi" 
-								className="form-control" 
-								placeholder="A6012"
-								required
-								defaultValue={ this.state.formData.kd_lokasi }
-								onChange={ this.changeHandler }
-								pattern="\w{1,2}\d{4}"
-								value={ this.state.formData.kd_lokasi ? this.state.formData.kd_lokasi : '' }
-							/>
-						</div>
-					</div>
-					<div className="form-group col-md-5">
-						<label>NPWP <span className="text-danger">*</span></label>
-						<div className="input-group">
-							<InputMask 
-								mask="99.999.999.9-999.999" 
-								placeholder="__.___.___._-___.___" 
-								maskChar="_"
-								name="npwp"
-								className="form-control"
-								defaultValue={ this.state.formData.npwp }
-								value={ this.state.formData.npwp ? this.state.formData.npwp : '' }
-								onChange={ this.changeHandler }
-								required
-								pattern="\d{2}[.]\d{3}[.]\d{3}[.]\d{1}[-]\d{3}[.]\d{3}"
-							/>
-						</div>
-					</div>
-					<div className="form-group col-md-7">
-						<label>Nama WP <span className="text-danger">*</span></label>
-						<div className="input-group">
-							<input 
-								type="text"
-								name="nama_wp" 
-								className="form-control" 
-								placeholder="Otomatis Terisi Jika NPWP Ditemukan"
-								disabled={ this.state.disableNamaWP }
-								defaultValue={ this.state.formData.nama_wp }
-								value={ this.state.formData.nama_wp ? this.state.formData.nama_wp : '' }
-								onChange={ this.changeHandler }
-								required
-							/>
-						</div>
-					</div>
-					<div className="form-group col-md-12">
-						<label>Jenis Berkas <span className="text-danger">*</span></label>
-						<div className="input-group">
-							<select
-								name="kd_berkas" 
-								className="form-control"
-								required
-								defaultValue={ this.state.formData.kd_berkas }
-								onChange={ this.changeHandler }
-							>
-								<option value="" hidden>Pilih Jenis Berkas</option>
-								{ options }
-							</select>
-						</div>
-					</div>
-					<div className="form-group col-md-4">
-						<label>Masa Pajak</label>
-						<div className="input-group">
-							<input 
-								type="number"
-								name="masa_pajak"
-								className="form-control"
-								min="0"
-								max="12"
-								placeholder={ new Date().getMonth() }
-								defaultValue={ this.state.formData.masa_pajak }
-								onChange={ this.changeHandler }
-								required={ this.state.required }
-							/>
-						</div>
-					</div><div className="form-group col-md-5">
-						<label>Tahun Pajak</label>
-						<div className="input-group">
-							<input 
-								type="number" 
-								name="tahun_pajak" 
-								className="form-control" 
-								min={ new Date().getFullYear() - 15 }
-								max={ new Date().getFullYear() }
-								placeholder={ new Date().getFullYear() }
-								defaultValue={ this.state.formData.tahun_pajak }
-								onChange={ this.changeHandler }
-							/>
-						</div>
-					</div>
-					<div className="form-group col-md-3">
-						<label>Urutan <span className="text-danger">*</span></label>
-						<div className="input-group">
-							<input 
-								type="number"
-								name="urutan"
-								className="form-control"
-								placeholder="1"
-								min="1"
-								step="any"
-								defaultValue={ this.state.formData.urutan }
-								onChange={ this.changeHandler }
-								required
-							/>
-						</div>
-					</div>
-					<div className="form-group col-md-12">
-						<label>Lampiran <span className="text-warning" style={{ fontSize: '.75em' }}>pdf only!</span></label>
-						<div className="input-group">
-							<input 
-								id="file"
-								type="file" 
-								name="file"
-								accept="application/pdf"
-								className="form-control-file"
-								onChange={ this.fileHandler }
-							/>
-						</div>
-					</div>
-					<div className="form-group col-md-12">
-						<label>Keterangan</label>
-						<div className="input-group">
-							<textarea 
-								name="ket_lain" 
-								rows="2" 
-								className="form-control"
-								defaultValue={ this.state.formData.ket_lain }
-								value={ this.state.formData.ket_lain ? this.state.formData.ket_lain : '' }
-								onChange={ this.changeHandler }
-							></textarea>
-						</div>
-					</div>
-					<div className="form-group col-md-12">
-						<button type="submit" className="btn btn-primary float-right">Simpan</button>
-					</div>
+					<GudangInput
+						width="7"
+						value={ this.state.formData.gudang }
+						onChange={ this.changeHandler }
+					/>
+					<KdLokasiInput
+						width="5"
+						value={ this.state.formData.kd_lokasi }
+						onChange={ this.changeHandler }
+					/>
+					<NPWPInput
+						width="5"
+						value={ this.state.formData.npwp }
+						onChange={ this.changeHandler }
+					/>
+					<NamaWPInput
+						width="7"
+						value={ this.state.formData.nama_wp }
+						disabled={ this.state.disableNamaWP }
+						onChange={ this.changeHandler }
+					/>
+					<KdBerkasInput
+						width="12"
+						value={ this.state.formData.kd_berkas }
+						onChange={ this.changeHandler }
+						options={ options }
+					/>
+					<MasaPajakInput
+						width="4"
+						value={ this.state.formData.masa_pajak }
+						onChange={ this.changeHandler }
+						required={ this.state.required }
+					/>
+					<TahunPajakInput
+						width="5"
+						value={ this.state.formData.tahun_pajak }
+						onChange={ this.changeHandler }
+					/>
+					<UrutanInput
+						width="3"
+						value={ this.state.formData.urutan }
+						onChange={ this.changeHandler }
+					/>
+					<FileInput
+						width="12"
+						onChange={ this.fileHandler }
+					/>
+					<KeteranganInput
+						width="12"
+						value={ this.state.formData.ket_lain }
+						onChange={ this.changeHandler }
+					/>
+					<ButtonSubmit
+						width="12"
+						float="right"
+					/>
 				</div>
 			</form>	
 		)

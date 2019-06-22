@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import InputMask from 'react-input-mask'
+import swal from 'sweetalert'
 
 import { fetchDataGQL, handleErrors, setToken } from '../../../functions/helpers'
-import swal from 'sweetalert';
+import { NamaPenerimaInput, TglTerimaInput, GudangInput, KdLokasiInput, KdBerkasInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit } from '../../../components/Forms'
 
 export default class SPTBaru extends Component {
 	state = {
@@ -125,129 +125,50 @@ export default class SPTBaru extends Component {
 		return(
 			<form id="form-spt-baru" onSubmit={ this.addBerkas }>
 				<div className="row">
-					<div className="form-group col-md-7">
-						<label>Gudang <span className="text-danger">*</span></label>
-						<div className="input-group">
-							<select 
-								name="gudang" 
-								className="form-control"
-								defaultValue={ this.state.formData.gudang }
-								onChange={ this.changeHandler }
-								required
-							>
-								<option value="1">Gudang 1</option>
-								<option value="2">Gudang 2</option>
-							</select>
-						</div>
-					</div>
-					<div className="form-group col-md-5">
-						<label>Lokasi <span className="text-danger">*</span></label>
-						<div
-							className="input-group"
-						>
-							<input 
-								type="text" 
-								name="kd_lokasi" 
-								className="form-control" 
-								placeholder="A6012"
-								required
-								defaultValue={ this.state.formData.kd_lokasi }
-								onChange={ this.changeHandler }
-								pattern="\w{1,2}\d{4}"
-								value={ this.state.formData.kd_lokasi ? this.state.formData.kd_lokasi : '' }
-							/>
-						</div>
-					</div>
-					<div className="form-group col-md-12">
-						<label>Jenis Berkas <span className="text-danger">*</span></label>
-						<div className="input-group">
-							<select
-								name="kd_berkas" 
-								className="form-control"
-								required
-								defaultValue={ this.state.formData.kd_berkas }
-								onChange={ this.changeHandler }
-							>
-								<option value="" hidden>Pilih Jenis Berkas</option>
-								{ options }
-							</select>
-						</div>
-					</div>
-					<div className="form-group col-md-5">
-						<label>Nama Penerima <span className="text-danger">*</span></label>
-						<div className="input-group">
-							<input 
-								type="text" 
-								name="nama_penerima" 
-								className="form-control"
-								required
-								defaultValue={ this.state.formData.nama_penerima }
-								onChange={ this.changeHandler }
-								value={ this.state.formData.nama_penerima ? this.state.formData.nama_penerima : '' }
-							/>
-						</div>
-					</div>
-					<div className="form-group col-md-4">
-						<label>Tanggal Terima <span className="text-danger">*</span></label>
-						<div className="input-group">
-							<InputMask 
-								mask="99/99/9999" 
-								placeholder="dd/mm/yyyy" 
-								name="tgl_terima" 
-								className="form-control"
-								required
-								pattern="[0-3]\d.[0-1]\d.20[0-1]\d"
-								defaultValue={ this.state.formData.tgl_terima }
-								value={ this.state.formData.tgl_terima ? this.state.formData.tgl_terima : '' }
-								onChange={ this.changeHandler }
-							/>
-						</div>
-					</div>
-					<div className="form-group col-md-3">
-						<label>Urutan <span className="text-danger">*</span></label>
-						<div className="input-group">
-							<input 
-								type="number"
-								name="urutan"
-								className="form-control"
-								placeholder="1"
-								min="1"
-								step="any"
-								defaultValue={ this.state.formData.urutan }
-								onChange={ this.changeHandler }
-								required
-							/>
-						</div>
-					</div>
-					<div className="form-group col-md-12">
-						<label>Lampiran <span className="text-warning" style={{ fontSize: '.75em' }}>pdf only!</span></label>
-						<div className="input-group">
-							<input 
-								id="file"
-								type="file" 
-								name="file"
-								accept="application/pdf"
-								className="form-control-file"
-								onChange={ this.fileHandler }
-							/>
-						</div>
-					</div>
-					<div className="form-group col-md-12">
-						<label>Keterangan</label>
-						<div className="input-group">
-							<textarea 
-								name="ket_lain" 
-								rows="2" 
-								className="form-control"
-								defaultValue={ this.state.formData.ket_lain }
-								value={ this.state.formData.ket_lain ? this.state.formData.ket_lain : '' }
-								onChange={ this.changeHandler }
-							></textarea>
-						</div>
-					</div>
-					<div className="form-group col-md-12">
-						<button type="submit" className="btn btn-primary float-right">Simpan</button>
-					</div>
+				<GudangInput
+						width="7"
+						value={ this.state.formData.gudang }
+						onChange={ this.changeHandler }
+					/>
+					<KdLokasiInput
+						width="5"
+						value={ this.state.formData.kd_lokasi }
+						onChange={ this.changeHandler }
+					/>
+					<KdBerkasInput
+						width="12"
+						value={ this.state.formData.kd_berkas }
+						onChange={ this.changeHandler }
+						options={ options }
+					/>
+					<NamaPenerimaInput
+						width="5"
+						value={ this.state.formData.nama_penerima }
+						onChange={ this.changeHandler }
+					/>
+					<TglTerimaInput
+						width="4"
+						value={ this.state.formData.tgl_terima }
+						onChange={ this.changeHandler }
+					/>
+					<UrutanInput
+						width="3"
+						value={ this.state.formData.urutan }
+						onChange={ this.changeHandler }
+					/>
+					<FileInput
+						width="12"
+						onChange={ this.fileHandler }
+					/>
+					<KeteranganInput
+						width="12"
+						value={ this.state.formData.ket_lain }
+						onChange={ this.changeHandler }
+					/>
+					<ButtonSubmit
+						width="12"
+						float="right"
+					/>
 				</div>
 			</form>	
 		)
