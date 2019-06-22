@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 
 import swal from 'sweetalert'
-import { fetchDataGQL, handleErrors, setToken } from '../../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../../functions/helpers'
 
 export default class PBK extends Component {
 	state = {

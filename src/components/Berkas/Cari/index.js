@@ -6,7 +6,7 @@ import HasilWP from './HasilWP'
 import HasilLokasi from './HasilLokasi'
 import HasilPenerima from './HasilPenerima'
 
-import { fetchDataGQL, handleErrors, setToken } from '../../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../../functions/helpers'
 
 export default class Cari extends Component {
 	state = {

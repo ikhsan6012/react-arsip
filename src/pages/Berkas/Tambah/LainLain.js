@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import InputMask from 'react-input-mask'
 
-import { fetchDataGQL, handleErrors, setToken } from '../../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../../functions/helpers'
 import swal from 'sweetalert'
 
 export default class LainLain extends Component {

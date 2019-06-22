@@ -4,7 +4,7 @@ import Pagination from 'react-js-pagination'
 import Aksi from './Aksi'
 import ModalEdit from './ModalEdit'
 
-import { fetchDataGQL, handleErrors, setToken } from '../../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../../functions/helpers'
 
 export default class HasilWP extends Component {
 	state = {

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 
-import { fetchDataGQL, handleErrors, setToken } from '../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../functions/helpers'
 
 export default class MonitorSPTLB extends Component {
   state = {

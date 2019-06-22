@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Pagination from 'react-js-pagination'
-import { fetchDataGQL, handleErrors, setToken } from '../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../functions/helpers'
 
 export default class Content extends Component {
 	state = {

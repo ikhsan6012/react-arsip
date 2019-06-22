@@ -3,7 +3,7 @@ import ContentHeader from '../../components/ContentHeader'
 import Content from './Content'
 import swal from 'sweetalert'
 
-import { fetchDataGQL, handleErrors, setToken } from '../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../functions/helpers'
 
 export default class Dashboard extends Component {
 	state = {
