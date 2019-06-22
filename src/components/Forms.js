@@ -3,14 +3,15 @@ import InputMask from 'react-input-mask'
 
 export const KdBerkasInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Jenis Berkas <span className="text-danger">*</span></label>
+		<label>Jenis Berkas { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<select
 				name="kd_berkas" 
 				className="form-control"
-				required
-				defaultValue={ props.value }
+				value={ props.value || 1 }
 				onChange={ props.onChange }
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			>
 				<option value="" hidden>Pilih Jenis Berkas</option>
 				{ props.options }
@@ -20,7 +21,7 @@ export const KdBerkasInput = props =>
 
 export const NPWPInput = props => 
 	<div className={`form-group col-md-${props.width}`}>
-		<label>NPWP <span className="text-danger">*</span></label>
+		<label>NPWP { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<InputMask 
 				mask="99.999.999.9-999.999" 
@@ -28,77 +29,77 @@ export const NPWPInput = props =>
 				maskChar="_"
 				name="npwp"
 				className="form-control"
-				defaultValue={ props.value }
 				value={ props.value ? props.value : '' }
 				onChange={ props.onChange }
-				required
 				pattern="\d{2}[.]\d{3}[.]\d{3}[.]\d{1}[-]\d{3}[.]\d{3}"
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			/>
 		</div>
 	</div>
 
 export const NamaWPInput = props => 
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Nama WP <span className="text-danger">*</span></label>
+		<label>Nama WP { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<input 
 				type="text"
 				name="nama_wp" 
 				className="form-control" 
 				placeholder="Otomatis Terisi Jika NPWP Ditemukan"
-				disabled={ props.disabled }
-				defaultValue={ props.value }
 				value={ props.value ? props.value : '' }
 				onChange={ props.onChange }
-				required
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			/>
 		</div>
 	</div>
 
 export const NamaPenerimaInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Nama Penerima <span className="text-danger">*</span></label>
+		<label>Nama Penerima { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<input 
 				type="text" 
 				name="nama_penerima" 
 				className="form-control"
-				required
-				defaultValue={ props.value }
-				onChange={ props.onChange }
 				value={ props.value ? props.value : '' }
+				onChange={ props.onChange }
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			/>
 		</div>
 	</div>
 
 export const TglTerimaInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Tanggal Terima <span className="text-danger">*</span></label>
+		<label>Tanggal Terima { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<InputMask 
 				mask="99/99/9999" 
 				placeholder="dd/mm/yyyy" 
 				name="tgl_terima" 
 				className="form-control"
-				required
 				pattern="[0-3]\d.[0-1]\d.20[0-1]\d"
-				defaultValue={ props.value }
 				value={ props.value ? props.value : '' }
 				onChange={ props.onChange }
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			/>
 		</div>
 	</div>
 
 export const StatusPBKInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Status <span className="text-danger">*</span></label>
+		<label>Status { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<select
 				name="status_pbk" 
 				className="form-control"
-				defaultValue={ props.value }
+				value={ props.value || 'Terima' }
 				onChange={ props.onChange }
-				required
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			>
 				<option value="Terima">Terima</option>
 				<option value="Tolak">Tolak</option>
@@ -108,31 +109,33 @@ export const StatusPBKInput = props =>
 
 export const NoPBKInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Nomor <span className="text-danger">*</span></label>
+		<label>Nomor { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<input 
 				type="number" 
 				name="nomor_pbk" 
 				className="form-control" 
 				min={ 1 }
-				value={ props.value ? props.value : '' }
-				onChange={ props.onChange }
-				required
 				pattern="\d*"
+				value={ props.value || '' }
+				onChange={ props.onChange }
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			/>
 		</div>
 	</div>
 
 export const GudangInput = props => 
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Gudang <span className="text-danger">*</span></label>
+		<label>Gudang { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<select
 				name="gudang" 
 				className="form-control"
-				defaultValue={ props.value }
+				value={ props.value || '' }
 				onChange={ props.onChange }
-				required
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			>
 				<option value="1">Gudang 1</option>
 				<option value="2">Gudang 2</option>
@@ -142,18 +145,18 @@ export const GudangInput = props =>
 
 export const KdLokasiInput = props => 
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Lokasi <span className="text-danger">*</span></label>
+		<label>Lokasi { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<input 
 				type="text" 
 				name="kd_lokasi" 
 				className="form-control" 
 				placeholder="A6012"
-				value={ props.value ? props.value : '' }
-				defaultValue={ props.value }
-				onChange={ props.onChange }
-				required
+				value={ props.value || '' }
 				pattern="\w{1,2}\d{4}"
+				onChange={ props.onChange }
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			/>
 		</div>
 	</div>
@@ -169,9 +172,10 @@ export const MasaPajakInput = props =>
 				min="0"
 				max="12"
 				placeholder={ new Date().getMonth() }
-				defaultValue={ props.value }
+				value={ props.value || ''}
 				onChange={ props.onChange }
-				required={ props.required }
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			/>
 		</div>
 	</div>
@@ -187,15 +191,17 @@ export const TahunPajakInput = props =>
 				min={ new Date().getFullYear() - 15 }
 				max={ new Date().getFullYear() }
 				placeholder={ new Date().getFullYear() }
-				defaultValue={ props.value }
+				value={ props.value || '' }
 				onChange={ props.onChange }
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			/>
 		</div>
 	</div>
 
 export const UrutanInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Urutan <span className="text-danger">*</span></label>
+		<label>Urutan { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<input 
 				type="number"
@@ -204,9 +210,10 @@ export const UrutanInput = props =>
 				placeholder="1"
 				min="1"
 				step="any"
-				defaultValue={ props.value }
+				value={ props.value || '' }
 				onChange={ props.onChange }
-				required
+				required={ props.required || true }
+				disabled={ props.disabled || false }
 			/>
 		</div>
 	</div>
@@ -222,6 +229,8 @@ export const FileInput = props =>
 				accept="application/pdf"
 				className="form-control-file"
 				onChange={ props.onChange }
+				required={ props.required || false }
+				disabled={ props.disabled || false }
 			/>
 		</div>
 	</div>
@@ -234,9 +243,10 @@ export const KeteranganInput = props =>
 				name="ket_lain" 
 				rows="2" 
 				className="form-control"
-				defaultValue={ props.value }
-				value={ props.value ? props.value : '' }
+				value={ props.value || '' }
 				onChange={ props.onChange }
+				required={ props.required || false }
+				disabled={ props.disabled || false }
 			></textarea>
 		</div>
 	</div>

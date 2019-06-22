@@ -9,8 +9,8 @@ const Nav = () => {
 		e.preventDefault()
 		setIsHiddenLogin(!isHiddenLogin)
     setTimeout(() => {
-      const form = document.querySelectorAll('#formLogin .form-control')
-      if(isHiddenLogin === false){
+			const form = document.querySelectorAll('#formLogin .form-control')
+      if(isHiddenLogin){
         form[0].focus()
       } else {
         form.forEach(input => input.value = '')

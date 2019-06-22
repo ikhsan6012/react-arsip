@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import InputMask from 'react-input-mask'
 import swal from 'sweetalert'
 
 import { fetchDataGQL, handleErrors, setToken } from '../../../functions/helpers'
+import { GudangInput, KdLokasiInput, UrutanInput, NPWPInput, NamaWPInput, NamaPenerimaInput, TglTerimaInput, KdBerkasInput, MasaPajakInput, TahunPajakInput, KeteranganInput } from '../../Forms'
 
 export default class ModalEdit extends Component {
 	state = {
@@ -174,169 +174,76 @@ export default class ModalEdit extends Component {
 						<form onSubmit={ this.editSubmit }>
 							<div className="modal-body">
 								<div className="row">
-									<div className="form-group col-md-6">
-										<label>Gudang</label>
-										<div className="input-group">
-											<select
-												name="lokasi-gudang" 
-												className="form-control"
-												value={ this.state.formData.lokasi ? this.state.formData.lokasi.gudang : 1 }
-												onChange={ this.changeHandler }
-												required
-											>
-												<option value="1">Gudang 1</option>
-												<option value="2">Gudang 2</option>
-											</select>
-										</div>
-									</div>
-									<div className="form-group col-md-4">
-										<label>Lokasi</label>
-										<div className="input-group">
-											<input 
-												type="text" 
-												name="lokasi-kd_lokasi" 
-												className="form-control" 
-												placeholder="A6012"
-												onChange={ this.changeHandler }
-												pattern="\w{1,2}\d{4}"
-												value={ this.state.formData.lokasi ? this.state.formData.lokasi.kd_lokasi : '' }
-												required
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-2">
-										<label>Urutan</label>
-										<div className="input-group">
-											<input 
-												type="number"
-												name="urutan"
-												className="form-control"
-												placeholder="1"
-												min="1"
-												step="any"
-												value={ this.state.formData.urutan ? this.state.formData.urutan : '' }
-												onChange={ this.changeHandler }
-												required
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-5">
-										<label>NPWP</label>
-										<div className="input-group">
-											<InputMask 
-												mask="99.999.999.9-999.999" 
-												placeholder="__.___.___._-___.___" 
-												maskChar="_"
-												name="pemilik-npwp"
-												className="form-control"
-												pattern="\d{2}[.]\d{3}[.]\d{3}[.]\d{1}[-]\d{3}[.]\d{3}"
-												value={ this.state.formData.pemilik ? this.state.formData.pemilik.npwp : '' }
-												onChange={ this.changeHandler }
-												required={ !this.state.disablePemilik }
-												disabled={ this.state.disablePemilik }
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-7">
-										<label>Nama WP</label>
-										<div className="input-group">
-											<input 
-												type="text"
-												name="pemilik-nama_wp" 
-												className="form-control" 
-												placeholder="Otomatis Terisi Jika NPWP Ditemukan"
-												value={ this.state.formData.pemilik ? this.state.formData.pemilik.nama_wp : '' }
-												onChange={ this.changeHandler }
-												required={ !this.state.disablePemilik }
-												disabled={ this.state.disableNamaWP }
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-7">
-										<label>Nama Penerima</label>
-										<div className="input-group">
-											<input 
-												type="text" 
-												name="penerima-nama_penerima" 
-												className="form-control"
-												onChange={ this.changeHandler }
-												value={ this.state.formData.penerima ? this.state.formData.penerima.nama_penerima : '' }
-												required={ !this.state.disablePenerima }
-												disabled={ this.state.disablePenerima }
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-5">
-										<label>Tanggal Terima</label>
-										<div className="input-group">
-											<InputMask 
-												mask="99/99/9999" 
-												placeholder="dd/mm/yyyy" 
-												name="penerima-tgl_terima" 
-												className="form-control"
-												pattern="[0-3]\d.[0-1]\d.20[0-1]\d"
-												value={ this.state.formData.penerima ? this.state.formData.penerima.tgl_terima : '' }
-												onChange={ this.changeHandler }
-												required={ !this.state.disablePenerima }
-												disabled={ this.state.disablePenerima }
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-6">
-										<label>Jenis Berkas</label>
-										<div className="input-group">
-											<select
-												name="ket_berkas-kd_berkas" 
-												className="form-control"
-												required
-												value={ this.state.formData.ket_berkas ? this.state.formData.ket_berkas.kd_berkas : '' }
-												onChange={ this.changeHandler }
-											>
-												<option value="" hidden>Pilih Jenis Berkas</option>
-												{ options }
-											</select>
-										</div>
-									</div>
-									<div className="form-group col-md-3">
-										<label>Masa Pajak</label>
-										<div className="input-group">
-											<input 
-												type="number" 
-												name="masa_pajak" 
-												className="form-control" 
-												min="0" 
-												max="12" 
-												value={ this.state.formData.masa_pajak ? this.state.formData.masa_pajak : '' }
-												onChange={ this.changeHandler }
-											/>
-										</div>
-									</div><div className="form-group col-md-3">
-										<label>Tahun Pajak</label>
-										<div className="input-group">
-											<input 
-												type="number" 
-												name="tahun_pajak" 
-												className="form-control" 
-												min={ new Date().getFullYear() - 15 }
-												max={ new Date().getFullYear() }
-												value={ this.state.formData.tahun_pajak ? this.state.formData.tahun_pajak : '' }
-												onChange={ this.changeHandler }
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-12">
-										<label>Keterangan</label>
-										<div className="input-group">
-											<textarea 
-												name="ket_lain" 
-												rows="2" 
-												className="form-control"
-												defaultValue={ this.state.formData.ket_lain }
-												value={ this.state.formData.ket_lain ? this.state.formData.ket_lain : '' }
-												onChange={ this.changeHandler }
-											></textarea>
-										</div>
-									</div>
+									<GudangInput
+										width="5"
+										value={ this.state.formData.lokasi ? this.state.formData.lokasi.gudang : 1 }
+										onChange={ this.changeHandler }
+									/>
+									<KdLokasiInput
+										width="4"
+										value={ this.state.formData.lokasi ? this.state.formData.lokasi.kd_lokasi : '' }
+										onChange={ this.changeHandler }
+									/>
+									<UrutanInput
+										width="3"
+										value={ this.state.formData.urutan ? this.state.formData.urutan : '' }
+										onChange={ this.changeHandler }
+									/>
+									<NPWPInput
+										width="5"
+										value={ this.state.formData.pemilik ? this.state.formData.pemilik.npwp : '' }
+										onChange={ this.changeHandler }
+										required={ !this.state.disablePemilik }
+										disabled={ this.state.disablePemilik }
+									/>
+									<NamaWPInput
+										width="7"
+										value={ this.state.formData.pemilik ? this.state.formData.pemilik.nama_wp : '' }
+										onChange={ this.changeHandler }
+										required={ !this.state.disablePemilik }
+										disabled={ this.state.disableNamaWP }
+									/>
+									<NamaPenerimaInput
+										width="7"
+										value={ this.state.formData.penerima ? this.state.formData.penerima.nama_penerima : '' }
+										onChange={ this.changeHandler }
+										required={ !this.state.disablePenerima }
+										disabled={ this.state.disablePenerima }
+									/>
+									<TglTerimaInput
+										width="5"
+										value={ this.state.formData.penerima ? this.state.formData.penerima.tgl_terima : '' }
+										onChange={ this.changeHandler }
+										required={ !this.state.disablePenerima }
+										disabled={ this.state.disablePenerima }
+									/>
+									<KdBerkasInput
+										width="6"
+										value={ this.state.formData.ket_berkas ? this.state.formData.ket_berkas.kd_berkas : '' }
+										onChange={ this.changeHandler }
+										options={ options }
+										required={ !this.state.disablePenerima }
+										disabled={ this.state.disablePenerima }
+									/>
+									<MasaPajakInput
+										width="4"
+										value={ this.state.formData.masa_pajak ? this.state.formData.masa_pajak : '' }
+										onChange={ this.changeHandler }
+										required={ false }
+										disabled={ this.state.disablePemilik }
+									/>
+									<TahunPajakInput
+										width="3"
+										value={ this.state.formData.tahun_pajak ? this.state.formData.tahun_pajak : '' }
+										onChange={ this.changeHandler }
+										required={ false }
+										disabled={ this.state.disablePemilik }
+									/>
+									<KeteranganInput
+										width="12"
+										value={ this.state.formData.ket_lain }
+										onChange={ this.changeHandler }
+									/>
 								</div>
 							</div>
 							<div className="modal-footer">

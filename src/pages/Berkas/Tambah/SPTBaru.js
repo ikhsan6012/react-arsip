@@ -125,7 +125,7 @@ export default class SPTBaru extends Component {
 		return(
 			<form id="form-spt-baru" onSubmit={ this.addBerkas }>
 				<div className="row">
-				<GudangInput
+					<GudangInput
 						width="7"
 						value={ this.state.formData.gudang }
 						onChange={ this.changeHandler }

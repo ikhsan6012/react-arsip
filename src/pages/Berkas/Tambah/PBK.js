@@ -175,6 +175,7 @@ export default class PBK extends Component {
 						width="7"
 						value={ this.state.formData.nama_wp }
 						onChange={ this.changeHandler }
+						disabled={ this.state.disableNamaWP }
 					/>
 					<StatusPBKInput
 						width="6"
