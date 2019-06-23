@@ -1,6 +1,6 @@
-const swal = require('sweetalert')
+import swal from 'sweetalert'
 
-const fetchDataGQL = body => {
+export const fetchDataGQL = body => {
 	const api = process.env.REACT_APP_API_SERVER || "http://localhost:3001"
 	const headers = { 
 		'Content-Type': 'application/json'
@@ -14,7 +14,7 @@ const fetchDataGQL = body => {
 	}).then(res => res.json())
 }
 
-const handleErrors = errors => {
+export const handleErrors = errors => {
 	if(errors.name === 'SessionError') {
 		return swal(errors.message, { icon: 'error' })
 			.then(() => {
@@ -27,10 +27,8 @@ const handleErrors = errors => {
 	}
 }
 
-const setToken = extensions => {
+export const setToken = extensions => {
 	if(extensions ? extensions.token : false){
 		localStorage.setItem('token', extensions.token)
 	}
 }
-
-module.exports = { fetchDataGQL, handleErrors, setToken }

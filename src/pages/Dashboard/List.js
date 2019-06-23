@@ -12,8 +12,8 @@ const List = props => {
 					{ props.children }
 				</div>
 			</div>
-			{ props.detailWP &&<DetailWPItem detailWP={ props.detailWP } /> }
-			{ props.detail &&<DetailBerkasItem detail={ props.detail } /> }
+			{ props.detailWP && <DetailWPItem detailWP={ props.detailWP } /> }
+			{ props.detail && <DetailBerkasItem detail={ props.detail } /> }
 		</div>
 	)
 }

@@ -1,8 +1,7 @@
-const swal = require('sweetalert')
+import swal from 'sweetalert'
+import { fetchDataGQL } from './helpers'
 
-const { fetchDataGQL } = require('./helpers')
-
-const login = e => {
+export const login = e => {
   e.preventDefault()
   const username = document.querySelectorAll('#formLogin .form-control')[0].value
   const password = document.querySelectorAll('#formLogin .form-control')[1].value
@@ -34,7 +33,7 @@ const login = e => {
     .catch(err => console.log(err))
 }
 
-const logout = () => {
+export const logout = () => {
   swal('Logout Berhasil!', {
     icon: 'success'
   }).then(() => {
@@ -42,5 +41,3 @@ const logout = () => {
     window.location.href = process.env.REACT_APP_HOST
   })
 }
-
-module.exports = { login, logout }

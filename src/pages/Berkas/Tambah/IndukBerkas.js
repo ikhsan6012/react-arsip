@@ -1,210 +1,62 @@
-import React, { Component } from 'react'
-import swal from 'sweetalert'
+import React, { useState } from 'react'
 
-import { fetchDataGQL, handleErrors, setToken } from '../../../functions/helpers'
 import { NPWPInput, NamaWPInput, GudangInput, KdLokasiInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit } from '../../../components/Forms'
+import { changeHandler, fileHandler, addBerkas } from '../../../functions/form'
 
-export default class IndukBerkas extends Component {
-	state = {
-		disableNamaWP: false,
-		isError: false,
-		errMsg: '',
-		formData: {
-			gudang: 1
-		}
-	}
-
-	errorHandler = msg => {
-		this.setState({
-			isError: true,
-			errMsg: msg,
-			disableNamaWP: false,
-			formData: { ...this.state.formData, nama_wp: '' }
-		})
-		console.error(msg)
-	}
-
-	changeHandler = async e => {
-		const el = e.target
-		const name = el.name
-		const value = el.value.toUpperCase()
-		await this.setState({formData: { ...this.state.formData, [name]: value }})
-		if(name === 'npwp') return this.checkNPWP()
-	}
-
-	checkNPWP = () => {
-		const npwp = this.state.formData.npwp
-		if(npwp.replace(/[_.-]/g, '').length < 15) {
-			return this.setState({disableNamaWP: false, formData: { ...this.state.formData, nama_wp: '' } })
-		}
-		if(npwp.replace(/[_.-]/g, '').length === 15){
-			// Get Nama WP
-			const body = {
-				query: `{
-					wp(npwp: "${npwp}") {
-						nama_wp
-					}
-				}`
-			}
-			fetchDataGQL(body)
-				.then(({data, errors, extensions}) => {
-					setToken(extensions)
-					if(!data.wp) return this.errorHandler('NPWP Tidak Ditemukan')
-					this.setState({
-						formData: { ...this.state.formData, nama_wp: data.wp.nama_wp },
-						isError: false,
-						disableNamaWP: true,
-						errMsg: ''
-					})
-				})
-				.catch(err => this.errorHandler(err.message))
-		}
-	}
-
-	fileHandler = e => {
-		let file = e.target.files[0]
-		if(file.type !== 'application/pdf'){
-			return e.target.classList.add('invalid')
-		}
-		e.target.classList.remove('invalid')
-		this.setState({ formData: { ...this.state.formData, file } })
-	}
-
-	addBerkas = async e => {
-		e.preventDefault()
-		const formData = this.state.formData
-		let isSend = true
-		let status, file
-		if(formData.file) {
-			let data = new FormData()
-			data.append('file', formData.file)
-			data.append('npwp', formData.npwp)
-			data.append('kd_berkas', this.props.kd_berkas)
-			await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
-				method: 'post',
-				body: data
-			}).then(res => res.json())
-				.then(res => {
-					return file = res.file
-				})
-		}
-		if(this.state.isError) {
-			await swal(`${this.state.errMsg}. Pilih Status WP untuk menyimpan!`, {
-				buttons: {
-					cancel: 'Batal',
-					AKTIF: 'Aktif',
-					PINDAH: 'Pindah',
-					DE: 'DE'
-				}
-			})
-				.then(value => {
-					if(value !== null){
-						status = value
-					} else {
-						isSend = false
-					}
-				})
-		}
-		if(isSend) {
-			const body = {
-				query: `mutation {
-					berkas: addBerkas(input: {
-						kd_berkas: "${this.props.kd_berkas}"
-						lokasi: {
-							gudang: ${formData.gudang}
-							kd_lokasi: "${formData.kd_lokasi}"
-						}
-						pemilik: {
-							npwp: "${formData.npwp}"
-							nama_wp: "${formData.nama_wp}"
-							${ status ? `status: "${status}"` : `` }
-						}
-						urutan: ${formData.urutan}
-						${ file ? `file: "${file}"` : `` }
-						${ formData.ket_lain ? `ket_lain: "${ formData.ket_lain }"` : `` }
-					}) {
-						ket_berkas {
-							nama_berkas
-						}
-						pemilik {
-							npwp
-							nama_wp
-						}
-						urutan
-					}
-				}`
-			}
-			return fetchDataGQL(body)
-				.then(({data, errors, extensions}) => {
-					setToken(extensions)
-					if(errors) return handleErrors(errors)
-					const alert = document.querySelector('.alert')
-					alert.classList.remove('alert-danger')
-					alert.classList.add('alert-success')
-					alert.innerHTML = `${data.berkas.ket_berkas.nama_berkas} => Nama: ${data.berkas.pemilik.nama_wp}, NPWP: ${data.berkas.pemilik.npwp}`
-					alert.hidden = false
-					this.setState({
-						formData: { ...this.state.formData, npwp: '', nama_wp: '' },
-						disableNamaWP: false
-					})
-					document.querySelector('[name=npwp]').focus()
-					document.getElementById('file').value = ''
-				})
-				.catch(err => {
-					const alert = document.querySelector('.alert')
-					alert.classList.remove('alert-danger')
-					alert.classList.add('alert-success')
-					alert.innerHTML = this.state.errMsg
-					alert.hidden = true
-				})
-		}
-	}
+const IndukBerkas = props => {
+	const [disableNamaWP, setDisableNamaWP] = useState(false)
+	const [isError, setIsError] = useState(false)
+	const [errMsg, setErrMsg] = useState('')
+	const [formData, setFormData] = useState({ gudang: 1 })
 	
-	render() {
-		return(
-			<form method="post" onSubmit={ this.addBerkas }>
-				<div className="row">
-					<NPWPInput
-						width="5"
-						value={ this.state.formData.npwp }
-						onChange={ this.changeHandler }
-					/>
-					<NamaWPInput
-						width="7"
-						value={ this.state.formData.nama_wp }
-						disabled={ this.state.disableNamaWP }
-						onChange={ this.changeHandler }
-					/>
-					<GudangInput
-						width="5"
-						value={ this.state.formData.gudang }
-						onChange={ this.changeHandler }
-					/>
-					<KdLokasiInput
-						width="4"
-						value={ this.state.formData.kd_lokasi }
-						onChange={ this.changeHandler }
-					/>
-					<UrutanInput
-						width="3"
-						value={ this.state.formData.urutan }
-						onChange={ this.changeHandler }
-					/>
-					<FileInput
-						width="12"
-						onChange={ this.fileHandler }
-					/>
-					<KeteranganInput
-						width="12"
-						value={ this.state.formData.ket_lain }
-						onChange={ this.changeHandler }
-					/>
-					<ButtonSubmit
-						width="12"
-						float="right"
-					/>
-				</div>
-			</form>	
-		)
-	}
+	return(
+		<form onSubmit={ addBerkas.bind(this, { 
+				formData, kd_berkas: props.kd_berkas, isError, errMsg 
+				}, { setFormData }) }
+		>
+			<div className="row">
+				<NPWPInput
+					width="5"
+					value={ formData.npwp }
+					onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
+				/>
+				<NamaWPInput
+					width="7"
+					value={ formData.nama_wp }
+					disabled={ disableNamaWP }
+					onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
+				/>
+				<GudangInput
+					width="5"
+					value={ formData.gudang }
+					onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
+				/>
+				<KdLokasiInput
+					width="4"
+					value={ formData.kd_lokasi }
+					onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
+				/>
+				<UrutanInput
+					width="3"
+					value={ formData.urutan }
+					onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
+				/>
+				<FileInput
+					width="12"
+					onChange={ fileHandler.bind(this, formData, { setFormData }) }
+				/>
+				<KeteranganInput
+					width="12"
+					value={ formData.ket_lain }
+					onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
+				/>
+				<ButtonSubmit
+					width="12"
+					float="right"
+				/>
+			</div>
+		</form>	
+	)
 }
+
+export default IndukBerkas

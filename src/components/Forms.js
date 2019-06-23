@@ -163,7 +163,7 @@ export const KdLokasiInput = props =>
 
 export const MasaPajakInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Masa Pajak</label>
+		<label>Masa Pajak { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<input 
 				type="number"
@@ -182,7 +182,7 @@ export const MasaPajakInput = props =>
 
 export const TahunPajakInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Tahun Pajak</label>
+		<label>Tahun Pajak { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<input 
 				type="number" 
