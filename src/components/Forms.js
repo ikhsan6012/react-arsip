@@ -125,6 +125,26 @@ export const NoPBKInput = props =>
 		</div>
 	</div>
 
+export const TahunPBKInput = props => 
+	<div className={`form-group col-md-${props.width}`}>
+		<label>Tahun { props.required === false ? '' : <span className="text-danger">*</span> }</label>
+		<div className="input-group">
+			<input 
+				type="number"
+				name="tahun_pbk" 
+				className="form-control" 
+				min={ new Date().getFullYear() - 20 }
+				max={ new Date().getFullYear() }
+				placeholder={ new Date().getFullYear() }
+				pattern="\d*"
+				value={ props.value || '' }
+				onChange={ props.onChange }
+				required={ props.required || true }
+				disabled={ props.disabled || false }
+			/>
+		</div>
+	</div>
+
 export const GudangInput = props => 
 	<div className={`form-group col-md-${props.width}`}>
 		<label>Gudang { props.required === false ? '' : <span className="text-danger">*</span> }</label>

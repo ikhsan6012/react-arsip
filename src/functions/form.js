@@ -7,7 +7,7 @@ const errorHandler = ({ msg, npwp, formData }, {
 }) => {
 	setIsError(true)
 	setErrMsg(msg)
-	setDisableNamaWP(false)
+	if(setDisableNamaWP) setDisableNamaWP(false)
 	setFormData({ ...formData, npwp, nama_wp: '' })
 	console.error(msg)
 }
@@ -33,13 +33,13 @@ const checkNPWP = async ({ npwp, formData }, {
 			})
 			setFormData({ ...formData, npwp, nama_wp: data.wp.nama_wp })
 			setIsError(false)
-			setDisableNamaWP(true)
+			if(setDisableNamaWP) setDisableNamaWP(true)
 			setErrMsg('')
 		} catch (err) {
 			errorHandler(err.message, npwp)
 		}
 	} else {
-		setDisableNamaWP(false)
+		if(setDisableNamaWP) setDisableNamaWP(false)
 		setFormData({ ...formData, npwp, nama_wp: '' })
 	}
 }
@@ -50,7 +50,8 @@ export const changeHandler = (formData, {
 }, e) => {
 	const el = e.target
 	const name = el.name
-	const value = el.value.toUpperCase()
+	const value = name.match(/status_pbk/) ? el.value : el.value.toUpperCase()
+
 	if(name === 'npwp') return checkNPWP({ npwp: value, formData }, {
 		setIsError, setErrMsg, setDisableNamaWP, setFormData 
 	})
@@ -109,6 +110,8 @@ export const addBerkas = async ({ formData, kd_berkas, isError, errMsg }, { setF
 						nama_wp: "${formData.nama_wp}"
 						${ status ? `status: "${status}"` : `` }
 					}
+					${ formData.nomor_pbk ? `nomor_pbk: ${formData.nomor_pbk}` : `` }
+					${ formData.tahun_pbk ? `tahun_pbk: ${formData.tahun_pbk}` : `` }
 					${ formData.masa_pajak ? `masa_pajak: ${formData.masa_pajak}` : `` }
 					${ formData.tahun_pajak ? `tahun_pajak: ${formData.tahun_pajak}` : `` }
 					urutan: ${formData.urutan}
