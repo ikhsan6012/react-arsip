@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 
-export default props => {
+const Aksi = props => {
 	return(
 		<Fragment>
 			{ localStorage.getItem('token')
@@ -50,3 +50,4 @@ export default props => {
 		</Fragment>
 	)
 }
+export default Aksi

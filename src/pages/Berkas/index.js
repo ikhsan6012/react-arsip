@@ -12,5 +12,4 @@ const Berkas = () => {
 		</main>
 	)
 }
-
 export default Berkas

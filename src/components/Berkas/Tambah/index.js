@@ -2,7 +2,7 @@ import React from 'react'
 import CardHeader from './CardHeader'
 import TabPane from './TabPane'
 
-export default props => {
+const Tambah = props => {
 	return(
 		<section className="content">
 			<div className="container-fluid">
@@ -26,3 +26,4 @@ export default props => {
 		</section>
 	)
 }
+export default Tambah

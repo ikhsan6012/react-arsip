@@ -50,5 +50,4 @@ const Content = props => {
 		</section>
 	)
 }
-
 export default Content

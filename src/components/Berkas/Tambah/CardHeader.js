@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-export default props => {
+const CardHeader = props => {
 	const list = props.list.map(li => {
 		const link = `/berkas/tambah${ li.url }`
 		
@@ -22,3 +22,4 @@ export default props => {
 		</div>
 	)
 }
+export default CardHeader

@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default  props => {
+const Content = props => {
 	const detail = Object.entries(props.dataDetail.data).map((data, i) => {
 		if(data[0] !== 'lastUpdate'){
 			return(
@@ -106,3 +106,4 @@ export default  props => {
 		</section>
 	)
 }
+export default Content

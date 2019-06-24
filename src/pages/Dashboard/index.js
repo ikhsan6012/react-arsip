@@ -13,5 +13,4 @@ const Dashboard = () => {
 		</main>
 	)
 }
-
 export default Dashboard

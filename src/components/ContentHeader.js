@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-export default props => {
+const ContentHeader = props => {
 	const contentTitle = props.contentHeader.slice(-1)[0].name
 	
 	const items = props.contentHeader.map(item => {
@@ -32,3 +32,4 @@ export default props => {
 		</section>
 	)
 }
+export default ContentHeader

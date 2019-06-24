@@ -58,5 +58,4 @@ const IndukBerkas = props => {
 		</form>	
 	)
 }
-
 export default IndukBerkas

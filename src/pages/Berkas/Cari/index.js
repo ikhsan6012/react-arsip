@@ -1,22 +1,19 @@
-import React, { Component, Fragment } from 'react'
+import React, { Fragment } from 'react'
 import Content from '../../../components/Berkas/Cari'
 
 import ContentHeader from '../../../components/ContentHeader'
 
-export default class TambahBerkas extends Component {
-	state = {
-		contentHeader: [
-			{ name: "Berkas" },
-			{ name: "Cari Berkas" }
-		]
-	}
+const Cari = () => {
+	const contentHeader = [
+		{ name: "Berkas" },
+		{ name: "Cari Berkas" }
+	]
 
-	render() {
-		return(
-			<Fragment>
-				<ContentHeader contentHeader={ this.state.contentHeader }/>
-				<Content />
-			</Fragment>
-		)
-	}
+	return(
+		<Fragment>
+			<ContentHeader contentHeader={ contentHeader }/>
+			<Content />
+		</Fragment>
+	)
 }
+export default Cari

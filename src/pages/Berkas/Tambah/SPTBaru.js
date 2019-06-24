@@ -92,5 +92,4 @@ const SPTBaru = () => {
 		</form>	
 	)
 }
-
 export default SPTBaru
