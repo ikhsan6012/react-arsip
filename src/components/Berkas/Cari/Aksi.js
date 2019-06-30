@@ -1,9 +1,15 @@
 import React, { Fragment } from 'react'
+import { UploadDonwloadIcon, EditDocumentIcon, DeleteDocumentIcon } from './AksiIcons'
 
 const Aksi = props => {
 	return(
 		<Fragment>
-			{ localStorage.getItem('token')
+			<td className="text-center align-middle">
+				<UploadDonwloadIcon berkas={ props.berkas } />
+				<EditDocumentIcon berkas={ props.berkas } />
+				<DeleteDocumentIcon berkas={ props.berkas } />
+			</td>
+			{/* { localStorage.getItem('token')
 				? <td className="text-center align-middle">
 						{ props.berkas.file
 							? <React.Fragment>
@@ -42,11 +48,10 @@ const Aksi = props => {
 						}
 						<span className="mr-2">||</span>
 						<i style={{cursor: 'pointer'}} value={ props.berkas._id } onClick={ props.editBerkas } className="fa fa-pencil-square-o text-warning mr-2" title="Edit Berkas"></i>
-						{/* <i style={{cursor: 'pointer'}} value={ props.berkas._id } className="fa fa-exchange text-info mr-2" title="Transaksi"></i> */}
 						<i style={{cursor: 'pointer'}} value={ props.berkas._id } onClick={ props.deleteBerkas } className="fa fa-trash text-danger" title="Hapus Berkas"></i>
 					</td>
 				: null
-			}
+			} */}
 		</Fragment>
 	)
 }

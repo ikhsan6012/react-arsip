@@ -1,37 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
-import { fetchDataGQL, handleErrors, setToken } from '../../../functions/helpers'
 import { NamaPenerimaInput, TglTerimaInput, GudangInput, KdLokasiInput, KdBerkasInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit } from '../../../components/Forms'
 import { changeHandler, fileHandler,addBerkas } from '../../../functions/form'
 
 const SPTBaru = () => {
-	const [ket_berkas, setKet_berkas] = useState([])
 	const [isError, setIsError] = useState(false)
 	const [errMsg, setErrMsg] = useState('')
 	const [formData, setFormData] = useState({ gudang: 1, status_pbk: 'Terima' })
-
-	// Get Ket Berkas
-	useEffect(() => {
-		const getKetBerkas = async body => {
-			try {
-				const {data, errors, extensions} = await fetchDataGQL(body)
-				setToken(extensions)
-				if(errors) return handleErrors(errors)
-				setKet_berkas(data.ket_berkas.filter(data => !data.kd_berkas.match(/(induk|pindah|pkp|sertel|pbk)/i)))
-			} catch (err) {
-				setIsError(true)
-				setErrMsg(err)
-			}
-		}
-		const body = { query: `{
-			ket_berkas: ketBerkases {
-				_id
-				kd_berkas
-				nama_berkas
-			}
-		}`}
-		getKetBerkas(body)
-	}, [])
+	const ket_berkas = JSON.parse(localStorage.getItem('ket_berkas')).filter(data => !data.kd_berkas.match(/(induk|pindah|pkp|sertel|pbk)/i))
 
 	// Options Jenis Berkas
 	const options = ket_berkas.map(opt => 
