@@ -1,18 +1,31 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { NPWPInput, NamaWPInput, GudangInput, KdLokasiInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit } from '../../../components/Forms'
 import { changeHandler, fileHandler, addBerkas } from '../../../functions/form'
 
 const IndukBerkas = props => {
+	const [formData, setFormData] = useState({})
+	const [file, setFile] = useState(null)
 	const [disableNamaWP, setDisableNamaWP] = useState(false)
 	const [isError, setIsError] = useState(false)
 	const [errMsg, setErrMsg] = useState('')
-	const [formData, setFormData] = useState({ gudang: 1 })
+
+	useEffect(() => {
+		const { npwp, nama_wp, gudang, kd_lokasi, urutan, ket_lain } = JSON.parse(localStorage.getItem('formData')) || { gudang: 1 }
+		const fd = { npwp, nama_wp, gudang, kd_lokasi, urutan, ket_lain }
+		if(fd){
+			setFormData(fd)
+			if(fd.nama_wp) setDisableNamaWP(true)
+		}
+		setTimeout(() => {
+			document.querySelector('[name=npwp]').focus()
+		}, 100)
+	}, [])
 	
 	return(
-		<form onSubmit={ addBerkas.bind(this, { 
-				formData, kd_berkas: props.kd_berkas, isError, errMsg 
-				}, { setFormData }) }
+		<form onSubmit={ addBerkas.bind(this, {
+			formData, kd_berkas: props.kd_berkas, file, isError, errMsg 
+			}, { setFormData }) }
 		>
 			<div className="row">
 				<NPWPInput
@@ -43,7 +56,7 @@ const IndukBerkas = props => {
 				/>
 				<FileInput
 					width="12"
-					onChange={ fileHandler.bind(this, formData, { setFormData }) }
+					onChange={ fileHandler.bind(this, { setFile }) }
 				/>
 				<KeteranganInput
 					width="12"

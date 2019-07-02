@@ -1,13 +1,25 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { NamaPenerimaInput, TglTerimaInput, GudangInput, KdLokasiInput, KdBerkasInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit } from '../../../components/Forms'
 import { changeHandler, fileHandler,addBerkas } from '../../../functions/form'
 
 const SPTBaru = () => {
+	const [formData, setFormData] = useState({})
+	const [file, setFile] = useState(null)
 	const [isError, setIsError] = useState(false)
 	const [errMsg, setErrMsg] = useState('')
-	const [formData, setFormData] = useState({ gudang: 1, status_pbk: 'Terima' })
 	const ket_berkas = JSON.parse(localStorage.getItem('ket_berkas')).filter(data => !data.kd_berkas.match(/(induk|pindah|pkp|sertel|pbk)/i))
+
+	useEffect(() => {
+		const { gudang, kd_lokasi, kd_berkas, nama_penerima, tgl_terima, urutan, ket_lain } = JSON.parse(localStorage.getItem('formData'))
+		const fd = { gudang: gudang || 1, kd_lokasi, kd_berkas, nama_penerima, tgl_terima, urutan, ket_lain }
+		if(fd){
+			setFormData(fd)
+		}
+		setTimeout(() => {
+			document.querySelector('[name=gudang]').focus()
+		}, 100)
+	}, [])
 
 	// Options Jenis Berkas
 	const options = ket_berkas.map(opt => 
@@ -16,7 +28,7 @@ const SPTBaru = () => {
 
 	return(
 		<form onSubmit={ addBerkas.bind(this, { 
-				formData, kd_berkas: formData.kd_berkas, isError, errMsg 
+				formData, kd_berkas: formData.kd_berkas, file, isError, errMsg 
 				}, { setFormData }) }
 		>
 			<div className="row">
@@ -53,7 +65,7 @@ const SPTBaru = () => {
 				/>
 				<FileInput
 					width="12"
-					onChange={ fileHandler.bind(this, formData, { setFormData }) }
+					onChange={ fileHandler.bind(this, { setFile }) }
 				/>
 				<KeteranganInput
 					width="12"

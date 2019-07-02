@@ -1,14 +1,27 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { NPWPInput, NamaWPInput, GudangInput, KdLokasiInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit, KdBerkasInput, MasaPajakInput, TahunPajakInput } from '../../../components/Forms'
 import { changeHandler, fileHandler,addBerkas } from '../../../functions/form'
 
 const LainLain = () => {
+	const [formData, setFormData] = useState({})
+	const [file, setFile] = useState(null)
 	const [disableNamaWP, setDisableNamaWP] = useState(false)
 	const [isError, setIsError] = useState(false)
 	const [errMsg, setErrMsg] = useState('')
-	const [formData, setFormData] = useState({ gudang: 1 })
 	const ket_berkas = JSON.parse(localStorage.getItem('ket_berkas')).filter(data => !data.kd_berkas.match(/(induk|pindah|pkp|sertel|pbk)/i))
+
+	useEffect(() => {
+		const { gudang, kd_lokasi, npwp, nama_wp, kd_berkas, masa_pajak, tahun_pajak, urutan, ket_lain } = JSON.parse(localStorage.getItem('formData'))
+		const fd = { gudang, kd_lokasi, npwp, nama_wp, kd_berkas, masa_pajak, tahun_pajak, urutan, ket_lain }
+		if(fd){
+			setFormData(fd)
+			if(fd.nama_wp) setDisableNamaWP(true)
+		}
+		setTimeout(() => {
+			document.querySelector('[name=gudang]').focus()
+		}, 100)
+	}, [])
 
 	// Options Jenis Berkas
 	const options = ket_berkas.map(opt => 
@@ -17,7 +30,7 @@ const LainLain = () => {
 
 	return(
 		<form onSubmit={ addBerkas.bind(this, { 
-				formData, kd_berkas: formData.kd_berkas, isError, errMsg 
+				formData, kd_berkas: formData.kd_berkas, file, isError, errMsg 
 				}, { setFormData }) }
 		>
 			<div className="row">
@@ -51,11 +64,13 @@ const LainLain = () => {
 				<MasaPajakInput
 					width="4"
 					value={ formData.masa_pajak }
+					required={ formData.kd_berkas ? !formData.kd_berkas.match(/lain/i) : true }
 					onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
 				/>
 				<TahunPajakInput
 					width="5"
 					value={ formData.tahun_pajak }
+					required={ formData.kd_berkas ? !formData.kd_berkas.match(/lain/i) : true }
 					onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
 				/>
 				<UrutanInput
@@ -65,7 +80,7 @@ const LainLain = () => {
 				/>
 				<FileInput
 					width="12"
-					onChange={ fileHandler.bind(this, formData, { setFormData }) }
+					onChange={ fileHandler.bind(this, { setFile }) }
 				/>
 				<KeteranganInput
 					width="12"

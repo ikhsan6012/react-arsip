@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 
 import ContentHeader from '../../../components/ContentHeader'
 import Content from '../../../components/Berkas/Tambah'
@@ -19,6 +19,12 @@ const TambahBerkas = () => {
 		{ name: "PBK", url: "/pbk", component: PBK, kd_berkas: "PBK" },
 		{ name: "Lain-Lain", url: "/lain-lain", component: LainLain }
 	]
+
+	useEffect(() => {
+		return () => {
+			localStorage.removeItem('formData')
+		}
+	}, [])
 
 	return (
 		<Fragment>

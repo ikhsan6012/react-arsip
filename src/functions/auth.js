@@ -38,6 +38,7 @@ export const logout = () => {
     icon: 'success'
   }).then(() => {
     localStorage.removeItem('token')
+    localStorage.removeItem('formData')
     window.location.href = process.env.REACT_APP_HOST
   })
 }

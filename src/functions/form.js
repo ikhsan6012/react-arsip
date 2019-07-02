@@ -2,18 +2,19 @@ import swal from 'sweetalert'
 import { fetchDataGQL, setToken, handleErrors } from './helpers'
 
 // Handle WP Error
-const errorHandler = ({ msg, npwp, formData }, {
+const errorHandler = ({ msg, npwp, formData, fdls }, {
 	setIsError, setErrMsg, setDisableNamaWP, setFormData
 }) => {
-	setIsError(true)
-	setErrMsg(msg)
+	if(setIsError) setIsError(true)
+	if(setErrMsg) setErrMsg(msg)
 	if(setDisableNamaWP) setDisableNamaWP(false)
+	localStorage.setItem('formData', JSON.stringify({ ...fdls, npwp }))
 	setFormData({ ...formData, npwp, nama_wp: '' })
 	console.error(msg)
 }
 
 // Check NPWP
-const checkNPWP = async ({ npwp, formData }, {
+const checkNPWP = async ({ npwp, formData, fdls }, {
 	setIsError, setErrMsg, setDisableNamaWP, setFormData 
 }) => {
 	if(npwp.replace(/[_.-]/g, '').length === 15){
@@ -28,18 +29,22 @@ const checkNPWP = async ({ npwp, formData }, {
 		try {
 			const {data, extensions} = await fetchDataGQL(body)
 			setToken(extensions)
-			if(!data.wp) return errorHandler({ msg: 'NPWP Tidak Ditemukan', npwp, formData }, {
-				setIsError, setErrMsg, setDisableNamaWP, setFormData
-			})
+			if(!data.wp) {
+				return errorHandler({ msg: 'NPWP Tidak Ditemukan', npwp, formData, fdls }, {
+					setIsError, setErrMsg, setDisableNamaWP, setFormData
+				})
+			}
+			localStorage.setItem('formData', JSON.stringify({ ...fdls, npwp, nama_wp: data.wp.nama_wp }))
 			setFormData({ ...formData, npwp, nama_wp: data.wp.nama_wp })
-			setIsError(false)
+			if(setIsError) setIsError(false)
 			if(setDisableNamaWP) setDisableNamaWP(true)
-			setErrMsg('')
+			if(setErrMsg) setErrMsg('')
 		} catch (err) {
 			errorHandler(err.message, npwp)
 		}
 	} else {
 		if(setDisableNamaWP) setDisableNamaWP(false)
+		localStorage.setItem('formData', JSON.stringify({ ...fdls, npwp, nama_wp: '' }))
 		setFormData({ ...formData, npwp, nama_wp: '' })
 	}
 }
@@ -51,32 +56,35 @@ export const changeHandler = (formData, {
 	const el = e.target
 	const name = el.name
 	const value = name.match(/status_pbk/) ? el.value : el.value.toUpperCase()
-
-	if(name === 'npwp') return checkNPWP({ npwp: value, formData }, {
+	const fdls = JSON.parse(localStorage.getItem('formData'))
+	if(name === 'npwp') return checkNPWP({ npwp: value, formData, fdls }, {
 		setIsError, setErrMsg, setDisableNamaWP, setFormData 
 	})
+	localStorage.setItem('formData', JSON.stringify({ ...fdls, [name]: value }))
 	setFormData({ ...formData, [name]: value })
 }
 
 // Handle File Change
-export const fileHandler = (formData, { setFormData }, e) => {
+export const fileHandler = ({ setFile }, e) => {
 	let file = e.target.files[0]
 	if(file.type !== 'application/pdf'){
 		return e.target.classList.add('invalid')
 	}
 	e.target.classList.remove('invalid')
-	setFormData({ ...formData, file })
+	setFile(file)
 }
 
-// Save Data
-export const addBerkas = async ({ formData, kd_berkas, isError, errMsg }, { setFormData }, e) => {
+// Add Berkas
+export const addBerkas = async ({ formData, kd_berkas, file, isError, errMsg }, { setFormData }, e) => {
 	e.preventDefault()
+	const alert = document.querySelector('.alert')
+	alert.hidden = true
 	let isSend = true
-	let status, file
-	if(formData.file) {
+	let status
+	if(file) {
 		const data = new FormData()
-		data.append('file', formData.file)
-		data.append('npwp', formData.npwp)
+		data.append('file', file)
+		if(formData.npwp) data.append('npwp', formData.npwp)
 		data.append('kd_berkas', kd_berkas)
 		const res = await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
 			method: 'post',
@@ -100,54 +108,76 @@ export const addBerkas = async ({ formData, kd_berkas, isError, errMsg }, { setF
 		const body = {
 			query: `mutation {
 				berkas: addBerkas(input: {
-					kd_berkas: "${kd_berkas}"
+					kd_berkas: "${ kd_berkas }"
 					lokasi: {
-						gudang: ${formData.gudang}
-						kd_lokasi: "${formData.kd_lokasi}"
+						gudang: ${ formData.gudang }
+						kd_lokasi: "${ formData.kd_lokasi }"
 					}
-					pemilik: {
-						npwp: "${formData.npwp}"
-						nama_wp: "${formData.nama_wp}"
-						${ status ? `status: "${status}"` : `` }
-					}
-					${ formData.nomor_pbk ? `nomor_pbk: ${formData.nomor_pbk}` : `` }
-					${ formData.tahun_pbk ? `tahun_pbk: ${formData.tahun_pbk}` : `` }
-					${ formData.masa_pajak ? `masa_pajak: ${formData.masa_pajak}` : `` }
-					${ formData.tahun_pajak ? `tahun_pajak: ${formData.tahun_pajak}` : `` }
-					urutan: ${formData.urutan}
-					${ file ? `file: "${file}"` : `` }
+					${ formData.npwp ? `pemilik: {
+						npwp: "${ formData.npwp }"
+						nama_wp: "${ formData.nama_wp }"
+						${ status ? `status: "${ status }"` : `` }
+					}` : `` }
+					${ formData.nama_penerima ? `penerima: {
+						nama_penerima: "${ formData.nama_penerima }"
+						tgl_terima: "${ formData.tgl_terima }"
+						${ status ? `status: "${ status }"` : `` }
+					}` : `` }
+					${ formData.status_pbk ? `status_pbk: "${ formData.status_pbk }"` : `` }
+					${ formData.nomor_pbk ? `nomor_pbk: ${ formData.nomor_pbk }` : `` }
+					${ formData.tahun_pbk ? `tahun_pbk: ${ formData.tahun_pbk }` : `` }
+					${ formData.masa_pajak ? `masa_pajak: ${ formData.masa_pajak }` : `` }
+					${ formData.tahun_pajak ? `tahun_pajak: ${ formData.tahun_pajak }` : `` }
+					urutan: ${ formData.urutan }
+					${ file ? `file: "${ file }"` : `` }
 					${ formData.ket_lain ? `ket_lain: "${ formData.ket_lain }"` : `` }
 				}) {
-					ket_berkas {
+					_id
+					ket_berkas{
+						_id
+						kd_berkas
 						nama_berkas
 					}
-					pemilik {
+					pemilik{
+						_id
 						npwp
 						nama_wp
 					}
 					masa_pajak
 					tahun_pajak
+					penerima{
+						_id
+						nama_penerima
+						tgl_terima
+					}
+					status_pbk
+					nomor_pbk
+					tahun_pbk
 					urutan
+					ket_lain
 				}
 			}`
 		}
 		try {
-			const {data, errors, extensions} = await fetchDataGQL(body)
+			const { data, errors, extensions } = await fetchDataGQL(body)
 			setToken(extensions)
 			if(errors) return handleErrors(errors)
-			const alert = document.querySelector('.alert')
 			alert.classList.remove('alert-danger')
 			alert.classList.add('alert-success')
-			alert.innerHTML = `${data.berkas.ket_berkas.nama_berkas} => Nama: ${data.berkas.pemilik.nama_wp}, NPWP: ${data.berkas.pemilik.npwp}`
+			alert.innerHTML = data.berkas.pemilik
+				? `${ data.berkas.ket_berkas.nama_berkas } => Nama: ${ data.berkas.pemilik.nama_wp }, NPWP: ${ data.berkas.pemilik.npwp }`
+				: `${ data.berkas.ket_berkas.nama_berkas } => Penerima: ${ data.berkas.penerima.nama_penerima }, Tanggal Terima: ${ data.berkas.penerima.nama_penerima }`
 			alert.hidden = false
-			setFormData({ ...formData, npwp: '', nama_wp: '', file: null })
-			document.querySelector('[name=npwp]').focus()
+			setFormData({ ...formData, npwp: '', nama_wp: '' })
+			data.berkas.pemilik
+				? document.querySelector('[name=npwp]').focus()
+				: document.querySelector('[name=nama_penerima]').focus()
 			document.getElementById('file').value = ''
 		} catch (err) {
 			const alert = document.querySelector('.alert')
-			alert.classList.remove('alert-danger')
-			alert.classList.add('alert-success')
-			alert.innerHTML = errMsg
+			alert.classList.add('alert-danger')
+			alert.classList.remove('alert-success')
+			alert.innerHTML = err
 			alert.hidden = true
 		}
 	}
