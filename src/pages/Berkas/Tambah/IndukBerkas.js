@@ -11,8 +11,8 @@ const IndukBerkas = props => {
 	const [errMsg, setErrMsg] = useState('')
 
 	useEffect(() => {
-		const { npwp, nama_wp, gudang, kd_lokasi, urutan, ket_lain } = JSON.parse(localStorage.getItem('formData')) || { gudang: 1 }
-		const fd = { npwp, nama_wp, gudang, kd_lokasi, urutan, ket_lain }
+		const { npwp, nama_wp, gudang, kd_lokasi, urutan, ket_lain } = JSON.parse(localStorage.getItem('formData')) || {}
+		const fd = { npwp, nama_wp, gudang: gudang || 1, kd_lokasi, urutan, ket_lain }
 		if(fd){
 			setFormData(fd)
 			if(fd.nama_wp) setDisableNamaWP(true)
@@ -25,7 +25,7 @@ const IndukBerkas = props => {
 	return(
 		<form onSubmit={ addBerkas.bind(this, {
 			formData, kd_berkas: props.kd_berkas, file, isError, errMsg 
-			}, { setFormData }) }
+			}, { setFormData, setFile }) }
 		>
 			<div className="row">
 				<NPWPInput

@@ -12,8 +12,8 @@ const LainLain = () => {
 	const ket_berkas = JSON.parse(localStorage.getItem('ket_berkas')).filter(data => !data.kd_berkas.match(/(induk|pindah|pkp|sertel|pbk)/i))
 
 	useEffect(() => {
-		const { gudang, kd_lokasi, npwp, nama_wp, kd_berkas, masa_pajak, tahun_pajak, urutan, ket_lain } = JSON.parse(localStorage.getItem('formData'))
-		const fd = { gudang, kd_lokasi, npwp, nama_wp, kd_berkas, masa_pajak, tahun_pajak, urutan, ket_lain }
+		const { gudang, kd_lokasi, npwp, nama_wp, kd_berkas, masa_pajak, tahun_pajak, urutan, ket_lain } = JSON.parse(localStorage.getItem('formData')) || {}
+		const fd = { gudang: gudang || 1, kd_lokasi, npwp, nama_wp, kd_berkas, masa_pajak, tahun_pajak, urutan, ket_lain }
 		if(fd){
 			setFormData(fd)
 			if(fd.nama_wp) setDisableNamaWP(true)
@@ -31,7 +31,7 @@ const LainLain = () => {
 	return(
 		<form onSubmit={ addBerkas.bind(this, { 
 				formData, kd_berkas: formData.kd_berkas, file, isError, errMsg 
-				}, { setFormData }) }
+				}, { setFormData, setFile }) }
 		>
 			<div className="row">
 				<GudangInput

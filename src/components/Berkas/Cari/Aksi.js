@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { UploadDonwloadIcon, EditDocumentIcon, DeleteDocumentIcon } from './AksiIcons'
+import { UploadDonwloadIcon, EditDocumentIcon, DeleteDocumentIcon, EditBerkas, DeleteBerkas } from './AksiIcons'
 
 const Aksi = props => {
 	return(
@@ -8,6 +8,9 @@ const Aksi = props => {
 				<UploadDonwloadIcon berkas={ props.berkas } />
 				<EditDocumentIcon berkas={ props.berkas } />
 				<DeleteDocumentIcon berkas={ props.berkas } />
+				<span className="mr-2">||</span>
+				<EditBerkas berkas={ props.berkas }/>
+				<DeleteBerkas berkas={ props.berkas }/>
 			</td>
 			{/* { localStorage.getItem('token')
 				? <td className="text-center align-middle">

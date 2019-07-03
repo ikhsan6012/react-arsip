@@ -7,12 +7,12 @@ const Cari = () => {
 	const ket_berkas = JSON.parse(localStorage.getItem('ket_berkas'))
 
 	// Handle Hasil
-	const handleHasil = async ({ wps, totalWPs, berkases, penerimas }) => {
+	const handleHasil = async ({ wps, totalWPs, penerimas, totalPenerimas, berkases }) => {
 		setHasil('')
 		if(wps){
-			const Result = await import('./HasilWP')
+			const { HasilWP } = await import('./Hasil')
 			return setHasil(
-				<Result.default
+				<HasilWP
 					wps={ wps }
 					total={ totalWPs }
 					ket_berkas={ ket_berkas }
@@ -20,19 +20,20 @@ const Cari = () => {
 			)
 		}
 		if(berkases){
-			const Result = await import('./HasilLokasi')
+			const Result = await import('./ListBerkas')
 			return setHasil(
-				<Result.default
-					berkas={ berkases }
+				<Result.ListBerkasLokasi
+					berkases={ berkases }
 					ket_berkas={ ket_berkas }
 				/>
 			)
 		}
 		if(penerimas){
-			const Result = await import('./HasilPenerima')
+			const Result = await import('./Hasil')
 			return setHasil(
-				<Result.default
-					penerima={ penerimas }
+				<Result.HasilPenerima
+					penerimas={ penerimas }
+					total={ totalPenerimas || 1 }
 					ket_berkas={ ket_berkas }
 				/>
 			)

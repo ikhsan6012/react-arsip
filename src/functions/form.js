@@ -55,7 +55,9 @@ export const changeHandler = (formData, {
 }, e) => {
 	const el = e.target
 	const name = el.name
-	const value = name.match(/status_pbk/) ? el.value : el.value.toUpperCase()
+	let value
+	if(name.match(/status_pbk/)) value = el.value
+	else value = el.value.toUpperCase()
 	const fdls = JSON.parse(localStorage.getItem('formData'))
 	if(name === 'npwp') return checkNPWP({ npwp: value, formData, fdls }, {
 		setIsError, setErrMsg, setDisableNamaWP, setFormData 
@@ -75,24 +77,12 @@ export const fileHandler = ({ setFile }, e) => {
 }
 
 // Add Berkas
-export const addBerkas = async ({ formData, kd_berkas, file, isError, errMsg }, { setFormData }, e) => {
+export const addBerkas = async ({ formData, kd_berkas, file, isError, errMsg }, { setFormData, setFile }, e) => {
 	e.preventDefault()
 	const alert = document.querySelector('.alert')
 	alert.hidden = true
 	let isSend = true
 	let status
-	if(file) {
-		const data = new FormData()
-		data.append('file', file)
-		if(formData.npwp) data.append('npwp', formData.npwp)
-		data.append('kd_berkas', kd_berkas)
-		const res = await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
-			method: 'post',
-			body: data
-		})
-		const json = await res.json()
-		file = json.file
-	}
 	if(isError) {
 		const value = await swal(`${errMsg}. Pilih Status WP untuk menyimpan!`, {
 			buttons: {
@@ -105,6 +95,18 @@ export const addBerkas = async ({ formData, kd_berkas, file, isError, errMsg }, 
 		value !== null ? status = value : isSend = false
 	}
 	if(isSend) {
+		if(file) {
+			const data = new FormData()
+			data.append('file', file)
+			if(formData.npwp) data.append('npwp', formData.npwp)
+			data.append('kd_berkas', kd_berkas)
+			const res = await fetch(`${process.env.REACT_APP_API_SERVER}/upload`, {
+				method: 'post',
+				body: data
+			})
+			const json = await res.json()
+			file = json.file
+		}
 		const body = {
 			query: `mutation {
 				berkas: addBerkas(input: {
@@ -130,7 +132,7 @@ export const addBerkas = async ({ formData, kd_berkas, file, isError, errMsg }, 
 					${ formData.tahun_pajak ? `tahun_pajak: ${ formData.tahun_pajak }` : `` }
 					urutan: ${ formData.urutan }
 					${ file ? `file: "${ file }"` : `` }
-					${ formData.ket_lain ? `ket_lain: "${ formData.ket_lain }"` : `` }
+					${ formData.ket_lain ? `ket_lain: """${ formData.ket_lain }"""` : `` }
 				}) {
 					_id
 					ket_berkas{
@@ -173,6 +175,7 @@ export const addBerkas = async ({ formData, kd_berkas, file, isError, errMsg }, 
 				? document.querySelector('[name=npwp]').focus()
 				: document.querySelector('[name=nama_penerima]').focus()
 			document.getElementById('file').value = ''
+			setFile(null)
 		} catch (err) {
 			const alert = document.querySelector('.alert')
 			alert.classList.add('alert-danger')

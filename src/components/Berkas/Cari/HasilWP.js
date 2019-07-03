@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react'
-import BerkasItem from './BerkasItem'
+import BerkasItem from './ListBerkas'
 import { PG } from '../../Pagination'
 import { pageHandler, getBerkas } from '../../../functions/cari'
 
@@ -40,10 +40,10 @@ const HasilWP = props => {
 					<table className="table table-striped table-bordered table-hover">
 						<thead>
 							<tr>
-								<th width="10px" className="text-center align-middle">No</th>
-								<th width="200px" className="text-center align-middle">NPWP</th>
+								<th className="text-center align-middle">No</th>
+								<th className="text-center align-middle">NPWP</th>
 								<th className="text-center">Nama</th>
-								<th width="100px" className="text-center">Aksi</th>
+								<th className="text-center">Aksi</th>
 							</tr>
 						</thead>
 						<tbody>

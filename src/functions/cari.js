@@ -33,19 +33,24 @@ export const submitHandler = async ({ kriteria, props }, e) => {
 					nama_berkas
 				}
 				pemilik {
+					_id
 					npwp
 					nama_wp
 				}
-				penerima{
+				penerima {
+					_id
 					nama_penerima
 					tgl_terima
 				}
+				masa_pajak
+				tahun_pajak
+				status_pbk
+				nomor_pbk
+				tahun_pbk
 				lokasi {
 					gudang
 					kd_lokasi
 				}
-				masa_pajak
-				tahun_pajak
 				urutan
 				file
 				ket_lain
@@ -73,10 +78,11 @@ export const pageHandler = page => {
 }
 
 // Get Berkas
-export const getBerkas = async ({ setBerkases, wps, setWPs }, e) => {
+export const getBerkas = async ({ setBerkases, wps, setWPs, penerimas, setPenerimas }, e) => {
 	const id = e.target.dataset.id
+	const by = wps ? 'pemilik' : 'penerima'
 	const body = {query: `{
-		berkases(by: pemilik, id: "${id}"){
+		berkases(by: ${ by }, id: "${id}"){
 			_id
 			ket_berkas {
 				kd_berkas
@@ -105,10 +111,11 @@ export const getBerkas = async ({ setBerkases, wps, setWPs }, e) => {
 			file
 			ket_lain
 		}
-}`}
+	}`}
 	const { data, errors, extensions } = await fetchDataGQL(body)
 	setToken(extensions)
 	if(errors) return handleErrors(errors)
-	setWPs(wps.filter(wp => wp._id === id))
 	setBerkases(data.berkases)
+	if(wps) return setWPs(wps.filter(wp => wp._id === id))
+	if(penerimas) return setPenerimas(penerimas.filter(p => p._id === id))
 }

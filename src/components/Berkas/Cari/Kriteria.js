@@ -1,10 +1,14 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import InputMask from 'react-input-mask'
 
 import { changeHandler, submitHandler } from '../../../functions/cari'
 
 const Kriteria = props => {
 	const [kriteria, setKriteria] = useState('npwp')
+
+	useEffect(() => {
+		document.querySelector('[name=kriteria]').focus()
+	}, [])
 
 	const NPWPInput =
 		<InputMask 
@@ -25,14 +29,14 @@ const Kriteria = props => {
 			type="text" 
 			placeholder="Nama WP" 
 			pattern="[A-Z0-9 ]{3,}"
+			required
 			onChange={ changeHandler }
 		/>
 
 	const LokasiInput = 
 		<Fragment>
-			<select id="gudang" className="form-control col-md-2">
-				<option hidden>Gudang</option>
-				<option value="1">1</option>
+			<select id="gudang" className="form-control col-md-2" required>
+				<option defaultValue="1">1</option>
 				<option value="2">2</option>
 			</select>
 			<input 
@@ -41,6 +45,7 @@ const Kriteria = props => {
 				type="text" 
 				placeholder="Lokasi" 
 				pattern="\w{1,2}\d{4}"
+				required
 				onChange={ changeHandler }
 			/>
 		</Fragment>

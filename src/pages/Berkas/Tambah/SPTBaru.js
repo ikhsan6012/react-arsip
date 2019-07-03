@@ -11,7 +11,7 @@ const SPTBaru = () => {
 	const ket_berkas = JSON.parse(localStorage.getItem('ket_berkas')).filter(data => !data.kd_berkas.match(/(induk|pindah|pkp|sertel|pbk)/i))
 
 	useEffect(() => {
-		const { gudang, kd_lokasi, kd_berkas, nama_penerima, tgl_terima, urutan, ket_lain } = JSON.parse(localStorage.getItem('formData'))
+		const { gudang, kd_lokasi, kd_berkas, nama_penerima, tgl_terima, urutan, ket_lain } = JSON.parse(localStorage.getItem('formData')) || {}
 		const fd = { gudang: gudang || 1, kd_lokasi, kd_berkas, nama_penerima, tgl_terima, urutan, ket_lain }
 		if(fd){
 			setFormData(fd)
@@ -29,7 +29,7 @@ const SPTBaru = () => {
 	return(
 		<form onSubmit={ addBerkas.bind(this, { 
 				formData, kd_berkas: formData.kd_berkas, file, isError, errMsg 
-				}, { setFormData }) }
+				}, { setFormData, setFile }) }
 		>
 			<div className="row">
 				<GudangInput
