@@ -91,11 +91,11 @@ export const EditBerkas = ({ berkas }) => {
 			setTimeout(() => {
 				if(success){
 					const kriteria = document.querySelector('[name=kriteria]').value
-					if(kriteria.match(/lokasi/i)) return document.querySelector('#cariKriteria').click()
-					else if(kriteria.match(/npwp|nama_wp/)) return document.querySelector(`button[data-id="${ berkas.pemilik._id }"]`).click()
-					else if(kriteria.match(/penerima/)) return document.querySelector(`button[data-id="${ berkas.penerima._id }"]`).click()
+					if(kriteria.match(/lokasi/i)) document.querySelector('#cariKriteria').click()
+					else if(kriteria.match(/npwp|nama_wp/)) document.querySelector(`button[data-id="${ berkas.pemilik._id }"]`).click()
+					else if(kriteria.match(/penerima/)) document.querySelector(`button[data-id="${ berkas.penerima._id }"]`).click()
 				}
-				else setModalEdit('')
+				setModalEdit('')
 			}, 150)
 		}
 	}

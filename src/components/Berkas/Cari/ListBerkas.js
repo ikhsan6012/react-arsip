@@ -1,5 +1,6 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import Aksi from './Aksi'
+import { setComplete } from '../../../functions/cari'
 
 export const ListBerkasWP = ({ berkases }) => {
 	// List Berkas
@@ -51,6 +52,9 @@ export const ListBerkasWP = ({ berkases }) => {
 }
 
 export const ListBerkasLokasi = ({ berkases }) => {
+	const [isComplete, setIsComplete] = useState(berkases[0].lokasi.completed)
+	const lokasi = berkases[0].lokasi._id
+
 	// List Berkas
 	const berkas = berkases.length ? berkases.map((b, i) =>
 		<tr key={ b._id }>
@@ -70,19 +74,24 @@ export const ListBerkasLokasi = ({ berkases }) => {
 	
 	return(
 		<div className="card-body">
+			<div className="pull-right mb-3">
+				<button className={`btn btn-${ isComplete ? 'danger' : 'primary' }`} onClick={ setComplete.bind(this, lokasi, !isComplete, setIsComplete) }>
+					{ isComplete ? 'Tandai Belum Selesai' : 'Tandai Selesai' }
+				</button>
+			</div>
 			<div className="table-responsive">
 				<table className="table table-striped table-bordered table-hover">
 					<thead>
 						<tr>
 							<th className="text-center align-middle no">No</th>
 							<th className="text-center align-middle" style={{ minWidth: "200px" }}>Jenis Berkas</th>
-							<th className="text-center align-middle" style={{ minWidth: "150px" }}>NPWP / Nama</th>
-							<th className="text-center align-middle" style={{ maxWidth: "50px" }}>Masa / Tahun</th>
+							<th className="text-center align-middle" style={{ minWidth: "145px" }}>NPWP / Nama</th>
+							<th className="text-center align-middle" style={{ minWidth: "65px" }}>Masa / Tahun</th>
 							<th className="text-center align-middle" style={{ minWidth: "150px" }}>Penerima / Tanggal</th>
-							<th className="align-middle text-center" style={{ minWidth: "125px" }}>Pemindahbukuan</th>
+							<th className="text-center align-middle" style={{ minWidth: "125px" }}>Pemindahbukuan</th>
 							<th className="text-center align-middle" style={{ minWidth: "25px" }}>Urutan</th>
 							<th className="text-center align-middle">Keterangan</th>
-							<th className="text-center align-middle" style={{ minWidth: "100px" }}>Aksi</th>
+							<th className="text-center align-middle" style={{ minWidth: "150px" }}>Aksi</th>
 						</tr>
 					</thead>
 					<tbody>

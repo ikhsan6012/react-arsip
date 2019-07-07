@@ -1,4 +1,5 @@
 import { fetchDataGQL, setToken, handleErrors } from './helpers'
+import swal from 'sweetalert';
 
 // Set Value To Uppercase
 export const changeHandler = e => {
@@ -29,6 +30,7 @@ export const submitHandler = async ({ kriteria, props }, e) => {
 			berkases(by: lokasi, gudang: ${ formData.gudang }, kd_lokasi: "${ formData.kd_lokasi }") {
 				_id
 				ket_berkas {
+					_id
 					kd_berkas
 					nama_berkas
 				}
@@ -48,8 +50,11 @@ export const submitHandler = async ({ kriteria, props }, e) => {
 				nomor_pbk
 				tahun_pbk
 				lokasi {
+					_id
 					gudang
 					kd_lokasi
+					completed
+					time_completed
 				}
 				urutan
 				file
@@ -85,6 +90,7 @@ export const getBerkas = async ({ setBerkases, wps, setWPs, penerimas, setPeneri
 		berkases(by: ${ by }, id: "${id}"){
 			_id
 			ket_berkas {
+				_id
 				kd_berkas
 				nama_berkas
 			}
@@ -104,8 +110,11 @@ export const getBerkas = async ({ setBerkases, wps, setWPs, penerimas, setPeneri
 			nomor_pbk
 			tahun_pbk
 			lokasi {
+				_id
 				gudang
 				kd_lokasi
+				completed
+				time_completed
 			}
 			urutan
 			file
@@ -150,5 +159,38 @@ export const handleBtnFocus = ({ key, ctrlKey }) => {
 	else {
 		if(isActive === 0) return listElement[listElement.length - 1].focus()
 		return listElement[isActive - 1].focus()
+	}
+}
+
+export const setComplete = async (lokasi, isComplete, setIsComplete) => {
+	try {
+		const isSend = await swal('Apakah Anda Yakin?', {
+			icon: 'warning',
+			buttons: ['Batal', 'Ya']
+		})
+		if(isSend){
+			const username = localStorage.getItem('username')
+			const body = {query: `mutation{
+				lokasi: setComplete(username: "${ username }", lokasi: "${ lokasi }", completed: ${ isComplete }){
+					completed
+					time_completed
+				}
+			}`}
+			const { data, errors, extensions } = await fetchDataGQL(body)
+			setToken(extensions)
+			if(errors) return handleErrors(errors)
+			const completed = data.lokasi.completed
+			if(completed) await swal({
+				icon: 'success',
+				text: 'Terima Kasih Telah Menyelesaikan Tugas Hari Ini...',
+			})
+			if(!completed) await swal({
+				icon: 'info',
+				text: 'Tetap Semangat! Tinggal Dikit Lagi Kok...',
+			})
+			setIsComplete(data.lokasi.completed)
+		}
+	} catch (err) {
+		
 	}
 }

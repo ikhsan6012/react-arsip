@@ -107,9 +107,10 @@ export const addBerkas = async ({ formData, kd_berkas, file, isError, errMsg }, 
 			const json = await res.json()
 			file = json.file
 		}
+		const username = localStorage.getItem('username')
 		const body = {
 			query: `mutation {
-				berkas: addBerkas(input: {
+				berkas: addBerkas(username: "${ username }" input: {
 					kd_berkas: "${ kd_berkas }"
 					lokasi: {
 						gudang: ${ formData.gudang }

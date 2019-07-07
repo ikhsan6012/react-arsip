@@ -23,6 +23,7 @@ export const login = e => {
             inputDOM[0].focus()
           })
       }
+      localStorage.setItem('username', data.user.username)
       return swal('Login Berhasil!', {
         icon: 'success'
       }).then(() => {
@@ -39,6 +40,7 @@ export const logout = () => {
   }).then(() => {
     localStorage.removeItem('token')
     localStorage.removeItem('formData')
+    localStorage.removeItem('username')
     window.location.href = process.env.REACT_APP_HOST
   })
 }
