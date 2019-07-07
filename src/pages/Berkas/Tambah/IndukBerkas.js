@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { NPWPInput, NamaWPInput, GudangInput, KdLokasiInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit } from '../../../components/Forms'
-import { changeHandler, fileHandler, addBerkas } from '../../../functions/form'
+import { changeHandler, fileHandler, addBerkas } from '../../../functions/tambah'
 
 const IndukBerkas = props => {
 	const [formData, setFormData] = useState({})

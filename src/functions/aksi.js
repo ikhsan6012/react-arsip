@@ -11,16 +11,21 @@ const handleMutation = (kriteria, berkas) => {
 
 export const uploadDocument = async ({ berkas, kriteria }, e) => {
 	e.persist()
+	const btn = e.target.parentNode
 	const file = e.target.files[0]
 	if(file.type !== 'application/pdf'){
 		e.target.value = ''
-		return swal('File Yang Diunggah Harus Dalam Format .pdf!', { icon: 'error' })
+		await swal('File Yang Diunggah Harus Dalam Format .pdf!', { icon: 'error' })
+		return btn.focus()
 	}
 	const isUpload = await swal('Anda Yakin Akan Mengunggah Dokumen?', {
 		icon: 'warning',
 		buttons: ['Batal', 'Ya']
 	})
-	if(!isUpload) return e.target.value = ''
+	if(!isUpload) {
+		e.target.value = ''
+		return btn.focus()
+	}
 	try {
 		const formData = new FormData()
 		formData.append('file', file)
@@ -41,25 +46,32 @@ export const uploadDocument = async ({ berkas, kriteria }, e) => {
 		if(errors) return handleErrors(errors)
 		await swal('Berhasil Mengunggah Dokumen...', { icon: 'success' })
 		e.target.value = ''
+		btn.focus()
 		return handleMutation(kriteria, berkas)
 	} catch (err) {
 		console.error(err)
-		swal('Gagal Mengunggah Dokumen!', { icon: 'error' })
+		await swal('Gagal Mengunggah Dokumen!', { icon: 'error' })
+		btn.focus()
 	}
 }
 
 export const editDocument = async ({ berkas, kriteria }, e) => {
 	e.persist()
+	const btn = e.target.parentNode
 	const file = e.target.files[0]
 	if(file.type !== 'application/pdf'){
 		e.target.value = ''
-		return swal('File Yang Diunggah Harus Dalam Format .pdf!', { icon: 'error' })
+		await swal('File Yang Diunggah Harus Dalam Format .pdf!', { icon: 'error' })
+		return btn.focus()
 	}
 	const isEdit = await swal('Anda Yakin Akan Mengganti Dokumen?', {
 		icon: 'warning',
 		buttons: ['Batal', 'Ya']
 	})
-	if(!isEdit) return e.target.value = ''
+	if(!isEdit) {
+		e.target.value = ''
+		return btn.focus()
+	}
 	try {
 		const formData = new FormData()
 		formData.append('file', file)
@@ -71,15 +83,19 @@ export const editDocument = async ({ berkas, kriteria }, e) => {
 		await upload.json()
 		await swal('Berhasil Mengganti Dokumen...', { icon: 'success' })
 		e.target.value = ''
+		btn.focus()
 		return handleMutation(kriteria, berkas)
 	} catch (err) {
 		console.error(err)
-		swal('Gagal Mengganti Dokumen!', { icon: 'error' })
+		await swal('Gagal Mengganti Dokumen!', { icon: 'error' })
+		btn.focus()
 	}
 }
 
-export const deleteDocument = async ({ hasToken, berkas, kriteria }) => {
-	if(!(hasToken && berkas.file)) return false
+export const deleteDocument = async ({ hasToken, berkas, kriteria }, e) => {
+	const btn = e.target
+	if(!hasToken) return swal('Anda Tidak Mempunyai Akses!', { icon: 'error' }).then(() => btn.focus())
+	if(!berkas.file) return swal('Tidak Ada Dokumen Yang Dihapus!', { icon: 'warning' }).then(() => btn.focus())
 	const isDelete = await swal('Anda Yakin Akan Menghapus Dokumen?', {
 		icon: 'warning',
 		buttons: ['Batal', 'Ya']
@@ -102,6 +118,7 @@ export const deleteDocument = async ({ hasToken, berkas, kriteria }) => {
 		const res = await del.json()
 		if(res.errors) return handleErrors(res.errors)
 		await swal('Berhasil Menghapus Dokumen...', { icon: 'success' })
+		btn.focus()
 		return handleMutation(kriteria, berkas)
 	} catch (err) {
 		console.error(err)
@@ -112,7 +129,7 @@ export const deleteDocument = async ({ hasToken, berkas, kriteria }) => {
 
 
 export const deleteBerkas = async ({ hasToken, berkas, kriteria }) => {
-	if(!hasToken) return false
+	if(!hasToken) return swal('Anda Tidak Mempunyai Akses!', { icon: 'error' })
 	try {
 		const isDelete = await swal('Anda Yakin Akan Menghapus Dokumen?', {
 			icon: 'warning',

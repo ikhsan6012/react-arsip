@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { NPWPInput, NamaWPInput, GudangInput, KdLokasiInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit, KdBerkasInput, MasaPajakInput, TahunPajakInput } from '../../../components/Forms'
-import { changeHandler, fileHandler,addBerkas } from '../../../functions/form'
+import { changeHandler, fileHandler,addBerkas } from '../../../functions/tambah'
 
 const LainLain = () => {
 	const [formData, setFormData] = useState({})

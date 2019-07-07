@@ -59,3 +59,9 @@ table i {
 pre {
     margin: 0;
 }
+
+button.icon {
+    border: none;
+    background: none;
+    padding: 0;
+}

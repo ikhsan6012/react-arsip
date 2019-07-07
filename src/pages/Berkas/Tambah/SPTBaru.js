@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { NamaPenerimaInput, TglTerimaInput, GudangInput, KdLokasiInput, KdBerkasInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit } from '../../../components/Forms'
-import { changeHandler, fileHandler,addBerkas } from '../../../functions/form'
+import { changeHandler, fileHandler,addBerkas } from '../../../functions/tambah'
 
 const SPTBaru = () => {
 	const [formData, setFormData] = useState({})

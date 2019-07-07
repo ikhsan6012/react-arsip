@@ -13,9 +13,7 @@ export const ListBerkasWP = ({ berkases }) => {
 			<td className="align-middle">
 				{ b.ket_lain && <pre>{ String.raw`${ b.ket_lain }` }</pre> }
 			</td>
-			<Aksi
-				berkas={ b }
-			/>
+			<Aksi berkas={ b }/>
 		</tr>
 	) : <tr><td colSpan="7">Tidak Ada Berkas</td></tr>
 
@@ -68,7 +66,7 @@ export const ListBerkasLokasi = ({ berkases }) => {
 			</td>
 			<Aksi berkas={ b } />
 		</tr>
-	) : <tr><td colSpan="8">Tidak Ada Berkas</td></tr>
+	) : <tr><td colSpan="9">Tidak Ada Berkas</td></tr>
 	
 	return(
 		<div className="card-body">
@@ -106,9 +104,7 @@ export const ListBerkasPenerima = ({ berkases }) => {
 			<td className="align-middle">
 				{ b.ket_lain && <pre>{ String.raw`${ b.ket_lain }` }</pre> }
 			</td>
-			<Aksi
-				berkas={ b }
-			/>
+			<Aksi berkas={ b } />
 		</tr>
 	) : <tr><td colSpan="5">Tidak Ada Berkas</td></tr>
 

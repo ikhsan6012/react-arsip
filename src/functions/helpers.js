@@ -16,7 +16,7 @@ export const fetchDataGQL = body => {
 
 export const handleErrors = errors => {
 	if(errors.name === 'SessionError') {
-		return swal(errors.message, { icon: 'error' })
+		return swal(errors.message, { icon: 'error', timer: 1000 })
 			.then(() => {
 				document.querySelector('nav .btn-danger').click()
 			})

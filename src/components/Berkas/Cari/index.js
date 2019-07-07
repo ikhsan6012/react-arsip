@@ -20,18 +20,18 @@ const Cari = () => {
 			)
 		}
 		if(berkases){
-			const Result = await import('./ListBerkas')
+			const { ListBerkasLokasi } = await import('./ListBerkas')
 			return setHasil(
-				<Result.ListBerkasLokasi
+				<ListBerkasLokasi
 					berkases={ berkases }
 					ket_berkas={ ket_berkas }
 				/>
 			)
 		}
 		if(penerimas){
-			const Result = await import('./Hasil')
+			const { HasilPenerima } = await import('./Hasil')
 			return setHasil(
-				<Result.HasilPenerima
+				<HasilPenerima
 					penerimas={ penerimas }
 					total={ totalPenerimas || 1 }
 					ket_berkas={ ket_berkas }

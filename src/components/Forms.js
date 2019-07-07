@@ -91,7 +91,7 @@ export const TglTerimaInput = props =>
 
 export const StatusPBKInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Status { props.required === false ? '' : <span className="text-danger">*</span> }</label>
+		<label>Status PBK { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<select
 				name="status_pbk" 
@@ -109,7 +109,7 @@ export const StatusPBKInput = props =>
 
 export const NoPBKInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Nomor { props.required === false ? '' : <span className="text-danger">*</span> }</label>
+		<label>Nomor PBK { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<input 
 				type="number" 
@@ -127,7 +127,7 @@ export const NoPBKInput = props =>
 
 export const TahunPBKInput = props => 
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Tahun { props.required === false ? '' : <span className="text-danger">*</span> }</label>
+		<label>Tahun PBK { props.required === false ? '' : <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<input 
 				type="number"
@@ -183,7 +183,7 @@ export const KdLokasiInput = props =>
 
 export const MasaPajakInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Masa Pajak { props.required === false ? '' : <span className="text-danger">*</span> }</label>
+		<label>Masa Pajak { props.required && <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<input 
 				type="number"
@@ -194,15 +194,15 @@ export const MasaPajakInput = props =>
 				placeholder={ new Date().getMonth() }
 				value={ props.value || ''}
 				onChange={ props.onChange }
-				required={ props.required || true }
-				disabled={ props.disabled || false }
+				required={ props.required === false ? false : true }
+				disabled={ props.disabled === true ? true : false }
 			/>
 		</div>
 	</div>
 
 export const TahunPajakInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
-		<label>Tahun Pajak { props.required === false ? '' : <span className="text-danger">*</span> }</label>
+		<label>Tahun Pajak { props.required && <span className="text-danger">*</span> }</label>
 		<div className="input-group">
 			<input 
 				type="number" 
@@ -213,8 +213,8 @@ export const TahunPajakInput = props =>
 				placeholder={ new Date().getFullYear() }
 				value={ props.value || '' }
 				onChange={ props.onChange }
-				required={ props.required || true }
-				disabled={ props.disabled || false }
+				required={ props.required === false ? false : true }
+				disabled={ props.disabled === true ? true : false }
 			/>
 		</div>
 	</div>

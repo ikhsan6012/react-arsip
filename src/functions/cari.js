@@ -119,3 +119,36 @@ export const getBerkas = async ({ setBerkases, wps, setWPs, penerimas, setPeneri
 	if(wps) return setWPs(wps.filter(wp => wp._id === id))
 	if(penerimas) return setPenerimas(penerimas.filter(p => p._id === id))
 }
+
+export const handleBtnFocus = ({ key, ctrlKey }) => {
+	const activeElement = document.activeElement
+	let listElement
+	switch (key) {
+		case 'A':
+			listElement = document.querySelectorAll('.icon-updown')
+			break
+		case 'S':
+			listElement = document.querySelectorAll('.icon-eddoc')
+			break
+		case 'D':
+			listElement = document.querySelectorAll('.icon-deldoc')
+			break
+		case 'F':
+			listElement = document.querySelectorAll('.icon-edber')
+			break
+		case 'G':
+			listElement = document.querySelectorAll('.icon-delber')
+			break
+		default:
+			return false
+		}
+	const isActive = [...listElement].indexOf(activeElement)
+	if(!ctrlKey) {
+		if(isActive === listElement.length - 1) return listElement[0].focus()
+		return listElement[isActive + 1].focus()
+	}
+	else {
+		if(isActive === 0) return listElement[listElement.length - 1].focus()
+		return listElement[isActive - 1].focus()
+	}
+}
