@@ -164,14 +164,22 @@ export const handleBtnFocus = ({ key, ctrlKey }) => {
 
 export const setComplete = async (lokasi, isComplete, setIsComplete) => {
 	try {
-		const isSend = await swal('Apakah Anda Yakin?', {
-			icon: 'warning',
-			buttons: ['Batal', 'Ya']
-		})
+		const isSend = isComplete ?
+			await swal('Apakah Anda Yakin?', {
+				icon: 'warning',
+				buttons: ['Batal', 'Ya']
+			}) :
+			await swal('Silahkan Masukkan Alasan Pembatalan...', {
+				icon: 'warning',
+				content: {
+					element: 'input'
+				},
+				buttons: ['Batal', 'Ya']
+			})
 		if(isSend){
 			const username = localStorage.getItem('username')
 			const body = {query: `mutation{
-				lokasi: setComplete(username: "${ username }", lokasi: "${ lokasi }", completed: ${ isComplete }){
+				lokasi: setComplete(username: "${ username }", lokasi: "${ lokasi }", completed: ${ isComplete }, cancel_msg: ${ !isComplete ? `"${ isSend }"` : `null` }){
 					completed
 					time_completed
 				}
