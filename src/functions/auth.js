@@ -19,7 +19,7 @@ export const login = async e => {
       await swal('Username atau Password Salah...', { icon: 'error' })
       const inputDOM = document.querySelectorAll('#formLogin input')
       inputDOM.forEach(input => input.value = '')
-      inputDOM[0].focus()
+      return inputDOM[0].focus()
     }
     localStorage.setItem('username', data.user.username)
     await swal('Login Berhasil!', {
@@ -44,4 +44,30 @@ export const logout = () => {
     localStorage.removeItem('username')
     window.location.href = process.env.REACT_APP_HOST
   })
+}
+
+export const changePassword = async (setPasswordForm, e) => {
+  e.preventDefault()
+  const isSend = await swal('Apakah Anda Yakin Akan Mengubah Password ??', { icon: 'warning', buttons: ['Batal', 'Ya'] })
+  if(isSend){
+    const password_lama = document.querySelector('#password-lama')
+    const password_baru = document.querySelector('#password-baru')
+    const username = localStorage.getItem('username')
+    const body = {query: `mutation{
+      user: changePassword(username: "${ username }", password_lama: "${ password_lama.value }", password_baru: "${ password_baru.value }"){
+        _id
+      }
+    }`}
+    try {
+      const { errors } = await fetchDataGQL(body)
+      if(errors) {
+        await swal(errors[0].message, { icon: 'error' })
+        return password_lama.focus()
+      }
+      await swal('Berhasil Mengganti Password...', { icon: 'success' })
+      setPasswordForm('')
+    } catch (err) {      
+      console.log(err) 
+    }
+  }
 }

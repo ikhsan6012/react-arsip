@@ -1,8 +1,9 @@
 import React, { Fragment, useState } from 'react'
-import { login, logout } from '../functions/auth'
+import { login, logout, changePassword } from '../functions/auth'
 
 const Nav = () => {
 	const [isHiddenLogin, setIsHiddenLogin] = useState(true)
+	const [passwordForm, setPasswordForm] = useState('')
 
 	const showLogin = e => {
 		e.preventDefault()
@@ -17,12 +18,37 @@ const Nav = () => {
     }, 100)
 	}
 
+	const showPasswordForm = () => {
+		if(!passwordForm){
+			setPasswordForm(
+				<form className="form-inline" onSubmit={ changePassword.bind(this, setPasswordForm) }>
+					<li className="nav-item mr-2">
+						<div className="input-group">
+							<input type="password" id="password-lama" className="form-control" placeholder="Password Lama" required/>
+						</div>
+					</li>
+					<li className="nav-item mr-2">
+						<div className="input-group">
+							<input type="password" id="password-baru" className="form-control" placeholder="Password Baru" required/>
+						</div>
+					</li>
+					<button hidden></button>
+				</form>
+			)
+			setTimeout(() => {
+				document.querySelector('#password-lama').focus()
+			}, 100)
+		}
+		else setPasswordForm('')
+	}
+
 	return(
 		<nav className="main-header navbar navbar-expand bg-white navbar-light border-bottom">
 			<ul className="navbar-nav ml-auto">
 				{ localStorage.getItem('token') ? 
 					<Fragment>
-						<li className="nav-item align-middle mr-2 dropdown" title="Ganti Password">
+						{ passwordForm }
+						<li className="nav-item align-middle mr-2 dropleft" title="Ganti Password" onClick={ showPasswordForm }>
 							<div className="nav-link dropdown-toggle" style={{ cursor: 'pointer' }}>{ JSON.parse(localStorage.getItem('user')).nama }</div>
 						</li>
 						<li className="nav-item">

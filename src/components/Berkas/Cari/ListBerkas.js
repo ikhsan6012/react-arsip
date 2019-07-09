@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react'
 import Aksi from './Aksi'
-import { setComplete } from '../../../functions/cari'
+import { setComplete, deleteLokasi } from '../../../functions/cari'
 
 export const ListBerkasWP = ({ berkases }) => {
 	// List Berkas
@@ -52,8 +52,8 @@ export const ListBerkasWP = ({ berkases }) => {
 }
 
 export const ListBerkasLokasi = ({ berkases }) => {
-	const [isComplete, setIsComplete] = useState(berkases[0].lokasi.completed)
-	const lokasi = berkases[0].lokasi._id
+	const [isComplete, setIsComplete] = useState(berkases[0] ? berkases[0].lokasi.completed : false)
+	const lokasi = berkases[0] ? berkases[0].lokasi._id : null
 
 	// List Berkas
 	const berkas = berkases.length ? berkases.map((b, i) =>
@@ -74,11 +74,14 @@ export const ListBerkasLokasi = ({ berkases }) => {
 	
 	return(
 		<div className="card-body">
-			<div className="pull-right mb-3">
-				<button className={`btn btn-${ isComplete ? 'danger' : 'primary' }`} onClick={ setComplete.bind(this, lokasi, !isComplete, setIsComplete) }>
-					{ isComplete ? 'Tandai Belum Selesai' : 'Tandai Selesai' }
-				</button>
-			</div>
+			{ localStorage.getItem('token') && berkases.length ?
+				<div className="pull-right mb-2">
+					<button className={`btn btn-${ isComplete ? 'danger' : 'primary' } mr-2`} onClick={ setComplete.bind(this, lokasi, !isComplete, setIsComplete) }>
+						{ isComplete ? 'Tandai Belum Selesai' : 'Tandai Selesai' }
+					</button>
+						<button className="btn btn-danger" onClick={ deleteLokasi.bind(this, lokasi) }>Hapus</button>
+				</div>
+			: '' }
 			<div className="table-responsive">
 				<table className="table table-striped table-bordered table-hover">
 					<thead>

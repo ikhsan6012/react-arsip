@@ -213,7 +213,7 @@ const ModalEdit = props => {
 					${ formData.nomor_pbk ? `nomor_pbk: ${ formData.nomor_pbk }` : `` }
 					${ formData.tahun_pbk ? `tahun_pbk: ${ formData.tahun_pbk }` : `` }
 					${ formData.urutan ? `urutan: ${ formData.urutan }` : `` }
-					${ formData.ket_lain ? `ket_lain: ${ formData.ket_lain }` : `` }
+					${ formData.ket_lain ? `ket_lain: "${ formData.ket_lain }"` : `` }
 				}){
 					_id
 				}

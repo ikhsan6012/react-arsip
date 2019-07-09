@@ -7,11 +7,11 @@ import MonitorLB from './pages/MonitorLB'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { Switch, Route } from 'react-router-dom'
 import { fetchDataGQL, handleErrors, setToken } from './functions/helpers'
-
+import 'font-awesome/css/font-awesome.min.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './static/css/adminlte.min.css'
-import './static/font-awesome/css/font-awesome.min.css'
 import './static/css/style.css'
+import SaranMasukan from './pages/SaranMasukan';
 
 const App = () => {
   // Get Ket Berkas
@@ -44,6 +44,7 @@ const App = () => {
         <Route exact path="/" component={ Dashboard }/>
         <Route path="/berkas" component={ Berkas }/>
         <Route path="/monitorlb" component={ MonitorLB }/>
+        <Route path="/saran-masukan" component={ SaranMasukan }/>
       </Switch>
     </Router>
   )
