@@ -1,11 +1,12 @@
-import Head from 'next/head'
+import H from 'next/head'
 
-export default () => {
+const Head = () => {
 	return(
-		<Head>
+		<H>
 			<title>Arsip-v2</title>
 			<link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css"/>
 			<link rel="shortcut icon" href="/static/img/logo.png"/>
-		</Head>
+		</H>
 	)
 }
+export default Head

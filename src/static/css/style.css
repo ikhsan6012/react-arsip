@@ -44,19 +44,24 @@ input[type=file].invalid {
     border-radius: 3px;
 }
 
-/* th {
-    position: relative;
+table {
+    font-size: 12px;
 }
 
-th .action {
-    display: inline-block;
-    position: absolute;
-    bottom: 0;
-    right: 5px;
-    font-size: 10px;
+table .no {
+    width: 45px;
 }
 
-th .action .sort,
-th .action .filter {
-    cursor: pointer;
-} */
+table i {
+    font-size: 1rem !important;
+}
+
+pre {
+    margin: 0;
+}
+
+button.icon {
+    border: none;
+    background: none;
+    padding: 0;
+}

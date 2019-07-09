@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
 
-export default props => {
+const TabPane = props => {
 	const list = props.list.map(li => {
 		let url = `/berkas/tambah${li.url}`
 		return(
@@ -27,3 +27,4 @@ export default props => {
 		</div>
 	)
 }
+export default TabPane

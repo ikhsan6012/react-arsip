@@ -1,352 +1,364 @@
-import React, { Component } from 'react'
-import InputMask from 'react-input-mask'
-import swal from 'sweetalert'
+import React, { useState, useEffect } from 'react'
+import { fetchDataGQL, handleErrors, setToken } from '../../../functions/helpers'
+import { GudangInput, KdLokasiInput, UrutanInput, NPWPInput, NamaWPInput, NamaPenerimaInput, TglTerimaInput, KdBerkasInput, MasaPajakInput, TahunPajakInput, StatusPBKInput, NoPBKInput, TahunPBKInput, KeteranganInput } from '../../Forms'
+import { changeHandler } from '../../../functions/tambah'
+import { handleBtnFocus } from '../../../functions/cari'
+import swal from 'sweetalert';
 
-import { fetchDataGQL2, handleErrors, setToken } from '../../../helpers'
+const ModalEdit = props => {
+	const { berkas } = props
+	const [formData, setFormData] = useState({})
+	const [hasPemilik, setHasPemilik] = useState(false)
+	const [disableNamaWP, setDisableNamaWP] = useState(false)
+	const [hasPenerima, setHasPenerima] = useState(false)
+	const [hasMasa, setHasMasa] = useState(false)
+	const [isPBK, setIsPBK] = useState(false)
+	const [isLain, setIsLain] = useState(false)
+	const [isSPT, setIsSPT] = useState(false)
+	const [by, setBy] = useState('npwp')
+	const [isError, setIsError] = useState(false)
+	const [errMsg, setErrMsg] = useState('')
 
-export default class ModalEdit extends Component {
-	state = {
-		formData: {},
-		disableNamaWP: true,
-		disablePemilik: true,
-		disablePenerima: true,
-		errWPMsg: null,
-		kriteria: null,
-	}
-
-	closeModal = e => {
-		const modalEdit = document.getElementById('modalEdit')
-		modalEdit.classList.remove('show')
+	useEffect(() => {
+		document.removeEventListener('keypress', handleBtnFocus, true)
+		document.addEventListener('keydown', props.closeModal, true)
 		setTimeout(() => {
-			modalEdit.style.display = 'none'
+			document.querySelector('[name=gudang]').focus()
 		}, 150);
-		this.setState({ formData: JSON.parse(localStorage.getItem('formData')) })
-		localStorage.removeItem('formData')
-	}
+		return () => {
+			document.removeEventListener('keydown', props.closeModal, true)
+			localStorage.removeItem('formData')
+			localStorage.removeItem('pemilik')
+			localStorage.removeItem('penerima')
+		}
+	}, [props.closeModal])
 
-	changeHandler = async e => {
-		const el = e.target
-		const name = el.name
-		const name2 = el.name.split('-')
-		const value = el.value.toUpperCase()
-		const formData = this.state.formData
-		if(name2.length > 1) formData[name2[0]][name2[1]] = value
-		else formData[name] = value
-		await this.setState({ formData })
-		if(name2[1] === 'npwp') return this.checkNPWP(value)
-	}
+	useEffect(() => {
+		const fd = { ...berkas }
+		fd.kd_berkas = fd.ket_berkas.kd_berkas
+		fd.gudang = fd.lokasi.gudang
+		fd.kd_lokasi = fd.lokasi.kd_lokasi
+		delete fd.ket_berkas
+		delete fd.lokasi
+		if(fd.pemilik){
+			fd.npwp = fd.pemilik.npwp
+			fd.nama_wp = fd.pemilik.nama_wp
+			delete fd.pemilik
+			setHasPemilik(true)
+			setDisableNamaWP(true)
+			setBy('npwp')
+		}
+		if(fd.penerima){
+			fd.nama_penerima = fd.penerima.nama_penerima
+			fd.tgl_terima = fd.penerima.tgl_terima
+			delete fd.penerima
+			setHasPenerima(true)
+			setDisableNamaWP(true)
+			setIsSPT(true)
+			setBy('penerima')
+		}
+		if(fd.status_pbk) setIsPBK(true)
+		if(fd.masa_pajak) setHasMasa(true)
+		localStorage.setItem('pemilik', JSON.stringify({ npwp: fd.npwp, nama_wp: fd.nama_wp }))
+		localStorage.setItem('penerima', JSON.stringify({ nama_penerima: fd.nama_penerima, tgl_terima: fd.tgl_terima }))
+		setFormData(fd)
+		const modalEdit = document.querySelector('#modalEdit')
+		modalEdit.style.display = 'block'
+		setTimeout(() => {
+			modalEdit.classList.add('show')
+		}, 150)
+	}, [berkas])
 
-	checkNPWP = npwp => {
-		if(npwp.replace(/[_.-]/g, '').length < 15) {
-			return this.setState({
-				disableNamaWP: false,
-				formData: { 
-					...this.state.formData, 
-					pemilik: { ...this.state.formData.pemilik, nama_wp: '' }  
-				} 
+	const kd_berkasHandler = e => {
+		const name = e.target.name
+		const kd_berkas = e.target.value
+		const { npwp, nama_wp } = JSON.parse(localStorage.getItem('pemilik'))
+		const { nama_penerima, tgl_terima } = JSON.parse(localStorage.getItem('penerima'))
+		if(kd_berkas.match(/induk|pindah|pkp|sertel/i)){
+			setHasPemilik(true)
+			setHasPenerima(false)
+			setHasMasa(false)
+			setIsPBK(false)
+			setIsLain(false)
+			setIsSPT(false)
+			setBy('npwp')
+			return setFormData({ 
+				...formData, 
+				nama_penerima: '', 
+				tgl_terima: '', 
+				status_pbk: '',
+				nomor_pbk: '',
+				tahun_pbk: '',
+				[name]: kd_berkas, 
+				npwp, 
+				nama_wp
 			})
 		}
-		if(npwp.replace(/[_.-]/g, '').length === 15){
-			// Get Nama WP
-			const body = {
-				query: `{
-					wp(npwp: "${npwp}") {
-						nama_wp
-					}
-				}`
-			}
-			fetchDataGQL2(body)
-				.then(({data, errors, extensions}) => {
-					setToken(extensions)
-					if(errors) return handleErrors(errors)
-					if(!data.wp){
-						return this.setState({ errWPMsg: 'NPWP Tidak Ditemukan' })
-					}
-					return this.setState({
-						disableNamaWP: true,
-						formData: { 
-							...this.state.formData,
-							pemilik: { ...this.state.formData.pemilik, nama_wp: data.wp.nama_wp }  
-						} ,
-						errWPMsg: null
-					})
-				})
+		if(kd_berkas.match(/pbk/i)){
+			setHasPemilik(true)
+			setHasPenerima(false)
+			setHasMasa(false)
+			setIsPBK(true)
+			setIsLain(false)
+			setIsSPT(false)
+			setBy('npwp')
+			return setFormData({ ...formData, nama_penerima: '', tgl_terima: '', [name]: kd_berkas, npwp, nama_wp })
+		}
+		if(kd_berkas.match(/lain/i)){
+			setHasPemilik(true)
+			setHasPenerima(false)
+			setHasMasa(false)
+			setIsPBK(false)
+			setIsLain(true)
+			setIsSPT(false)
+			setBy('npwp')
+			if(npwp || nama_wp) return setFormData({ 
+				...formData, 
+				status_pbk: '',
+				nomor_pbk: '',
+				tahun_pbk: '', 
+				[name]: kd_berkas, 
+				npwp, 
+				nama_wp 
+			})
+			else return setFormData({ 
+				...formData, 
+				status_pbk: '',
+				nomor_pbk: '',
+				tahun_pbk: '', 
+				nama_penerima: '', 
+				tgl_terima: '' 
+			})
+		}
+		if(kd_berkas.match(/spt|pph|ppn/i)){
+			setBy(formData.npwp ? 'npwp' : 'penerima')
+			setHasPemilik(formData.npwp ? true : false)
+			setHasPenerima(formData.npwp ? false : true)
+			setHasMasa(nama_penerima ? false : true)
+			setIsLain(false)
+			setIsSPT(true)
+			if(nama_penerima || tgl_terima) return setFormData({ 
+				...formData, 
+				status_pbk: '',
+				nomor_pbk: '',
+				tahun_pbk: '', 
+				[name]: kd_berkas, 
+				nama_penerima, 
+				tgl_terima 
+			})
+		}
+		return setFormData({ ...formData, [name]: kd_berkas })
+	}
+
+	const handleBy = e => {
+		const value = e.target.value
+		setBy(value)
+		if(value === 'npwp'){
+			const { npwp, nama_wp } = JSON.parse(localStorage.getItem('pemilik'))
+			setFormData({ ...formData, nama_penerima: '', tgl_terima: '', npwp, nama_wp })
+			setHasPemilik(true)
+			setIsLain(false)
+			setHasMasa(true)
+			setHasPenerima(false)
+		}
+		if(value === 'penerima'){
+			const { nama_penerima, tgl_terima } = JSON.parse(localStorage.getItem('penerima'))
+			setFormData({ ...formData, npwp: '', nama_wp: '', nama_penerima, tgl_terima })
+			setHasPenerima(true)
+			setHasPemilik(false)
+			setHasMasa(false)
+			setDisableNamaWP(true)
+			document.querySelector('[name=nama_wp]').disabled = true
 		}
 	}
 
-	editSubmit = async e => {
+	const handleSubmit = async e => {
 		e.preventDefault()
-		const formData = this.state.formData
-		let isSend = false
-		let status
-		if(this.state.errWPMsg) {
-			status = await swal(this.state.errWPMsg, 'Pilih Status WP untuk menyimpan!', {
-				buttons: {
-					cancel: 'Batal',
-					AKTIF: 'Aktif',
-					PINDAH: 'Pindah',
-					DE: 'DE'
-				},
-				icon: 'warning'
-			})
-		} else {
-			isSend = true
-		}
-		if(isSend || status){
-			const body = {query: `
-				mutation {
-					berkas: editBerkas(id: "${formData._id}", input: {
-						lokasi: {
-							gudang: ${ formData.lokasi.gudang }
-							kd_lokasi: "${ formData.lokasi.kd_lokasi }"
-						}
-						${ formData.pemilik ? `pemilik: {
-							npwp: "${ formData.pemilik.npwp }"
-							nama_wp: "${ formData.pemilik.nama_wp }"
-							${ status ? `status: "${ status }"` : `` }
-						}` : `` }
-						${ formData.penerima ? `penerima: {
-							nama_penerima: "${ formData.penerima.nama_penerima }"
-							tgl_terima: "${ formData.penerima.tgl_terima }"
-							${ status ? `status: "${ status }"` : `` }
-						}` : `` }
-						kd_berkas: "${ formData.ket_berkas.kd_berkas }"
-						${ formData.masa_pajak ? `masa_pajak: ${ formData.masa_pajak }` : `` }
-						${ formData.tahun_pajak ? `tahun_pajak: ${ formData.tahun_pajak }` : `` }
-						urutan: ${ formData.urutan }
-						${ formData.ket_lain ? `ket_lain: "${ formData.ket_lain }"` : `` }
-					}) {
-						_id
+		const status = isError ? await swal(`${ errMsg }. Pilih Status WP untuk menyimpan!`, {
+			buttons: {
+				cancel: 'Batal',
+				AKTIF: 'Aktif',
+				PINDAH: 'Pindah',
+				DE: 'DE'
+			}
+		}) : null
+		const isSend = !status ? await swal('Anda Yakin Akan Mengunggah Dokumen?', {
+			icon: 'warning',
+			buttons: ['Batal', 'Ya']
+		}) : true
+		if(isSend){
+			const body = {query: `mutation{
+				editBerkas(id: "${ berkas._id }", input: {
+					lokasi: {
+						gudang: ${ formData.gudang }
+						kd_lokasi: "${ formData.kd_lokasi }"
 					}
+					${ formData.npwp ?
+						`pemilik: {
+							npwp: "${ formData.npwp }"
+							nama_wp: "${ formData.nama_wp }"
+							${ status ? `status: "${ status }"` : `` }
+						}`
+					: ``}
+					kd_berkas: "${ formData.kd_berkas }"
+					${ formData.nama_penerima ?
+						`penerima: {
+							nama_penerima: "${ formData.nama_penerima }"						
+							tgl_terima: "${ formData.tgl_terima }"
+						}`
+					: `` }
+					${ formData.masa_pajak ? `masa_pajak: ${ formData.masa_pajak }` : `` }
+					${ formData.tahun_pajak ? `tahun_pajak: ${ formData.tahun_pajak }` : `` }
+					${ formData.status_pbk ? `status_pbk: ${ formData.status_pbk }` : `` }
+					${ formData.nomor_pbk ? `nomor_pbk: ${ formData.nomor_pbk }` : `` }
+					${ formData.tahun_pbk ? `tahun_pbk: ${ formData.tahun_pbk }` : `` }
+					${ formData.urutan ? `urutan: ${ formData.urutan }` : `` }
+					${ formData.ket_lain ? `ket_lain: ${ formData.ket_lain }` : `` }
+				}){
+					_id
 				}
-			`}
-			return fetchDataGQL2(body)
-				.then(async ({data, errors, extensions}) => {
-					setToken(extensions)
-					if(errors) return handleErrors(errors)
-					await swal('Berhasil Menyimpan Data...', { icon: 'success' })
-					this.closeModal()
-					const kriteria = this.state.kriteria
-					const formData = JSON.parse(localStorage.getItem('formData'))
-					if(kriteria.match(/npwp|nama_wp/i)){
- 						return this.props.lihatBerkas(formData.pemilik._id)
-					} else if(kriteria.match(/penerima/i)){
-						return this.props.lihatBerkas(formData.penerima._id)
-					} else {
-						return document.querySelector('#cariBerkas').click()
-					}
-				})
-				.catch(err => { throw err })
+			}`}
+			const { errors, extensions } = await fetchDataGQL(body)
+			setToken(extensions)
+			if(errors) return handleErrors(errors)
+			await swal('Berhasil Mengedit Berkas!', { icon: 'success', timer: 2000 })
+			props.closeModal({ key: 'Escape', success: true })
 		}
 	}
 
-	componentWillReceiveProps({ berkas }){
-		if(!Object.keys(this.props.berkas).length && Object.keys(berkas).length){
-			localStorage.setItem('formData', JSON.stringify(berkas))
-			this.setState({ kriteria: document.querySelector('[name=kriteria]').value })
-		}
-		if(this.props.berkas !== berkas){
-			this.setState({ formData: berkas })
-		}
-		if(berkas.pemilik){
-			this.setState({ disablePemilik: false })
-		}
-		if(berkas.penerima){
-			this.setState({ disablePenerima: false })
-		}
-	}
-	
-	render(){
-		const options = this.props.ket_berkas.map(opt => {
-			return <option value={ opt.kd_berkas } key={ opt._id }>{ opt.nama_berkas }</option>
-		})
+	// Options
+	const options = JSON.parse(localStorage.getItem('ket_berkas')).map(opt =>
+		<option key={ opt._id } value={ opt.kd_berkas }>{ opt.nama_berkas }</option>
+	)
 
-		return (
-			<div className="modal fade" id="modalEdit" tabIndex="-1" role="dialog">
-				<div className="modal-dialog modal-dialog-centered" role="document" style={{ maxWidth: "50vw" }}>
-					<div className="modal-content">
-						<div className="modal-header">
-							<h5 className="modal-title">Konfirmasi Perubahan</h5>
-							<button className="close" onClick={ this.closeModal }>
-								<span>&times;</span>
-							</button>
-						</div>
-						<form onSubmit={ this.editSubmit }>
-							<div className="modal-body">
-								<div className="row">
-									<div className="form-group col-md-6">
-										<label>Gudang</label>
-										<div className="input-group">
-											<select
-												name="lokasi-gudang" 
-												className="form-control"
-												value={ this.state.formData.lokasi ? this.state.formData.lokasi.gudang : 1 }
-												onChange={ this.changeHandler }
-												required
-											>
-												<option value="1">Gudang 1</option>
-												<option value="2">Gudang 2</option>
-											</select>
-										</div>
-									</div>
-									<div className="form-group col-md-4">
-										<label>Lokasi</label>
-										<div className="input-group">
-											<input 
-												type="text" 
-												name="lokasi-kd_lokasi" 
-												className="form-control" 
-												placeholder="A6012"
-												onChange={ this.changeHandler }
-												pattern="\w{1,2}\d{4}"
-												value={ this.state.formData.lokasi ? this.state.formData.lokasi.kd_lokasi : '' }
-												required
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-2">
-										<label>Urutan</label>
-										<div className="input-group">
-											<input 
-												type="number"
-												name="urutan"
-												className="form-control"
-												placeholder="1"
-												min="1"
-												step="any"
-												value={ this.state.formData.urutan ? this.state.formData.urutan : '' }
-												onChange={ this.changeHandler }
-												required
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-5">
-										<label>NPWP</label>
-										<div className="input-group">
-											<InputMask 
-												mask="99.999.999.9-999.999" 
-												placeholder="__.___.___._-___.___" 
-												maskChar="_"
-												name="pemilik-npwp"
-												className="form-control"
-												pattern="\d{2}[.]\d{3}[.]\d{3}[.]\d{1}[-]\d{3}[.]\d{3}"
-												value={ this.state.formData.pemilik ? this.state.formData.pemilik.npwp : '' }
-												onChange={ this.changeHandler }
-												required={ !this.state.disablePemilik }
-												disabled={ this.state.disablePemilik }
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-7">
-										<label>Nama WP</label>
-										<div className="input-group">
-											<input 
-												type="text"
-												name="pemilik-nama_wp" 
-												className="form-control" 
-												placeholder="Otomatis Terisi Jika NPWP Ditemukan"
-												value={ this.state.formData.pemilik ? this.state.formData.pemilik.nama_wp : '' }
-												onChange={ this.changeHandler }
-												required={ !this.state.disablePemilik }
-												disabled={ this.state.disableNamaWP }
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-7">
-										<label>Nama Penerima</label>
-										<div className="input-group">
-											<input 
-												type="text" 
-												name="penerima-nama_penerima" 
-												className="form-control"
-												onChange={ this.changeHandler }
-												value={ this.state.formData.penerima ? this.state.formData.penerima.nama_penerima : '' }
-												required={ !this.state.disablePenerima }
-												disabled={ this.state.disablePenerima }
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-5">
-										<label>Tanggal Terima</label>
-										<div className="input-group">
-											<InputMask 
-												mask="99/99/9999" 
-												placeholder="dd/mm/yyyy" 
-												name="penerima-tgl_terima" 
-												className="form-control"
-												pattern="[0-3]\d.[0-1]\d.20[0-1]\d"
-												value={ this.state.formData.penerima ? this.state.formData.penerima.tgl_terima : '' }
-												onChange={ this.changeHandler }
-												required={ !this.state.disablePenerima }
-												disabled={ this.state.disablePenerima }
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-6">
-										<label>Jenis Berkas</label>
-										<div className="input-group">
-											<select
-												name="ket_berkas-kd_berkas" 
-												className="form-control"
-												required
-												value={ this.state.formData.ket_berkas ? this.state.formData.ket_berkas.kd_berkas : '' }
-												onChange={ this.changeHandler }
-											>
-												<option value="" hidden>Pilih Jenis Berkas</option>
-												{ options }
-											</select>
-										</div>
-									</div>
-									<div className="form-group col-md-3">
-										<label>Masa Pajak</label>
-										<div className="input-group">
-											<input 
-												type="number" 
-												name="masa_pajak" 
-												className="form-control" 
-												min="0" 
-												max="12" 
-												value={ this.state.formData.masa_pajak ? this.state.formData.masa_pajak : '' }
-												onChange={ this.changeHandler }
-											/>
-										</div>
-									</div><div className="form-group col-md-3">
-										<label>Tahun Pajak</label>
-										<div className="input-group">
-											<input 
-												type="number" 
-												name="tahun_pajak" 
-												className="form-control" 
-												min={ new Date().getFullYear() - 15 }
-												max={ new Date().getFullYear() }
-												value={ this.state.formData.tahun_pajak ? this.state.formData.tahun_pajak : '' }
-												onChange={ this.changeHandler }
-											/>
-										</div>
-									</div>
-									<div className="form-group col-md-12">
-										<label>Keterangan</label>
-										<div className="input-group">
-											<textarea 
-												name="ket_lain" 
-												rows="2" 
-												className="form-control"
-												defaultValue={ this.state.formData.ket_lain }
-												value={ this.state.formData.ket_lain ? this.state.formData.ket_lain : '' }
-												onChange={ this.changeHandler }
-											></textarea>
-										</div>
+	return (
+		<div className="modal fade" id="modalEdit">
+			<div className="modal-dialog modal-dialog-centered" style={{ minWidth: '45vw' }}>
+				<div className="modal-content">
+					<div className="modal-header">
+						<h5 className="modal-title">Konfirmasi Perubahan</h5>
+						<button className="close-modal" onClick={ props.closeModal.bind(this, { key: 'Escape' }) }>
+							<span>&times;</span>
+						</button>
+					</div>
+					<form onSubmit={ handleSubmit }>
+						<div className="modal-body" style={{ overflow: 'auto', maxHeight: '70vh' }}>
+							<div className="row">
+								<GudangInput
+									width="5"
+									value={ formData.gudang }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<KdLokasiInput
+									width="4"
+									value={ formData.kd_lokasi }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<UrutanInput
+									width="3"
+									value={ formData.urutan }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<KdBerkasInput
+									width="8"
+									value={ formData.kd_berkas }
+									options={ options }
+									onChange={ kd_berkasHandler }
+								/>
+								<div className="form-group col-md-4">
+									<label>Berdasarkan { isSPT ? <span className="text-danger">*</span> : '' }</label>
+									<div className="input-group">
+										<select
+											name="by" 
+											className="form-control"
+											value={ by }
+											required={ isSPT }
+											disabled={ !isSPT }
+											onChange={ handleBy }
+										>
+											<option value="npwp">NPWP</option>
+											<option value="penerima">Penerima</option>
+										</select>
 									</div>
 								</div>
+								<NPWPInput
+									width="5"
+									value={ formData.npwp }
+									required={ hasPemilik }
+									disabled={ !hasPemilik }
+									onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
+								/>
+								<NamaWPInput
+									width="7"
+									value={ formData.nama_wp }
+									required={ hasPemilik }
+									disabled={ disableNamaWP }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<NamaPenerimaInput
+									width="7"
+									value={ formData.nama_penerima }
+									required={ hasPenerima }
+									disabled={ !hasPenerima }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<TglTerimaInput
+									width="5"
+									value={ formData.tgl_terima }
+									required={ hasPenerima }
+									disabled={ !hasPenerima }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<MasaPajakInput
+									width="2"
+									value={ formData.masa_pajak }
+									required={ hasMasa }
+									disabled={ !isLain && !hasMasa }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<TahunPajakInput
+									width="2"
+									value={ formData.tahun_pajak }
+									required={ hasMasa }
+									disabled={ !isLain && !hasMasa }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<StatusPBKInput
+									width="4"
+									value={ formData.status_pbk }
+									required={ isPBK }							
+									disabled={ !isPBK }		
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<NoPBKInput
+									width="2"
+									value={ formData.nomor_pbk }
+									required={ isPBK }							
+									disabled={ !isPBK }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<TahunPBKInput
+									width="2"
+									value={ formData.tahun_pbk }
+									required={ isPBK }							
+									disabled={ !isPBK }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<KeteranganInput
+									width="12"
+									value={ formData.ket_lain }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
 							</div>
-							<div className="modal-footer">
-								<button type="button" className="btn btn-secondary" onClick={ this.closeModal }>Batal</button>
-								<button type="submit" className="btn btn-primary">Simpan</button>
-							</div>
-						</form>
-					</div>
+						</div>
+						<div className="modal-footer">
+							<button type="button" className="btn btn-secondary close-modal" onClick={ props.closeModal.bind(this, { key: 'Escape' }) }>Batal</button>
+							<button type="submit" className="btn btn-primary">Simpan</button>
+						</div>
+					</form>
 				</div>
 			</div>
-		)
-	}
+		</div>
+	)
 }
+export default ModalEdit

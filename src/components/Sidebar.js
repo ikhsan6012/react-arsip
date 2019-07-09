@@ -4,11 +4,11 @@ import swal from 'sweetalert'
 
 import logo from '../static/img/logo.png'
 
-export default props => {
+const Sidebar = () => {
 	const openMenu = e => {
 		e.currentTarget.classList.toggle('menu-open')
 	}
-
+	
 	const notLogin = e => {
 		e.preventDefault()
 		const id = e.target.id || e.target.parentNode.id
@@ -23,7 +23,7 @@ export default props => {
 				return input.focus()
 			})
 	}
-
+	
 	return(
 		<aside className="main-sidebar sidebar-dark-primary elevation-4">
 			<Link to="/" className="brand-link">
@@ -86,3 +86,4 @@ export default props => {
 		</aside>
 	)
 }
+export default Sidebar

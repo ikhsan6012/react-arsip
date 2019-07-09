@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 
-import { fetchDataGQL2, handleErrors, setToken } from '../../helpers'
+import { fetchDataGQL, handleErrors, setToken } from '../../functions/helpers'
 
 export default class MonitorSPTLB extends Component {
   state = {
@@ -162,7 +162,7 @@ export default class MonitorSPTLB extends Component {
         tahun_nd
       }
     }`}
-    return fetchDataGQL2(body)
+    return fetchDataGQL(body)
       .then(({data, extensions, errors}) => {
         setToken(extensions)
         if(errors) return handleErrors(errors)
@@ -187,7 +187,7 @@ export default class MonitorSPTLB extends Component {
         _id
       }
     }`}
-    return fetchDataGQL2(body)
+    return fetchDataGQL(body)
       .then(({extensions, errors}) => {
         setToken(extensions)
         if(errors) return handleErrors(errors)
@@ -213,7 +213,7 @@ export default class MonitorSPTLB extends Component {
         tujuan_nd
       }
     }`}
-    return fetchDataGQL2(body)
+    return fetchDataGQL(body)
       .then(({data, errors, extensions}) => {
         setToken(extensions)
         if(errors) return handleErrors(errors)
@@ -239,7 +239,7 @@ export default class MonitorSPTLB extends Component {
         tujuan_nd
       }
     }`}
-    return fetchDataGQL2(body)
+    return fetchDataGQL(body)
       .then(({data, errors, extensions}) => {
         setToken(extensions)
         if(errors) return handleErrors
@@ -266,7 +266,7 @@ export default class MonitorSPTLB extends Component {
         ${ this.state.get }
       }
     }`}
-    return fetchDataGQL2(body)
+    return fetchDataGQL(body)
       .then(({data, errors, extensions}) => {
         setToken(extensions)
         if(errors) return handleErrors
@@ -290,7 +290,7 @@ export default class MonitorSPTLB extends Component {
         ${ this.state.get }
       }
     }`}
-    return fetchDataGQL2(body)
+    return fetchDataGQL(body)
       .then(({data, errors, extensions}) => {
         setToken(extensions)
         if(errors) return handleErrors
@@ -305,7 +305,7 @@ export default class MonitorSPTLB extends Component {
         ${ this.state.get }
       }
     }`}
-    fetchDataGQL2(body)
+    fetchDataGQL(body)
       .then(({data, errors, extensions}) => {
         setToken(extensions)
         if(errors) return handleErrors(errors)

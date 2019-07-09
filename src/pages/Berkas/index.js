@@ -4,7 +4,7 @@ import { Route } from 'react-router-dom'
 import Tambah from './Tambah'
 import Cari from './Cari'
 
-export default () => {
+const Berkas = () => {
 	return(
 		<main className="content-wrapper">
 			<Route path="/berkas/tambah" component={ Tambah }/>
@@ -12,3 +12,4 @@ export default () => {
 		</main>
 	)
 }
+export default Berkas
