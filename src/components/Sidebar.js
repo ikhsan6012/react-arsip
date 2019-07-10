@@ -49,15 +49,15 @@ const Sidebar = () => {
 							</NavLink>
 							<ul id="collapseBerkas" className="nav nav-treeview">
 								<li className="nav-item">
-									{ localStorage.getItem('token')
-										? <NavLink to="/berkas/tambah" className="nav-link">
-												<i className="nav-icon fa fa-circle-o"></i>
-												<p>Tambah</p>
-											</NavLink>
-										: <a href="/" id="tambah" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin }>
-												<i className="nav-icon fa fa-circle-o"></i>
-												<p>Tambah</p>
-											</a>
+									{ localStorage.getItem('token') ? 
+										<NavLink to="/berkas/tambah" className="nav-link">
+											<i className="nav-icon fa fa-circle-o"></i>
+											<p>Tambah</p>
+										</NavLink> : 
+										<a href="/" id="tambah" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin }>
+											<i className="nav-icon fa fa-circle-o"></i>
+											<p>Tambah</p>
+										</a>
 									}
 								</li>
 								<li className="nav-item">
@@ -69,17 +69,23 @@ const Sidebar = () => {
 							</ul>
 						</li>
 						<li className="nav-item">
-							{ localStorage.getItem('token')
-								? <NavLink exact to="/monitorlb" className="nav-link">
-										<i className="nav-icon fa fa-desktop"></i>
-										<p>Monitor SPT LB</p>
-									</NavLink>
-								: <a href="/" id="monitorlb" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin }>
-										<i className="nav-icon fa fa-desktop"></i>
-										<p>Monitor SPT LB</p>
-									</a>
+							{ localStorage.getItem('token') ? 
+								<NavLink exact to="/monitorlb" className="nav-link">
+									<i className="nav-icon fa fa-desktop"></i>
+									<p>Monitor SPT LB</p>
+								</NavLink> : 
+								<a href="/" id="monitorlb" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin }>
+									<i className="nav-icon fa fa-desktop"></i>
+									<p>Monitor SPT LB</p>
+								</a>
 							}
 						</li>
+						{/* <li className="nav-item">
+							<NavLink exact to="/saran-masukan" className="nav-link">
+								<i className="nav-icon fa fa-envelope"></i>
+								<p>Saran dan Masukan</p>
+							</NavLink>
+						</li> */}
 					</ul>
 				</nav>
 			</div>

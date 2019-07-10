@@ -199,6 +199,28 @@ export const setComplete = async (lokasi, isComplete, setIsComplete) => {
 			setIsComplete(data.lokasi.completed)
 		}
 	} catch (err) {
-		
+		console.log(err)
+	}
+}
+
+export const deleteLokasi = async lokasi => {
+	const isDelete = await swal('Apakah Anda Yakin Akan Menghapus Lokasi ?', {
+		icon: 'warning',
+		buttons: ['Batal', 'Ya']
+	})
+	if(isDelete){
+		try {
+			const body = {query: `mutation{
+				lokasi: deleteLokasi(id: "${ lokasi }"){
+					_id
+				}
+			}`}
+			const { extensions, errors } = await fetchDataGQL(body)
+			setToken(extensions)
+			if(errors) return handleErrors(errors)
+			document.getElementById('cariKriteria').click()
+		} catch (err) {
+			console.log(err)
+		}
 	}
 }
