@@ -42,6 +42,7 @@ export const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('formData')
     localStorage.removeItem('username')
+    localStorage.removeItem('user')
     window.location.href = process.env.REACT_APP_HOST
   })
 }

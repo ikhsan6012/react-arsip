@@ -20,7 +20,7 @@ const Nav = () => {
 	return(
 		<nav className="main-header navbar navbar-expand bg-white navbar-light border-bottom">
 			<ul className="navbar-nav ml-auto">
-				{ localStorage.getItem('token') ? 
+				{ localStorage.getItem('token') && localStorage.getItem('user') ? 
 					<Fragment>
 						<li className="nav-item align-middle mr-2 dropdown" title="Ganti Password">
 							<div className="nav-link dropdown-toggle" style={{ cursor: 'pointer' }}>{ JSON.parse(localStorage.getItem('user')).nama }</div>

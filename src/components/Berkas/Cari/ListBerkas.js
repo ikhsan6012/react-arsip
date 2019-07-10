@@ -51,9 +51,9 @@ export const ListBerkasWP = ({ berkases }) => {
 	)
 }
 
-export const ListBerkasLokasi = ({ berkases }) => {
-	const [isComplete, setIsComplete] = useState(berkases[0].lokasi.completed)
-	const lokasi = berkases[0].lokasi._id
+export const ListBerkasLokasi = ({ berkases, completed }) => {
+	const [isComplete, setIsComplete] = useState(berkases[0] ? berkases[0].lokasi.completed : false)
+	const lokasi = berkases[0] ? berkases[0].lokasi._id : null
 
 	// List Berkas
 	const berkas = berkases.length ? berkases.map((b, i) =>
