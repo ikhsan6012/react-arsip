@@ -80,7 +80,7 @@ const Kriteria = props => {
 	return(
 		<form id="formSearch" data-page={ 1 } onSubmit={ submitHandler.bind(this, { kriteria, props }) }>
 			<div className="row">
-				<label>Cari Berdasarkan:</label>
+				<label className="mt-2">Cari Berdasarkan:</label>
 				<div className="input-group">
 					<select name="kriteria" className="form-control col-md-2" value={ kriteria } onChange={ e => setKriteria(e.target.value) }>
 						<option value="npwp">NPWP</option>

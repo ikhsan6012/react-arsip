@@ -169,9 +169,9 @@ export const addBerkas = async ({ formData, kd_berkas, file, isError, errMsg }, 
 			alert.classList.add('alert-success')
 			alert.innerHTML = data.berkas.pemilik
 				? `${ data.berkas.ket_berkas.nama_berkas } => Nama: ${ data.berkas.pemilik.nama_wp }, NPWP: ${ data.berkas.pemilik.npwp }`
-				: `${ data.berkas.ket_berkas.nama_berkas } => Penerima: ${ data.berkas.penerima.nama_penerima }, Tanggal Terima: ${ data.berkas.penerima.nama_penerima }`
+				: `${ data.berkas.ket_berkas.nama_berkas } => Penerima: ${ data.berkas.penerima.nama_penerima }, Tanggal Terima: ${ data.berkas.penerima.tgl_terima }`
 			alert.hidden = false
-			setFormData({ ...formData, npwp: '', nama_wp: '' })
+			setFormData({ ...formData, npwp: '', nama_wp: '', nama_penerima: '' })
 			data.berkas.pemilik
 				? document.querySelector('[name=npwp]').focus()
 				: document.querySelector('[name=nama_penerima]').focus()

@@ -11,6 +11,7 @@ export const login = async e => {
       username
       nama
       token
+      status
     }
   }`}
   try {
@@ -21,12 +22,13 @@ export const login = async e => {
       inputDOM.forEach(input => input.value = '')
       return inputDOM[0].focus()
     }
-    localStorage.setItem('username', data.user.username)
     await swal('Login Berhasil!', {
       title: 'Login Berhasil!',
       text: `Selamat Datang, ${ data.user.nama }...`,
       icon: 'success'
     })
+    localStorage.setItem('username', data.user.username)
+    localStorage.setItem('status', JSON.stringify(data.user.status))
     localStorage.setItem('token', data.user.token)
     localStorage.setItem('user', JSON.stringify(data.user))
     window.location.href = process.env.REACT_APP_HOST
@@ -42,6 +44,7 @@ export const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('formData')
     localStorage.removeItem('username')
+    localStorage.removeItem('token')
     localStorage.removeItem('user')
     window.location.href = process.env.REACT_APP_HOST
   })

@@ -8,8 +8,8 @@ export const ListBerkasWP = ({ berkases }) => {
 		<tr key={ i }>
 			<td className="text-center align-middle">{ i+1 }</td>
 			<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
-			<td className="text-center align-middle">{ b.masa_pajak && `${ b.masa_pajak }/${ b.tahun_pajak }` }</td>
-			<td className="text-center align-middle">{ b.status_pbk && `${ b.status_pbk } | No. ${ b.nomor_pbk } | ${ b.tahun_pbk }` }</td>
+			<td className="text-center align-middle">{ b.masa_pajak ? `${ b.masa_pajak }/${ b.tahun_pajak }` : '' }</td>
+			<td className="text-center align-middle">{ b.status_pbk ? `${ b.status_pbk } | No. ${ b.nomor_pbk } | ${ b.tahun_pbk }` : '' }</td>
 			<td className="text-center align-middle">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
 			<td className="align-middle">
 				{ b.ket_lain && <pre>{ String.raw`${ b.ket_lain }` }</pre> }
