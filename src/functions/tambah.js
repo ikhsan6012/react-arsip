@@ -131,6 +131,7 @@ export const addBerkas = async ({ formData, kd_berkas, file, isError, errMsg }, 
 					${ formData.tahun_pbk ? `tahun_pbk: ${ formData.tahun_pbk }` : `` }
 					${ formData.masa_pajak ? `masa_pajak: ${ formData.masa_pajak }` : `` }
 					${ formData.tahun_pajak ? `tahun_pajak: ${ formData.tahun_pajak }` : `` }
+					${ formData.pembetulan ? `pembetulan: ${ formData.pembetulan }` : `` }
 					urutan: ${ formData.urutan }
 					${ file ? `file: "${ file }"` : `` }
 					${ formData.ket_lain ? `ket_lain: """${ formData.ket_lain }"""` : `` }
@@ -148,6 +149,7 @@ export const addBerkas = async ({ formData, kd_berkas, file, isError, errMsg }, 
 					}
 					masa_pajak
 					tahun_pajak
+					pembetulan
 					penerima{
 						_id
 						nama_penerima

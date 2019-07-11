@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { fetchDataGQL, handleErrors, setToken } from '../../../functions/helpers'
-import { GudangInput, KdLokasiInput, UrutanInput, NPWPInput, NamaWPInput, NamaPenerimaInput, TglTerimaInput, KdBerkasInput, MasaPajakInput, TahunPajakInput, StatusPBKInput, NoPBKInput, TahunPBKInput, KeteranganInput } from '../../Forms'
+import { GudangInput, KdLokasiInput, UrutanInput, NPWPInput, NamaWPInput, NamaPenerimaInput, TglTerimaInput, KdBerkasInput, MasaPajakInput, TahunPajakInput, StatusPBKInput, NoPBKInput, TahunPBKInput, KeteranganInput, PembetulanInput } from '../../Forms'
 import { changeHandler } from '../../../functions/tambah'
 import { handleBtnFocus } from '../../../functions/cari'
 import swal from 'sweetalert';
@@ -46,6 +46,7 @@ const ModalEdit = props => {
 			delete fd.pemilik
 			setHasPemilik(true)
 			setDisableNamaWP(true)
+			setIsSPT(true)
 			setBy('npwp')
 		}
 		if(fd.penerima){
@@ -58,7 +59,7 @@ const ModalEdit = props => {
 			setBy('penerima')
 		}
 		if(fd.status_pbk) setIsPBK(true)
-		if(fd.masa_pajak) setHasMasa(true)
+		if(fd.tahun_pajak) setHasMasa(true)
 		localStorage.setItem('pemilik', JSON.stringify({ npwp: fd.npwp, nama_wp: fd.nama_wp }))
 		localStorage.setItem('penerima', JSON.stringify({ nama_penerima: fd.nama_penerima, tgl_terima: fd.tgl_terima }))
 		setFormData(fd)
@@ -163,7 +164,16 @@ const ModalEdit = props => {
 		}
 		if(value === 'penerima'){
 			const { nama_penerima, tgl_terima } = JSON.parse(localStorage.getItem('penerima'))
-			setFormData({ ...formData, npwp: '', nama_wp: '', nama_penerima, tgl_terima })
+			setFormData({ 
+				...formData, 
+				npwp: '', 
+				nama_wp: '', 
+				tahun_pajak: '', 
+				masa_pajak: '', 
+				pembetulan: '', 
+				nama_penerima, 
+				tgl_terima 
+			})
 			setHasPenerima(true)
 			setHasPemilik(false)
 			setHasMasa(false)
@@ -209,6 +219,7 @@ const ModalEdit = props => {
 					: `` }
 					${ formData.masa_pajak ? `masa_pajak: ${ formData.masa_pajak }` : `` }
 					${ formData.tahun_pajak ? `tahun_pajak: ${ formData.tahun_pajak }` : `` }
+					${ formData.pembetulan ? `pembetulan: ${ formData.pembetulan }` : `` }
 					${ formData.status_pbk ? `status_pbk: ${ formData.status_pbk }` : `` }
 					${ formData.nomor_pbk ? `nomor_pbk: ${ formData.nomor_pbk }` : `` }
 					${ formData.tahun_pbk ? `tahun_pbk: ${ formData.tahun_pbk }` : `` }
@@ -310,35 +321,41 @@ const ModalEdit = props => {
 									onChange={ changeHandler.bind(this, formData, { setFormData }) }
 								/>
 								<MasaPajakInput
-									width="2"
+									width="4"
 									value={ formData.masa_pajak }
 									required={ hasMasa }
 									disabled={ !isLain && !hasMasa }
 									onChange={ changeHandler.bind(this, formData, { setFormData }) }
 								/>
 								<TahunPajakInput
-									width="2"
+									width="4"
 									value={ formData.tahun_pajak }
 									required={ hasMasa }
 									disabled={ !isLain && !hasMasa }
 									onChange={ changeHandler.bind(this, formData, { setFormData }) }
 								/>
-								<StatusPBKInput
+								<PembetulanInput
 									width="4"
+									value={ formData.pembetulan }
+									disabled={ !isLain && !hasMasa }
+									onChange={ changeHandler.bind(this, formData, { setFormData }) }
+								/>
+								<StatusPBKInput
+									width="6"
 									value={ formData.status_pbk }
 									required={ isPBK }							
 									disabled={ !isPBK }		
 									onChange={ changeHandler.bind(this, formData, { setFormData }) }
 								/>
 								<NoPBKInput
-									width="2"
+									width="3"
 									value={ formData.nomor_pbk }
 									required={ isPBK }							
 									disabled={ !isPBK }
 									onChange={ changeHandler.bind(this, formData, { setFormData }) }
 								/>
 								<TahunPBKInput
-									width="2"
+									width="3"
 									value={ formData.tahun_pbk }
 									required={ isPBK }							
 									disabled={ !isPBK }

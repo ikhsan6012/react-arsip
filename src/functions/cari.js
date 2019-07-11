@@ -46,6 +46,7 @@ export const submitHandler = async ({ kriteria, props }, e) => {
 				}
 				masa_pajak
 				tahun_pajak
+				pembetulan
 				status_pbk
 				nomor_pbk
 				tahun_pbk
@@ -106,6 +107,7 @@ export const getBerkas = async ({ setBerkases, wps, setWPs, penerimas, setPeneri
 			}
 			masa_pajak
 			tahun_pajak
+			pembetulan
 			status_pbk
 			nomor_pbk
 			tahun_pbk

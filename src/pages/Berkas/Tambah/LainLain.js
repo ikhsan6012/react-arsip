@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { NPWPInput, NamaWPInput, GudangInput, KdLokasiInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit, KdBerkasInput, MasaPajakInput, TahunPajakInput } from '../../../components/Forms'
+import { NPWPInput, NamaWPInput, GudangInput, KdLokasiInput, UrutanInput, FileInput, KeteranganInput, ButtonSubmit, KdBerkasInput, MasaPajakInput, TahunPajakInput, PembetulanInput } from '../../../components/Forms'
 import { changeHandler, fileHandler,addBerkas } from '../../../functions/tambah'
 
 const LainLain = () => {
@@ -62,15 +62,20 @@ const LainLain = () => {
 					options={ options }
 				/>
 				<MasaPajakInput
-					width="4"
+					width="3"
 					value={ formData.masa_pajak }
 					required={ formData.kd_berkas ? !formData.kd_berkas.match(/lain/i) : true }
 					onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
 				/>
 				<TahunPajakInput
-					width="5"
+					width="3"
 					value={ formData.tahun_pajak }
 					required={ formData.kd_berkas ? !formData.kd_berkas.match(/lain/i) : true }
+					onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
+				/>
+				<PembetulanInput
+					width="3"
+					value={ formData.pembetulan }
 					onChange={ changeHandler.bind(this, formData, { setFormData, setDisableNamaWP, setErrMsg, setIsError }) }
 				/>
 				<UrutanInput

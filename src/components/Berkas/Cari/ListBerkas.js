@@ -8,12 +8,21 @@ export const ListBerkasWP = ({ berkases }) => {
 		<tr key={ i }>
 			<td className="text-center align-middle">{ i+1 }</td>
 			<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
-			<td className="text-center align-middle">{ b.masa_pajak ? `${ b.masa_pajak }/${ b.tahun_pajak }` : '' }</td>
-			<td className="text-center align-middle">{ b.status_pbk ? `${ b.status_pbk } | No. ${ b.nomor_pbk } | ${ b.tahun_pbk }` : '' }</td>
-			<td className="text-center align-middle">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
-			<td className="align-middle">
-				{ b.ket_lain && <pre>{ String.raw`${ b.ket_lain }` }</pre> }
+			<td className="text-center align-middle">
+				{ b.tahun_pajak ? `${ b.masa_pajak }/${ b.tahun_pajak }` : '' }
+				{ b.pembetulan ? <><br/>{ b.pembetulan }</> : '' }
 			</td>
+			<td className="text-center align-middle">{ b.status_pbk ? <>
+				{ b.status_pbk }<br/>
+				No. { b.nomor_pbk } | { b.tahun_pbk }
+			</> : '' }</td>
+			<td className="text-center align-middle"><>
+				Gudang { b.lokasi.gudang } | { b.lokasi.kd_lokasi }<br/>
+				{ b.urutan }
+			</></td>
+			<td className="align-middle">{ b.ket_lain &&<pre>
+				{ String.raw`${ b.ket_lain }` }
+			</pre> }</td>
 			<Aksi berkas={ b }/>
 		</tr>
 	) : <tr><td colSpan="7">Tidak Ada Berkas</td></tr>
@@ -33,12 +42,12 @@ export const ListBerkasWP = ({ berkases }) => {
 						<thead>
 							<tr>
 								<th className="align-middle text-center">No</th>
-								<th className="align-middle text-center" style={{ minWidth: "200px" }}>Jenis Berkas</th>
-								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Masa / Tahun</th>
+								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Jenis Berkas</th>
+								<th className="align-middle text-center" style={{ minWidth: "100px" }}>Masa / Tahun<br/>Pembetulan</th>
 								<th className="align-middle text-center" style={{ minWidth: "125px" }}>Pemindahbukuan</th>
-								<th className="align-middle text-center" style={{ minWidth: "100px" }}>Lokasi</th>
+								<th className="align-middle text-center" style={{ minWidth: "140px" }}>Gudang | Lokasi<br/>Urutan</th>
 								<th className="align-middle text-center">Keterangan</th>
-								<th className="align-middle text-center" style={{ minWidth: "100px" }}>Aksi</th>
+								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Aksi</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -60,14 +69,26 @@ export const ListBerkasLokasi = ({ berkases }) => {
 		<tr key={ b._id }>
 			<td className="align-middle text-center">{ i+1 }</td>
 			<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
-			<td className="align-middle">{ b.pemilik && <React.Fragment>{ b.pemilik.npwp }<br/>{ b.pemilik.nama_wp }</React.Fragment> }</td>
-			<td className="align-middle text-center">{ b.tahun_pajak && `${ b.masa_pajak }/${ b.tahun_pajak }` }</td>
-			<td className="align-middle">{ b.penerima && <React.Fragment>{ b.penerima.nama_penerima }<br/>{ b.penerima.tgl_terima }</React.Fragment> }</td>
-			<td className="align-middle text-center">{ b.status_pbk && `${ b.status_pbk } | No. ${ b.nomor_pbk } | ${ b.tahun_pbk }` }</td>
-			<td className="align-middle text-center">{ b.urutan }</td>
-			<td className="align-middle">
-				{ b.ket_lain && <pre>{ String.raw`${ b.ket_lain }` }</pre> }
+			<td className="align-middle">{ b.pemilik && <>
+				{ b.pemilik.nama_wp }<br/>
+				{ b.pemilik.npwp }
+			</> }</td>
+			<td className="text-center align-middle">
+				{ b.tahun_pajak ? `${ b.masa_pajak }/${ b.tahun_pajak }` : '' }
+				{ b.pembetulan ? <><br/>{ b.pembetulan }</> : '' }
 			</td>
+			<td className="align-middle">{ b.penerima && <>
+				{ b.penerima.nama_penerima }<br/>
+				{ b.penerima.tgl_terima }
+			</> }</td>
+			<td className="text-center align-middle">{ b.status_pbk ? <>
+				{ b.status_pbk }<br/>
+				No. { b.nomor_pbk } | { b.tahun_pbk }
+			</> : '' }</td>
+			<td className="align-middle text-center">{ b.urutan }</td>
+			<td className="align-middle">{ b.ket_lain &&<pre>
+				{ String.raw`${ b.ket_lain }` }
+			</pre> }</td>
 			<Aksi berkas={ b } />
 		</tr>
 	) : <tr><td colSpan="9">Tidak Ada Berkas</td></tr>
@@ -87,12 +108,12 @@ export const ListBerkasLokasi = ({ berkases }) => {
 					<thead>
 						<tr>
 							<th className="text-center align-middle no">No</th>
-							<th className="text-center align-middle" style={{ minWidth: "200px" }}>Jenis Berkas</th>
-							<th className="text-center align-middle" style={{ minWidth: "145px" }}>NPWP / Nama</th>
-							<th className="text-center align-middle" style={{ minWidth: "65px" }}>Masa / Tahun</th>
-							<th className="text-center align-middle" style={{ minWidth: "150px" }}>Penerima / Tanggal</th>
-							<th className="text-center align-middle" style={{ minWidth: "125px" }}>Pemindahbukuan</th>
-							<th className="text-center align-middle" style={{ minWidth: "25px" }}>Urutan</th>
+							<th className="text-center align-middle" style={{ minWidth: "150px" }}>Jenis Berkas</th>
+							<th className="text-center align-middle" style={{ minWidth: "142px" }}>Nama Wajib Pajak<br/>NPWP</th>
+							<th className="text-center align-middle" style={{ minWidth: "100px" }}>Masa / Tahun<br/>Pembetulan</th>
+							<th className="text-center align-middle" style={{ minWidth: "150px" }}>Nama Penerima<br/>Tanggal Terima</th>
+							<th className="text-center align-middle" style={{ minWidth: "1px" }}>Pemindahbukuan</th>
+							<th className="text-center align-middle" style={{ minWidth: "65px" }}>Urutan</th>
 							<th className="text-center align-middle">Keterangan</th>
 							<th className="text-center align-middle" style={{ minWidth: "150px" }}>Aksi</th>
 						</tr>
@@ -135,10 +156,10 @@ export const ListBerkasPenerima = ({ berkases }) => {
 						<thead>
 							<tr>
 								<th className="align-middle text-center">No</th>
-								<th className="align-middle text-center" style={{ minWidth: "200px" }}>Jenis Berkas</th>
-								<th className="align-middle text-center" style={{ minWidth: "100px" }}>Lokasi</th>
+								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Jenis Berkas</th>
+								<th className="align-middle text-center" style={{ minWidth: "140px" }}>Lokasi</th>
 								<th className="align-middle text-center">Keterangan</th>
-								<th className="align-middle text-center" style={{ minWidth: "100px" }}>Aksi</th>
+								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Aksi</th>
 							</tr>
 						</thead>
 						<tbody>

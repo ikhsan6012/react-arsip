@@ -192,7 +192,7 @@ export const MasaPajakInput = props =>
 				min="0"
 				max="12"
 				placeholder={ new Date().getMonth() }
-				value={ props.value || ''}
+				value={ props.value >= 0 ? props.value : ''}
 				onChange={ props.onChange }
 				required={ props.required === false ? false : true }
 				disabled={ props.disabled === true ? true : false }
@@ -218,6 +218,23 @@ export const TahunPajakInput = props =>
 			/>
 		</div>
 	</div>
+
+export const PembetulanInput = props =>
+<div className={`form-group col-md-${props.width}`}>
+	<label>Pembetulan { props.required && <span className="text-danger">*</span> }</label>
+	<div className="input-group">
+		<input 
+			type="number" 
+			name="pembetulan" 
+			className="form-control" 
+			min={ 0 }
+			value={ props.value || '' }
+			onChange={ props.onChange }
+			required={ props.required === false ? false : true }
+			disabled={ props.disabled === true ? true : false }
+		/>
+	</div>
+</div>
 
 export const UrutanInput = props =>
 	<div className={`form-group col-md-${props.width}`}>
