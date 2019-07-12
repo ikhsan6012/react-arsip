@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react'
 import FormTanggalRekam from './FormMonitor'
 
 const MonitorRekam = () => {
-	const [perekam, setPerekam] = useState([])
-	const [listPerekam, setListPerekam] = useState('')
-
+	const [lokasis, setLokasis] = useState(null)
+	const [listLokasi, setListLokasi] = useState('')
+	
 	useEffect(() => {
-		setListPerekam('')
-		const getListPerekam = async perekam => {
-			const Module = await import('./ListPerekam')
-			setListPerekam(<Module.default perekam={ perekam } />)
+		setListLokasi('')
+		const getListLokasi = async lokasis => {
+			const Module = await import('./ListLokasi')
+			setListLokasi(<Module.default lokasis={ lokasis } />)
 		}
-		if(perekam.length) getListPerekam(perekam)
-	}, [perekam])
+		if(lokasis) getListLokasi(lokasis)
+	}, [lokasis])
 
 	return(
 		<section className="content">
@@ -23,11 +23,11 @@ const MonitorRekam = () => {
 							<div className="card-header d-flex p-0">
 								<div className="col-md-12 ml-1">
 									<div className="form-group col-md-12">
-										<FormTanggalRekam setPerekam={ setPerekam } />
+										<FormTanggalRekam setLokasis={ setLokasis } />
 									</div>
 								</div>
 							</div>
-							{ listPerekam }
+							{ listLokasi }
 						</div>
 					</div>
 				</div>

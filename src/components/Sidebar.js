@@ -66,13 +66,13 @@ const Sidebar = () => {
 										<p>Cari</p>
 									</NavLink>
 								</li>
-								{/* { (localStorage.getItem('token') && localStorage.getItem('status').match(/0|2/)) &&
+								{ (localStorage.getItem('token') && localStorage.getItem('status').match(/0|2/)) &&
 									<li className="nav-item">
 										<NavLink exact to="/berkas/monitor-rekam" className="nav-link">
 											<i className="nav-icon fa fa-circle-o"></i>
 											<p>Monitoring Perekaman</p>
 										</NavLink>
-									</li> } */}
+									</li> }
 							</ul>
 						</li>
 						<li className="nav-item">

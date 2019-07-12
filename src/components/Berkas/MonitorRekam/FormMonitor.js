@@ -8,7 +8,7 @@ const FormMonitor = props => {
 	}, [])
 	
 	return(
-		<form id="form-monitor" onSubmit={ handleSubmit.bind(this, props.setPerekam) }>
+		<form id="form-monitor" onSubmit={ handleSubmit.bind(this, props.setLokasis) }>
 			<div className="row">
 				<label className="mt-2">Masukkan Tanggal Rekam</label>
 				<div className="input-group">
