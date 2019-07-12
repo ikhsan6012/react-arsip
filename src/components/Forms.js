@@ -230,7 +230,7 @@ export const PembetulanInput = props =>
 			min={ 0 }
 			value={ props.value || '' }
 			onChange={ props.onChange }
-			required={ props.required === false ? false : true }
+			required={ props.required === true ? true : false }
 			disabled={ props.disabled === true ? true : false }
 		/>
 	</div>
