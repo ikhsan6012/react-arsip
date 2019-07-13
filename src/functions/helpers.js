@@ -21,6 +21,10 @@ export const handleErrors = errors => {
 				document.querySelector('nav .btn-danger').click()
 			})
 	} else if(errors.length) {
+		swal({
+			text: errors[0].message, 
+			icon: 'error' 
+		})
 		return errors.forEach(err => {
 			console.error(err)
 		})
