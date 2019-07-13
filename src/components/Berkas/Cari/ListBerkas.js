@@ -16,10 +16,12 @@ export const ListBerkasWP = ({ berkases }) => {
 				{ b.status_pbk }<br/>
 				No. { b.nomor_pbk } | { b.tahun_pbk }
 			</> : '' }</td>
-			<td className="text-center align-middle"><>
-				Gudang { b.lokasi.gudang } | { b.lokasi.kd_lokasi }<br/>
-				{ b.urutan }
-			</></td>
+			{ localStorage.getItem('token') ? 
+				<td className="text-center align-middle"><>
+					Gudang { b.lokasi.gudang } | { b.lokasi.kd_lokasi }<br/>
+					{ b.urutan }
+				</></td>
+			: '' }
 			<td className="align-middle">{ b.ket_lain &&<pre>
 				{ String.raw`${ b.ket_lain }` }
 			</pre> }</td>
@@ -45,7 +47,9 @@ export const ListBerkasWP = ({ berkases }) => {
 								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Jenis Berkas</th>
 								<th className="align-middle text-center" style={{ minWidth: "100px" }}>Masa / Tahun<br/>Pembetulan</th>
 								<th className="align-middle text-center" style={{ minWidth: "125px" }}>Pemindahbukuan</th>
-								<th className="align-middle text-center" style={{ minWidth: "140px" }}>Gudang | Lokasi<br/>Urutan</th>
+								{ localStorage.getItem('token') ?
+									<th className="align-middle text-center" style={{ minWidth: "140px" }}>Gudang | Lokasi<br/>Urutan</th>
+								: ''}
 								<th className="align-middle text-center">Keterangan</th>
 								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Aksi</th>
 							</tr>
@@ -133,7 +137,9 @@ export const ListBerkasPenerima = ({ berkases }) => {
 		<tr key={ i }>
 			<td className="align-middle text-center">{ i+1 }</td>
 			<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
-			<td className="align-middle text-center">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
+			{ localStorage.getItem('token') ?
+				<td className="align-middle text-center">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
+			: '' }
 			<td className="align-middle">
 				{ b.ket_lain && <pre>{ String.raw`${ b.ket_lain }` }</pre> }
 			</td>
@@ -157,7 +163,9 @@ export const ListBerkasPenerima = ({ berkases }) => {
 							<tr>
 								<th className="align-middle text-center">No</th>
 								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Jenis Berkas</th>
-								<th className="align-middle text-center" style={{ minWidth: "140px" }}>Lokasi</th>
+								{ localStorage.getItem('token') ?
+									<th className="align-middle text-center" style={{ minWidth: "140px" }}>Lokasi</th>
+								: '' }
 								<th className="align-middle text-center">Keterangan</th>
 								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Aksi</th>
 							</tr>

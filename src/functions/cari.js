@@ -10,6 +10,10 @@ export const changeHandler = e => {
 // Submit Search
 export const submitHandler = async ({ kriteria, props }, e) => {
 	e.preventDefault()
+	if(kriteria.match(/lokasi/i) && !localStorage.getItem('token')) return swal({
+		text: 'Anda Tidak Memiliki Akses...',
+		icon: 'error'
+	})
 	const form = document.querySelector('#formSearch')
 	const page = form.dataset.page
 	const limit = [page * 5 - 5, 5]

@@ -17,15 +17,63 @@ export const handleSubmit = async (setLokasis, e) => {
 				_id
 				nama
 			}
+			jumlah_berkas
 		}
 	}`}
 	try {
 		const { data, errors, extension } = await fetchDataGQL(body)
 		setToken(extension)
 		if(errors) return handleErrors(errors)
-		console.log(data)
 		setLokasis(data.lokasis)
 	} catch (err) {
 		console.log(err)
+	}
+}
+
+export const getDetailRekam = async (lokasi, { setLokasis, setBerkases }) => {
+	if(document.getElementById('tbl-lokasi')) {
+		setLokasis(JSON.parse(localStorage.getItem('lokasis')))
+		return setBerkases([])
+	}
+	const body = {query: `{
+		berkases(by: lokasi, gudang: ${ lokasi.gudang }, kd_lokasi: "${ lokasi.kd_lokasi }") {
+			_id
+			ket_berkas {
+				_id
+				kd_berkas
+				nama_berkas
+			}
+			pemilik {
+				_id
+				npwp
+				nama_wp
+			}
+			penerima {
+				_id
+				nama_penerima
+				tgl_terima
+			}
+			masa_pajak
+			tahun_pajak
+			pembetulan
+			status_pbk
+			nomor_pbk
+			tahun_pbk
+			lokasi {
+				_id
+			}
+			urutan
+			file
+			ket_lain
+		}
+	}`}
+	try {
+		const { data, errors, extension } = await fetchDataGQL(body)
+		setToken(extension)
+		if(errors) return handleErrors(errors)
+		setLokasis([lokasi])
+		setBerkases(data.berkases)
+	} catch (err) {
+		console.error(err)
 	}
 }
