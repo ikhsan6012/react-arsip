@@ -16,12 +16,11 @@ export const ListBerkasWP = ({ berkases }) => {
 				{ b.status_pbk }<br/>
 				No. { b.nomor_pbk } | { b.tahun_pbk }
 			</> : '' }</td>
-			{ localStorage.getItem('token') ? 
+			{ localStorage.getItem('token') &&
 				<td className="text-center align-middle"><>
 					Gudang { b.lokasi.gudang } | { b.lokasi.kd_lokasi }<br/>
 					{ b.urutan }
-				</></td>
-			: '' }
+				</></td> }
 			<td className="align-middle">{ b.ket_lain &&<pre>
 				{ String.raw`${ b.ket_lain }` }
 			</pre> }</td>
@@ -47,9 +46,8 @@ export const ListBerkasWP = ({ berkases }) => {
 								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Jenis Berkas</th>
 								<th className="align-middle text-center" style={{ minWidth: "100px" }}>Masa / Tahun<br/>Pembetulan</th>
 								<th className="align-middle text-center" style={{ minWidth: "125px" }}>Pemindahbukuan</th>
-								{ localStorage.getItem('token') ?
-									<th className="align-middle text-center" style={{ minWidth: "140px" }}>Gudang | Lokasi<br/>Urutan</th>
-								: ''}
+								{ localStorage.getItem('token') &&
+									<th className="align-middle text-center" style={{ minWidth: "140px" }}>Gudang | Lokasi<br/>Urutan</th> }
 								<th className="align-middle text-center">Keterangan</th>
 								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Aksi</th>
 							</tr>
@@ -68,45 +66,58 @@ export const ListBerkasLokasi = ({ berkases }) => {
 	const [isComplete, setIsComplete] = useState(berkases[0] ? berkases[0].lokasi.completed : false)
 	const lokasi = berkases[0] ? berkases[0].lokasi._id : null
 
+	const urutan = [], duplicate_urutan = []
+	for(let b of berkases){
+		if(!urutan.includes(b.urutan)) urutan.push(b.urutan)
+		else duplicate_urutan.push(b.urutan)
+	}
+
 	// List Berkas
-	const berkas = berkases.length ? berkases.map((b, i) =>
-		<tr key={ b._id }>
-			<td className="align-middle text-center">{ i+1 }</td>
-			<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
-			<td className="align-middle">{ b.pemilik && <>
-				{ b.pemilik.nama_wp }<br/>
-				{ b.pemilik.npwp }
-			</> }</td>
-			<td className="text-center align-middle">
-				{ b.tahun_pajak ? `${ b.masa_pajak }/${ b.tahun_pajak }` : '' }
-				{ b.pembetulan ? <><br/>{ b.pembetulan }</> : '' }
-			</td>
-			<td className="align-middle">{ b.penerima && <>
-				{ b.penerima.nama_penerima }<br/>
-				{ b.penerima.tgl_terima }
-			</> }</td>
-			<td className="text-center align-middle">{ b.status_pbk ? <>
-				{ b.status_pbk }<br/>
-				No. { b.nomor_pbk } | { b.tahun_pbk }
-			</> : '' }</td>
-			<td className="align-middle text-center">{ b.urutan }</td>
-			<td className="align-middle">{ b.ket_lain &&<pre>
-				{ String.raw`${ b.ket_lain }` }
-			</pre> }</td>
-			<Aksi berkas={ b } />
-		</tr>
-	) : <tr><td colSpan="9">Tidak Ada Berkas</td></tr>
+	const berkas = berkases.length ? berkases.map((b, i) => {
+		const isDuplicate = duplicate_urutan.includes(b.urutan) ? 'table-danger' : ''
+		const isJumped = () => {
+			if(!berkases[i+1]) return ''
+			if(!(b.urutan - berkases[i+1].urutan).toString().match(/1|0/)) return 'table-danger'
+		}
+		const title = isDuplicate ? 'Duplikat Urutan' : isJumped() ? 'Terdapat Urutan Yang Hilang Sebelum Ini' : ''
+		return(
+			<tr key={ b._id } className={`${ isDuplicate } ${ isJumped() }`} title={ title }>
+				<td className="align-middle text-center">{ i+1 }</td>
+				<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
+				<td className="align-middle">{ b.pemilik && <>
+					{ b.pemilik.nama_wp }<br/>
+					{ b.pemilik.npwp }
+				</> }</td>
+				<td className="text-center align-middle">
+					{ b.tahun_pajak ? `${ b.masa_pajak }/${ b.tahun_pajak }` : '' }
+					{ b.pembetulan ? <><br/>{ b.pembetulan }</> : '' }
+				</td>
+				<td className="align-middle">{ b.penerima && <>
+					{ b.penerima.nama_penerima }<br/>
+					{ b.penerima.tgl_terima }
+				</> }</td>
+				<td className="text-center align-middle">{ b.status_pbk && <>
+					{ b.status_pbk }<br/>
+					No. { b.nomor_pbk } | { b.tahun_pbk }
+				</> }</td>
+				<td className="align-middle text-center">{ b.urutan }</td>
+				<td className="align-middle">{ b.ket_lain &&<pre>
+					{ String.raw`${ b.ket_lain }` }
+				</pre> }</td>
+				<Aksi berkas={ b } />
+			</tr>
+		)
+	}) : <tr><td colSpan="9">Tidak Ada Berkas</td></tr>
 	
 	return(
 		<div className="card-body">
-			{ localStorage.getItem('token') && berkases.length ?
+			{ berkases.length &&
 				<div className="pull-right mb-2">
 					<button className={`btn btn-${ isComplete ? 'danger' : 'primary' } mr-2`} onClick={ setComplete.bind(this, lokasi, !isComplete, setIsComplete) }>
 						{ isComplete ? 'Tandai Belum Selesai' : 'Tandai Selesai' }
 					</button>
 						<button className="btn btn-danger" onClick={ deleteLokasi.bind(this, lokasi) }>Hapus</button>
-				</div>
-			: '' }
+				</div> }
 			<div className="table-responsive">
 				<table className="table table-striped table-bordered table-hover">
 					<thead>
@@ -139,7 +150,7 @@ export const ListBerkasPenerima = ({ berkases }) => {
 			<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
 			{ localStorage.getItem('token') ?
 				<td className="align-middle text-center">{`Gudang ${b.lokasi.gudang} | ${b.lokasi.kd_lokasi} | ${b.urutan}`}</td>
-			: '' }
+			: null }
 			<td className="align-middle">
 				{ b.ket_lain && <pre>{ String.raw`${ b.ket_lain }` }</pre> }
 			</td>
@@ -163,9 +174,8 @@ export const ListBerkasPenerima = ({ berkases }) => {
 							<tr>
 								<th className="align-middle text-center">No</th>
 								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Jenis Berkas</th>
-								{ localStorage.getItem('token') ?
-									<th className="align-middle text-center" style={{ minWidth: "140px" }}>Lokasi</th>
-								: '' }
+								{ localStorage.getItem('token') &&
+									<th className="align-middle text-center" style={{ minWidth: "140px" }}>Lokasi</th> }
 								<th className="align-middle text-center">Keterangan</th>
 								<th className="align-middle text-center" style={{ minWidth: "150px" }}>Aksi</th>
 							</tr>

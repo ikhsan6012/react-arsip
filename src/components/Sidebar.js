@@ -87,12 +87,6 @@ const Sidebar = () => {
 								</a>
 							}
 						</li>
-						{/* <li className="nav-item">
-							<NavLink exact to="/saran-masukan" className="nav-link">
-								<i className="nav-icon fa fa-bug"></i>
-								<p>Saran dan Masukan</p>
-							</NavLink>
-						</li> */}
 					</ul>
 				</nav>
 			</div>

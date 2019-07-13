@@ -7,7 +7,7 @@ const DetailRekam = ({ berkases }) => {
 		else duplicate_urutan.push(b.urutan)
 	}
 	
-	const listBerkas = berkases.length ? berkases.sort((a, b) => a.urutan - b.urutan).map((b, i) =>{
+	const listBerkas = berkases.length ? berkases.sort((a, b) => a.urutan - b.urutan).map((b, i) => {
 		const isDuplicate = duplicate_urutan.includes(b.urutan) ? 'table-danger' : ''
 		const isJumped = () => {
 			if(!berkases[i-1]) return ''
@@ -15,9 +15,7 @@ const DetailRekam = ({ berkases }) => {
 		}
 		const title = isDuplicate ? 'Duplikat Urutan' : isJumped() ? 'Terdapat Urutan Yang Hilang Sebelum Ini' : ''
 		return(
-			<tr key={ b._id } className={`${ isDuplicate } ${ isJumped() }`} 
-				title={ title }
-			>
+			<tr key={ b._id } className={`${ isDuplicate } ${ isJumped() }`} title={ title }>
 				<td className="align-middle text-center">{ i+1 }</td>
 				<td className="align-middle">{ b.ket_berkas.nama_berkas }</td>
 				<td className="align-middle">{ b.pemilik && <>
