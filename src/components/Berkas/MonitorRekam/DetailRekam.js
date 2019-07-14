@@ -11,7 +11,7 @@ const DetailRekam = ({ berkases }) => {
 		const isDuplicate = duplicate_urutan.includes(b.urutan) ? 'table-danger' : ''
 		const isJumped = () => {
 			if(!berkases[i-1]) return ''
-			if(!(b.urutan - berkases[i-1].urutan).toString().match(/1|0/)) return 'table-danger'
+			if(!(b.urutan - berkases[i-1].urutan).toString().match(/^1$|^0$/)) return 'table-danger'
 		}
 		const title = isDuplicate ? 'Duplikat Urutan' : isJumped() ? 'Terdapat Urutan Yang Hilang Sebelum Ini' : ''
 		return(
