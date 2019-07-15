@@ -1,5 +1,5 @@
+import swal from 'sweetalert'
 import { fetchDataGQL, setToken, handleErrors } from './helpers'
-import swal from 'sweetalert';
 
 // Set Value To Uppercase
 export const changeHandler = e => {
@@ -10,6 +10,11 @@ export const changeHandler = e => {
 // Submit Search
 export const submitHandler = async ({ kriteria, props }, e) => {
 	e.preventDefault()
+	if(kriteria.match(/penerima/i)){
+		const [tgl_terima, nama_penerima] = [...document.querySelectorAll('#formSearch input')]
+		if(!tgl_terima.value && !nama_penerima.value) return swal('Harus Mengisi Salah Satu Atau Keduanya...', { icon: 'error' })
+			.then(() => tgl_terima.focus())
+	}
 	if(kriteria.match(/lokasi/i) && !localStorage.getItem('token')) return swal({
 		text: 'Anda Tidak Memiliki Akses...',
 		icon: 'error'
@@ -169,6 +174,7 @@ export const handleBtnFocus = ({ key, ctrlKey }) => {
 }
 
 export const setComplete = async (lokasi, isComplete, setIsComplete) => {
+	document.removeEventListener('keypress', handleBtnFocus, true)
 	try {
 		const isSend = isComplete ?
 			await swal('Apakah Anda Yakin?', {
@@ -203,6 +209,7 @@ export const setComplete = async (lokasi, isComplete, setIsComplete) => {
 				text: 'Tetap Semangat! Tinggal Dikit Lagi Kok...',
 			})
 			setIsComplete(data.lokasi.completed)
+			document.addEventListener('keypress', handleBtnFocus, true)
 		}
 	} catch (err) {
 		console.log(err)

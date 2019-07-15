@@ -34,13 +34,16 @@ const ListLokasi = props => {
 				<td className="text-center align-middle">
 					{ lokasi.time_completed ? new Date(parseInt(lokasi.time_completed)).toLocaleString('id') : '' }
 				</td>
-				<td className="text-center align-middle">{ lokasi.completed ?
-					<h6 style={{ marginBottom: 0 }}><span className="badge badge-pill badge-success">Selesai</span></h6> :
-					<h6 style={{ marginBottom: 0 }}><span className="badge badge-pill badge-danger">Belum Selesai</span></h6>
+				<td className="text-center align-middle">{ lokasi.cancel_msg ?
+					<h6 style={{ marginBottom: 0 }}><span className="badge badge-pill badge-warning">Dibuka Kembali</span></h6> :
+					lokasi.completed ?
+						<h6 style={{ marginBottom: 0 }}><span className="badge badge-pill badge-success">Selesai</span></h6> :
+						<h6 style={{ marginBottom: 0 }}><span className="badge badge-pill badge-danger">Belum Selesai</span></h6>
 				}</td>
+				<td className="align-middle">{ lokasi.cancel_msg }</td>
 			</tr>
 		)
-	}) : <tr><td colSpan="8">Tidak Ada Data...</td></tr>
+	}) : <tr><td colSpan="9">Tidak Ada Data...</td></tr>
 		
 	
 	return(<>
@@ -57,6 +60,7 @@ const ListLokasi = props => {
 							<th className="text-center align-middle">Waktu Mulai</th>
 							<th className="text-center align-middle">Waktu Selesai</th>
 							<th className="text-center align-middle">Status</th>
+							<th className="text-center align-middle">Keterangan</th>
 						</tr>
 					</thead>
 					<tbody>
