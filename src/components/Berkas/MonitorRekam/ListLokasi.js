@@ -22,7 +22,7 @@ const ListLokasi = props => {
 		if(berkases.length) renderDetailRekam(berkases)
 	}, [berkases])
 
-	const list = lokasis.length ? lokasis.sort((a,b) => a.perekam.nama < b.perekam.nama).map((lokasi, i) => {
+	const list = lokasis.length ? lokasis.sort((a,b) => a.perekam.nama.localeCompare(b.perekam.nama)).map((lokasi, i) => {
 		return(
 			<tr key={ lokasi._id } style={{ cursor: 'pointer' }} onClick={ getDetailRekam.bind(this, lokasi, { setLokasis, setBerkases }) }>
 				<td className="text-center align-middle">{ i+1 }</td>
@@ -30,9 +30,9 @@ const ListLokasi = props => {
 				<td className="text-center align-middle">{ lokasi.gudang }</td>
 				<td className="text-center align-middle">{ lokasi.kd_lokasi }</td>
 				<td className="text-center align-middle">{ lokasi.jumlah_berkas }</td>
-				<td className="text-center align-middle">{ new Date(parseInt(lokasi.created_at)).toISOString() }</td>
+				<td className="text-center align-middle">{ new Date(parseInt(lokasi.created_at)).toLocaleString('id') }</td>
 				<td className="text-center align-middle">
-					{ lokasi.time_completed ? new Date(parseInt(lokasi.time_completed)).toISOString() : '' }
+					{ lokasi.time_completed ? new Date(parseInt(lokasi.time_completed)).toLocaleString('id') : '' }
 				</td>
 				<td className="text-center align-middle">{ lokasi.completed ?
 					<h6 style={{ marginBottom: 0 }}><span className="badge badge-pill badge-success">Selesai</span></h6> :

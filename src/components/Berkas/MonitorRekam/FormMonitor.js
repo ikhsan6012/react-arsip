@@ -10,7 +10,7 @@ const FormMonitor = props => {
 	return(
 		<form id="form-monitor" onSubmit={ handleSubmit.bind(this, props.setLokasis) }>
 			<div className="row">
-				<label className="mt-2">Masukkan Tanggal Rekam</label>
+				<label className="mt-2">Masukkan Tanggal Mulai Rekam</label>
 				<div className="input-group">
 					<InputMask 
 						id="tgl_rekam"
