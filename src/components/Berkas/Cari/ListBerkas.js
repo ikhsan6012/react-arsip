@@ -111,13 +111,13 @@ export const ListBerkasLokasi = ({ berkases }) => {
 	
 	return(
 		<div className="card-body">
-			{ berkases.length &&
+			{ berkases.length ?
 				<div className="pull-right mb-2">
 					<button className={`btn btn-${ isComplete ? 'danger' : 'primary' } mr-2`} onClick={ setComplete.bind(this, lokasi, !isComplete, setIsComplete) }>
 						{ isComplete ? 'Tandai Belum Selesai' : 'Tandai Selesai' }
 					</button>
 						<button className="btn btn-danger" onClick={ deleteLokasi.bind(this, lokasi) }>Hapus</button>
-				</div> }
+				</div> : '' }
 			<div className="table-responsive">
 				<table className="table table-striped table-bordered table-hover">
 					<thead>

@@ -18,6 +18,7 @@ const ModalEdit = props => {
 	const [by, setBy] = useState('npwp')
 	const [isError, setIsError] = useState(false)
 	const [errMsg, setErrMsg] = useState('')
+	const username = localStorage.getItem('username')
 
 	useEffect(() => {
 		document.removeEventListener('keypress', handleBtnFocus, true)
@@ -198,7 +199,7 @@ const ModalEdit = props => {
 		}) : true
 		if(isSend){
 			const body = {query: `mutation{
-				editBerkas(id: "${ berkas._id }", input: {
+				editBerkas(id: "${ berkas._id }", username: "${ username }", input: {
 					lokasi: {
 						gudang: ${ formData.gudang }
 						kd_lokasi: "${ formData.kd_lokasi }"
@@ -322,14 +323,14 @@ const ModalEdit = props => {
 								/>
 								<MasaPajakInput
 									width="4"
-									value={ formData.masa_pajak }
+									value={ formData.masa_pajak || '' }
 									required={ hasMasa }
 									disabled={ !isLain && !hasMasa }
 									onChange={ changeHandler.bind(this, formData, { setFormData }) }
 								/>
 								<TahunPajakInput
 									width="4"
-									value={ formData.tahun_pajak }
+									value={ formData.tahun_pajak || '' }
 									required={ hasMasa }
 									disabled={ !isLain && !hasMasa }
 									onChange={ changeHandler.bind(this, formData, { setFormData }) }

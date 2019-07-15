@@ -1,6 +1,8 @@
 import swal from 'sweetalert'
 import { fetchDataGQL, setToken, handleErrors } from './helpers'
 
+const username = localStorage.getItem('username')
+
 // Set Value To Uppercase
 export const changeHandler = e => {
 	e.target.value = e.target.value.toUpperCase()
@@ -189,7 +191,6 @@ export const setComplete = async (lokasi, isComplete, setIsComplete) => {
 				buttons: ['Batal', 'Ya']
 			})
 		if(isSend){
-			const username = localStorage.getItem('username')
 			const body = {query: `mutation{
 				lokasi: setComplete(username: "${ username }", lokasi: "${ lokasi }", completed: ${ isComplete }, cancel_msg: ${ !isComplete ? `"${ isSend }"` : `null` }){
 					completed
@@ -224,7 +225,7 @@ export const deleteLokasi = async lokasi => {
 	if(isDelete){
 		try {
 			const body = {query: `mutation{
-				lokasi: deleteLokasi(id: "${ lokasi }"){
+				lokasi: deleteLokasi(id: "${ lokasi }", username: "${ username }"){
 					_id
 				}
 			}`}
