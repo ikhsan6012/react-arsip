@@ -1,6 +1,8 @@
 import swal from 'sweetalert'
 import { fetchDataGQL, setToken, handleErrors } from './helpers'
 
+const username = localStorage.getItem('username')
+
 const handleMutation = (kriteria, berkas) => {
 	if(kriteria.match(/npwp|nama_wp|penerima/)) {
 		const id = kriteria.match(/npwp|nama_wp/) ? berkas.pemilik._id : berkas.penerima._id
@@ -137,7 +139,7 @@ export const deleteBerkas = async ({ hasToken, berkas, kriteria }) => {
 		})
 		if(!isDelete) return false
 			const body = {query: `mutation{
-			deleteBerkas(id: "${ berkas._id }"){
+			deleteBerkas(id: "${ berkas._id }", username: "${ username }"){
 				_id
 			}
 		}`}

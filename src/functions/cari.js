@@ -1,5 +1,7 @@
+import swal from 'sweetalert'
 import { fetchDataGQL, setToken, handleErrors } from './helpers'
-import swal from 'sweetalert';
+
+const username = localStorage.getItem('username')
 
 // Set Value To Uppercase
 export const changeHandler = e => {
@@ -10,6 +12,11 @@ export const changeHandler = e => {
 // Submit Search
 export const submitHandler = async ({ kriteria, props }, e) => {
 	e.preventDefault()
+	if(kriteria.match(/penerima/i)){
+		const [tgl_terima, nama_penerima] = [...document.querySelectorAll('#formSearch input')]
+		if(!tgl_terima.value && !nama_penerima.value) return swal('Harus Mengisi Salah Satu Atau Keduanya...', { icon: 'error' })
+			.then(() => tgl_terima.focus())
+	}
 	if(kriteria.match(/lokasi/i) && !localStorage.getItem('token')) return swal({
 		text: 'Anda Tidak Memiliki Akses...',
 		icon: 'error'
@@ -169,6 +176,7 @@ export const handleBtnFocus = ({ key, ctrlKey }) => {
 }
 
 export const setComplete = async (lokasi, isComplete, setIsComplete) => {
+	document.removeEventListener('keypress', handleBtnFocus, true)
 	try {
 		const isSend = isComplete ?
 			await swal('Apakah Anda Yakin?', {
@@ -183,7 +191,6 @@ export const setComplete = async (lokasi, isComplete, setIsComplete) => {
 				buttons: ['Batal', 'Ya']
 			})
 		if(isSend){
-			const username = localStorage.getItem('username')
 			const body = {query: `mutation{
 				lokasi: setComplete(username: "${ username }", lokasi: "${ lokasi }", completed: ${ isComplete }, cancel_msg: ${ !isComplete ? `"${ isSend }"` : `null` }){
 					completed
@@ -203,6 +210,7 @@ export const setComplete = async (lokasi, isComplete, setIsComplete) => {
 				text: 'Tetap Semangat! Tinggal Dikit Lagi Kok...',
 			})
 			setIsComplete(data.lokasi.completed)
+			document.addEventListener('keypress', handleBtnFocus, true)
 		}
 	} catch (err) {
 		console.log(err)
@@ -217,7 +225,7 @@ export const deleteLokasi = async lokasi => {
 	if(isDelete){
 		try {
 			const body = {query: `mutation{
-				lokasi: deleteLokasi(id: "${ lokasi }"){
+				lokasi: deleteLokasi(id: "${ lokasi }", username: "${ username }"){
 					_id
 				}
 			}`}

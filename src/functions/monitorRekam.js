@@ -13,6 +13,7 @@ export const handleSubmit = async (setLokasis, e) => {
 			completed
 			time_completed
 			created_at
+			cancel_msg
 			perekam{
 				_id
 				nama
