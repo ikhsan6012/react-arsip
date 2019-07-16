@@ -47,7 +47,7 @@ const ModalEdit = props => {
 			delete fd.pemilik
 			setHasPemilik(true)
 			setDisableNamaWP(true)
-			setIsSPT(true)
+			setIsSPT(fd.kd_berkas.match(/induk|pindah|pkp|sertel/i) ? false : true)
 			setBy('npwp')
 		}
 		if(fd.penerima){
@@ -221,7 +221,7 @@ const ModalEdit = props => {
 					${ formData.masa_pajak ? `masa_pajak: ${ formData.masa_pajak }` : `` }
 					${ formData.tahun_pajak ? `tahun_pajak: ${ formData.tahun_pajak }` : `` }
 					${ formData.pembetulan ? `pembetulan: ${ formData.pembetulan }` : `` }
-					${ formData.status_pbk ? `status_pbk: ${ formData.status_pbk }` : `` }
+					${ formData.status_pbk ? `status_pbk: "${ formData.status_pbk }"` : `` }
 					${ formData.nomor_pbk ? `nomor_pbk: ${ formData.nomor_pbk }` : `` }
 					${ formData.tahun_pbk ? `tahun_pbk: ${ formData.tahun_pbk }` : `` }
 					${ formData.urutan ? `urutan: ${ formData.urutan }` : `` }

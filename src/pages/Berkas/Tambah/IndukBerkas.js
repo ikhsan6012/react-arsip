@@ -21,6 +21,8 @@ const IndukBerkas = props => {
 			document.querySelector('[name=npwp]').focus()
 		}, 100)
 	}, [])
+
+	console.log(formData)
 	
 	return(
 		<form onSubmit={ addBerkas.bind(this, {
