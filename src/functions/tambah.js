@@ -174,6 +174,7 @@ export const addBerkas = async ({ formData, kd_berkas, file, isError, errMsg }, 
 				: `${ data.berkas.ket_berkas.nama_berkas } => Penerima: ${ data.berkas.penerima.nama_penerima }, Tanggal Terima: ${ data.berkas.penerima.tgl_terima }`
 			alert.hidden = false
 			setFormData({ ...formData, npwp: '', nama_wp: '', nama_penerima: '', urutan: data.berkas.urutan + 1 })
+			document.activeElement.blur()
 			data.berkas.pemilik
 				? document.querySelector('[name=npwp]').focus()
 				: document.querySelector('[name=nama_penerima]').focus()
