@@ -22,8 +22,6 @@ const IndukBerkas = props => {
 		}, 100)
 	}, [])
 
-	console.log(formData)
-	
 	return(
 		<form onSubmit={ addBerkas.bind(this, {
 			formData, kd_berkas: props.kd_berkas, file, isError, errMsg 

@@ -22,8 +22,8 @@ export const handleSubmit = async (setLokasis, e) => {
 		}
 	}`}
 	try {
-		const { data, errors, extension } = await fetchDataGQL(body)
-		setToken(extension)
+		const { data, errors, extensions } = await fetchDataGQL(body)
+		setToken(extensions)
 		if(errors) return handleErrors(errors)
 		setLokasis(data.lokasis)
 	} catch (err) {
@@ -69,12 +69,39 @@ export const getDetailRekam = async (lokasi, { setLokasis, setBerkases }) => {
 		}
 	}`}
 	try {
-		const { data, errors, extension } = await fetchDataGQL(body)
-		setToken(extension)
+		const { data, errors, extensions } = await fetchDataGQL(body)
+		setToken(extensions)
 		if(errors) return handleErrors(errors)
 		setLokasis([lokasi])
 		setBerkases(data.berkases)
 	} catch (err) {
 		console.error(err)
 	}
+}
+
+export const getResume = async (body, setResume) => {
+	const { data, errors, extensions } = await fetchDataGQL(body)
+	setToken(extensions)
+	if(errors) return handleErrors(errors)
+	setResume(data.resume)
+}
+
+export const getDetailsData = async tgl_rekam => {
+	const body = {query: `{
+		details: detailsResume(tgl_rekam: "${ tgl_rekam }"){
+			nama
+			jml_per_tgl{
+				lokasi {
+					selesai
+					belum
+					total
+				}
+				berkas
+			}
+		}
+	}`}
+	const { data, errors, extensions } = await fetchDataGQL(body)
+	setToken(extensions)
+	if(errors) return handleErrors(errors)
+	return data.details
 }

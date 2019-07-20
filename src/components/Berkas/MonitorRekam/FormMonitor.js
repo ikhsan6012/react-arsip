@@ -20,7 +20,7 @@ const FormMonitor = props => {
 						mask="99/99/9999" 
 						pattern="[0-3]\d.[0-1]\d.20[0-2]\d"
 					/>
-					<button className="form-control btn btn-primary col-md-1">Cari</button>
+					<button className="form-control btn btn-primary col-md-1 mr-2">Cari</button>
 				</div>
 			</div>
 		</form>

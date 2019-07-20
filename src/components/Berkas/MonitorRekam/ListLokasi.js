@@ -48,6 +48,10 @@ const ListLokasi = props => {
 	
 	return(<>
 		<div className="card-body">
+			<label style={{ width: '100%' }}>
+				Daftar Perekaman 
+				<button className="btn btn-secondary float-right" onClick={ props.handleBackBtn }>Kembali</button>
+			</label>
 			<div className="table-responsive">
 				<table className="table table-striped table-bordered table-hover">
 					<thead>

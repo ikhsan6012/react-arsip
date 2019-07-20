@@ -45,6 +45,7 @@ const DetailRekam = ({ berkases }) => {
 	return(<>
 		<hr/>
 		<div className="card-body">
+			<label>Daftar Lokasi</label>
 			<div className="table-responsive">
 				<table id="tbl-lokasi" className="table table-striped table-bordered table-hover">
 					<thead>
