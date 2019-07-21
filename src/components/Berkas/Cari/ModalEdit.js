@@ -323,7 +323,7 @@ const ModalEdit = props => {
 								/>
 								<MasaPajakInput
 									width="4"
-									value={ formData.masa_pajak || '' }
+									value={ formData.masa_pajak === 0 ? 0 : formData.masa_pajak || '' }
 									required={ hasMasa }
 									disabled={ !isLain && !hasMasa }
 									onChange={ changeHandler.bind(this, formData, { setFormData }) }
