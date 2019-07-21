@@ -79,7 +79,20 @@ export const getDetailRekam = async (lokasi, { setLokasis, setBerkases }) => {
 	}
 }
 
-export const getResume = async (body, setResume) => {
+export const getResume = async (setResume) => {
+	const body = {query: `{
+		resume: resumeRekam{
+			tgl_rekam
+			jml_per_tgl{
+				lokasi{
+					selesai
+					belum
+					total
+				}
+				berkas
+			}
+		}
+	}`}
 	const { data, errors, extensions } = await fetchDataGQL(body)
 	setToken(extensions)
 	if(errors) return handleErrors(errors)
