@@ -20,7 +20,7 @@ const TabPane = props => {
 	
 	return(
 		<div className="tab-pane active">
-			<div className="col-md-6">
+			<div className="col-md-7">
 				<div className="alert" hidden></div>
 				{ list }
 			</div>
