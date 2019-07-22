@@ -19,6 +19,7 @@ const FormMonitor = props => {
 						placeholder="Tanggal Rekam" 
 						mask="99/99/9999" 
 						pattern="[0-3]\d.[0-1]\d.20[0-2]\d"
+						required
 					/>
 					<button className="form-control btn btn-primary col-md-1 mr-2">Cari</button>
 				</div>
