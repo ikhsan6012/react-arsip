@@ -3,10 +3,14 @@ import { fetchDataGQL, handleErrors, setToken } from './helpers'
 
 export const handleSubmit = async (setLokasis, e) => {
 	e.preventDefault()
-	const tgl_rekam = document.querySelector('#tgl_rekam').value
+	const tgl_rekam = document.querySelector('#tgl_rekam')
+	const perekam = document.querySelector('#perekam')
 	if(!localStorage.getItem('status').match(/0|2/)) return swal('Anda Tidak Memiliki Akses...' , { icon: 'error' })
+	const input = 
+		tgl_rekam && perekam ? `tgl_rekam: "${ tgl_rekam.value }", perekam: "${ perekam.value }"` :
+		tgl_rekam ? `tgl_rekam: "${ tgl_rekam.value }"` : `perekam: "${ perekam.value }"`
 	const body = {query: `{
-		lokasis: monitorRekam(tgl_rekam: "${ tgl_rekam }"){
+		lokasis: monitorRekam(${ input }){
 			_id
 			gudang
 			kd_lokasi
