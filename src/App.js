@@ -11,7 +11,8 @@ import 'font-awesome/css/font-awesome.min.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './static/css/adminlte.min.css'
 import './static/css/style.css'
-import SaranMasukan from './pages/SaranMasukan';
+import SaranMasukan from './pages/SaranMasukan'
+import UpdateWP from './pages/UpdateWP'
 
 const App = () => {
   // Get Ket Berkas
@@ -45,6 +46,7 @@ const App = () => {
         <Route path="/berkas" component={ Berkas }/>
         <Route path="/monitorlb" component={ MonitorLB }/>
         <Route path="/saran-masukan" component={ SaranMasukan }/>
+        <Route path="/update-wp" component={ UpdateWP }/>
       </Switch>
     </Router>
   )
