@@ -13,6 +13,7 @@ import './static/css/adminlte.min.css'
 import './static/css/style.css'
 import SaranMasukan from './pages/SaranMasukan'
 import UpdateWP from './pages/UpdateWP'
+import MonitorPeminjaman from './pages/MonitorPeminjaman'
 
 const App = () => {
   // Get Ket Berkas
@@ -47,6 +48,7 @@ const App = () => {
         <Route path="/monitorlb" component={ MonitorLB }/>
         <Route path="/saran-masukan" component={ SaranMasukan }/>
         <Route path="/update-wp" component={ UpdateWP }/>
+        <Route path="/monitor-peminjaman" component={ MonitorPeminjaman }/>
       </Switch>
     </Router>
   )

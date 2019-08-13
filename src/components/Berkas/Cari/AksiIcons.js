@@ -100,15 +100,13 @@ export const EditBerkas = ({ berkas }) => {
 		}
 	}
 
-	return(
-		<Fragment>
-			<button className="icon icon-edber mr-2" onClick={ showModal }>
-				<i className={`fa fa-pencil-square-o text-${ hasToken ? 'warning' : 'secondary' }`} 
-					title="Edit Berkas"></i>
-			</button>
-			{ modalEdit }
-		</Fragment>
-	)
+	return(<>
+		<button className="icon icon-edber mr-2" onClick={ showModal }>
+			<i className={`fa fa-pencil-square-o text-${ hasToken ? 'warning' : 'secondary' }`} 
+				title="Edit Berkas"></i>
+		</button>
+		{ modalEdit }
+	</>)
 }
 
 export const DeleteBerkas = ({ berkas }) => {
@@ -118,4 +116,40 @@ export const DeleteBerkas = ({ berkas }) => {
 				title="Hapus Berkas"></i>
 		</button>
 	)
+}
+
+export const TransactionBerkas = ({ berkas }) => {
+	const [modalTransaksi, setModalTransaksi] = useState('')
+	
+	const showModal = async e => {
+		if(!hasToken) return swal('Anda Tidak Mempunyai Akses!', { icon: 'error' })
+		const ModalTransaksi = await import('./ModalTransaksi')
+		setModalTransaksi(
+			<ModalTransaksi.default berkas={ berkas } closeModal={ closeModal } />
+		)
+	}
+
+	const closeModal = ({ key, success }) => {
+		if(key === 'Escape' || success){
+			const modalTransaksi = document.getElementById('modalTransaksi')
+			modalTransaksi.classList.remove('show')
+			setTimeout(() => {
+				if(success){
+					const kriteria = document.querySelector('[name=kriteria]').value
+					if(kriteria.match(/lokasi/i)) document.querySelector('#cariKriteria').click()
+					else if(kriteria.match(/npwp|nama_wp/)) document.querySelector(`button[data-id="${ berkas.pemilik._id }"]`).click()
+					else if(kriteria.match(/penerima/)) document.querySelector(`button[data-id="${ berkas.penerima._id }"]`).click()
+				}
+				setModalTransaksi('')
+			}, 150)
+		}
+	}
+	
+	return(<>
+		<button className="icon icon-tranber" onClick={ showModal } >
+			<i className={`fa fa-exchange text-${ hasToken ? 'info' : 'secondary' }`}
+				title="Pinjam Berkas"></i>
+		</button>
+		{ modalTransaksi }
+	</>)
 }

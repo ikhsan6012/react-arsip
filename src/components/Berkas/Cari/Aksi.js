@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { UploadDonwloadIcon, EditDocumentIcon, DeleteDocumentIcon, EditBerkas, DeleteBerkas } from './AksiIcons'
+import { UploadDonwloadIcon, EditDocumentIcon, DeleteDocumentIcon, EditBerkas, DeleteBerkas, TransactionBerkas } from './AksiIcons'
 
 const Aksi = props => {
 	return(
@@ -11,6 +11,7 @@ const Aksi = props => {
 				<span className="mr-2">||</span>
 				<EditBerkas berkas={ props.berkas }/>
 				<DeleteBerkas berkas={ props.berkas }/>
+				<TransactionBerkas berkas={ props.berkas }/>
 			</td>
 		</Fragment>
 	)

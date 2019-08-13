@@ -226,7 +226,7 @@ export const PembetulanInput = props =>
 		<input 
 			type="number" 
 			name="pembetulan" 
-			className="form-control" 
+			className="form-control"
 			min={ 0 }
 			value={ props.value || '' }
 			onChange={ props.onChange }
@@ -291,4 +291,84 @@ export const KeteranganInput = props =>
 export const ButtonSubmit = props => 
 	<div className={`form-group col-md-${props.width}`}>
 		<button type="submit" className={`btn btn-primary float-${props.float}`}>Simpan</button>
+	</div>
+
+export const TujuanTransaksi = props => 
+	<div className={`form-group col-md-${props.width}`}>
+		<label>Seksi Peminjam<span className="text-danger">*</span></label>
+		<div className="input-group">
+			<select
+				name="seksi"
+				className="form-control"
+				value={ props.value || 1 }
+				onChange={ props.onChange }
+				required
+			>
+				<option value="" hidden>Pilih Seksi Tujuan</option>
+				{ props.options }
+			</select>
+		</div>
+	</div>
+
+export const NoND = props =>
+	<div className={`form-group col-md-${props.width}`}>
+		<label>No. ND { props.label }<span className="text-danger">*</span></label>
+		<div className="input-group">
+			<input 
+				type="number" 
+				name={`no_nd_${ props.name }`}
+				className="form-control" 
+				min={ 1 }
+				value={ props.value || '' }
+				onChange={ props.onChange }
+				required
+			/>
+		</div>
+	</div>
+
+export const TahunND = props =>
+	<div className={`form-group col-md-${props.width}`}>
+		<label>Tahun ND { props.label }<span className="text-danger">*</span></label>
+		<div className="input-group">
+			<input 
+				type="number" 
+				name={`tahun_nd_${ props.name }`}
+				pattern="\d{4,}"
+				className="form-control" 
+				min={ new Date().getFullYear() - 10 }
+				max={ new Date().getFullYear() }
+				value={ props.value || new Date().getFullYear() }
+				onChange={ props.onChange }
+				required
+			/>
+		</div>
+	</div>
+
+export const FullND = props =>
+	<div className={`form-group col-md-${props.width}`}>
+		<div className="input-group">
+			<input 
+				type="text" 
+				name="full_nd" 
+				className="form-control" 
+				value={ props.value }
+				disabled />
+		</div>
+	</div>
+
+export const TanggalND = props =>
+	<div className={`form-group col-md-${props.width}`}>
+		<label>Tanggal ND { props.label } <span className="text-danger">*</span></label>
+		<div className="input-group">
+			<InputMask 
+				mask="99/99/9999" 
+				placeholder="dd/mm/yyyy" 
+				name={`tgl_nd_${ props.name }`} 
+				className="form-control"
+				pattern="[0-3]\d.[0-1]\d.20[0-1]\d"
+				value={ props.value ? props.value : '' }
+				onChange={ props.onChange }
+				required
+			/>
+		</div>
 	</div>

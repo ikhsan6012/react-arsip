@@ -25,7 +25,7 @@ const ModalEdit = props => {
 		document.addEventListener('keydown', props.closeModal, true)
 		setTimeout(() => {
 			document.querySelector('[name=gudang]').focus()
-		}, 150);
+		}, 150)
 		return () => {
 			document.removeEventListener('keydown', props.closeModal, true)
 			localStorage.removeItem('formData')

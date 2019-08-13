@@ -42,8 +42,7 @@ const Sidebar = () => {
 						<li className="nav-item has-treeview" onMouseEnter={ openMenu } onMouseLeave={ openMenu }>
 							<NavLink to="/berkas" id="berkas" className="nav-link">
 								<i className="nav-icon fa fa-archive"></i>
-								<p>
-									Berkas
+								<p>Berkas
 									<i className="right fa fa-angle-left"></i>
 								</p>
 							</NavLink>
@@ -74,6 +73,18 @@ const Sidebar = () => {
 										</NavLink>
 									</li> }
 							</ul>
+						</li>
+						<li className="nav-item">
+							{ localStorage.getItem('token') ? 
+								<NavLink exact to="/monitor-peminjaman" className="nav-link">
+									<i className="nav-icon fa fa-exchange"></i>
+									<p>Monitor Peminjaman</p>
+								</NavLink> : 
+								<a href="/" id="monitor-peminjaman" className="nav-link" style={{ cursor: 'pointer' }} onClick={ notLogin }>
+									<i className="nav-icon fa fa-exchange"></i>
+									<p>Monitor Peminjaman</p>
+								</a>
+							}
 						</li>
 						<li className="nav-item">
 							{ localStorage.getItem('token') ? 
